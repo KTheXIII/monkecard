@@ -12,6 +12,7 @@
 .auto-theme {
   --bg: var(--grey-0);
   --bg-1: var(--grey-1);
+  --bg-2: var(--grey-2);
   --text-color: var(--white);
 }
 
@@ -25,7 +26,6 @@ body,
   background-color: var(--bg);
   color: var(--text-color);
   height: 100%;
-  overflow: hidden;
 }
 
 .app {

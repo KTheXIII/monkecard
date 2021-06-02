@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { ChevronLeft, Clock } from '../assets/icons'
+
+import '../style/toolstop.scss'
 
 interface IToolsTop {
   backButton?: () => void
   time: number
+}
+
+function formatTimer(time: number) {
+  return new Date(time).toLocaleTimeString('en-SE', { timeZone: 'utc' })
 }
 
 export const ToolsTop: React.FC<IToolsTop> = (props) => {
@@ -20,7 +26,7 @@ export const ToolsTop: React.FC<IToolsTop> = (props) => {
           {Clock}
         </div>
         <div className="time-display noselect">
-          00:00:00
+          {formatTimer(props.time)}
         </div>
       </div>
       <div className="right"></div>
