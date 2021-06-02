@@ -7,21 +7,24 @@ export default {
   plugins: [
     '@snowpack/plugin-react-refresh',
     '@snowpack/plugin-dotenv',
-    '@snowpack/plugin-sass',
+    ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],
+    ['@snowpack/plugin-typescript'],
     [
-      '@snowpack/plugin-typescript',
+      '@snowpack/plugin-run-script',
+      {
+        cmd: 'eslint src --ext .js,.jsx,.ts,.tsx',
+        watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
+      },
     ],
-    [
-      'snowpack-plugin-hash',
-    ]
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
   optimize: {
-    /* Example: Bundle your final build: */
-    // "bundle": true,
+    minify: true,
+    splitting: true,
+    treeshake: true
   },
   packageOptions: {
     /* ... */
@@ -30,6 +33,8 @@ export default {
     open: 'none'
   },
   buildOptions: {
-    metaUrlPath: 'snowpack' // Fix for github pages
+    cacheDirPath: './.cache/snowpack',
+    metaUrlPath: 'snowpack', // Fix for github pages
+    baseUrl: process.env.PUBLIC_URL || '/'
   },
 }
