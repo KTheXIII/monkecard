@@ -16,6 +16,13 @@ export default {
         watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
       },
     ],
+    [
+      '@snowpack/plugin-optimize',
+      {
+        'preloadCSS': true,
+        'preloadCSSFileName': './style.css'
+      }
+    ],
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
@@ -23,7 +30,7 @@ export default {
   ],
   optimize: {
     splitting: true,
-    treeshake: true
+    treeshake: true,
   },
   packageOptions: {
     /* ... */
