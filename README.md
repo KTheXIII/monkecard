@@ -5,24 +5,23 @@ Build with Snowpack, ReactJS and TypeScript.
 ## Requirements
 
 - [nodejs](https://nodejs.org/)
-- [pnpm](https://pnpm.io)
 
 ## Development
 
 Installs the packages
 
 ```
-pnpm i
+yarn
 ```
 
 Run development server
 
 ```
-pnpm dev
+yarn dev
 ```
 
 Build production
 
 ```
-pnpm build
+yarn build
 ```

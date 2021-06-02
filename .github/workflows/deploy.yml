@@ -17,9 +17,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install -g pnpm
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm build
+      - run: yarn --frozen-lockfile
+      - run: yarn test
+      - run: yarn build
         env:
           PUBLIC_URL: './'
 

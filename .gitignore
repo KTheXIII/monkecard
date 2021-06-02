@@ -3,9 +3,7 @@
 
 ## Builds
 build
-
-## Generated data
-data
+.cache
 
 ## Package files
 *.zip
