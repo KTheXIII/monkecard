@@ -3,25 +3,23 @@
   bottom: 0;
   width: 100%;
 
-  height: 2.8rem;
-  margin-bottom: 15pt;
+  height: 5rem;
 
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: center;
-  align-content: center;
 
   .tools {
-    margin: auto;
+    margin: 0 auto;
     display: flex;
     height: 100%;
+    height: 2.6rem;
 
     border-radius: 5pt;
     background-color: var(--bg-1);
     overflow: hidden;
-    margin: 0;
-    
+
     button {
       display: block;
       cursor: pointer;
@@ -30,6 +28,7 @@
       border: none;
       background-color: inherit;
       color: var(--text-color);
+      transition: background-color 125ms ease-in;
 
       text-decoration: none;
 
