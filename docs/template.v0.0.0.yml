@@ -1,0 +1,11 @@
+# Model version
+version: 0.0.0
+
+questions:
+  - content:  ''    # text with markdown support
+    image:
+      source: ''    # image source
+    options: []     # string array of options
+    correct: []     # number array of correct options
+    categories: []  # string array of categories
+    source: ''      # CCCCC-TYYYYMMDDQNN

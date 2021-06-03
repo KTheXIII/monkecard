@@ -17,7 +17,7 @@
     height: 2.6rem;
 
     border-radius: 5pt;
-    background-color: var(--bg-1);
+    background-color: var(--bg-2);
     overflow: hidden;
 
     button {
@@ -50,11 +50,11 @@
         }
       }
 
-      padding-right: 6pt;
+      padding-right: 8pt;
     }
 
     button:hover {
-      background-color: var(--bg-2);
+      background-color: var(--bg-3);
     }
 
     button:active {

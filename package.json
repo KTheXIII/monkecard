@@ -1,6 +1,6 @@
 {
   "name": "q-react",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Question game in React",
   "private": true,
   "scripts": {
@@ -15,8 +15,10 @@
   "author": "KTheXIII",
   "license": "MIT",
   "dependencies": {
+    "js-yaml": "^4.1.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-markdown": "^6.0.2"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.1.0",
@@ -28,6 +30,7 @@
     "@snowpack/web-test-runner-plugin": "^0.2.2",
     "@testing-library/react": "^11.2.7",
     "@types/chai": "^4.2.18",
+    "@types/js-yaml": "^4.0.1",
     "@types/mocha": "^8.2.2",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",

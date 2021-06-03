@@ -1,4 +1,54 @@
 .question {
   margin-top: 3.4rem;
   padding-bottom: 5.5rem;
+
+  .display {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+
+    .image-container {
+      max-height: 128pt;
+      text-align: center;
+      img, svg {
+        max-height: inherit;
+      }
+    }
+
+    .content-container {
+      min-height: 96pt;
+      padding: 10pt;
+      font-size: 10pt;
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: auto;
+      gap: 8pt;
+      padding: 10pt;
+
+      .option {
+        display: grid;
+        cursor: pointer;
+        grid-template-columns: 20pt auto;
+        background-color: var(--bg-1);
+        padding: 10pt;
+        min-height: 21pt;
+        border-radius: 5pt;
+        font-size: 10pt;
+
+        .icon {
+          display: grid;
+          width: 9pt;
+          height: 9pt;
+          margin: auto 0;
+          margin-right: 10pt;
+        }
+
+        .text {
+          margin: auto 0;
+        }
+      }
+    }
+  }
 }

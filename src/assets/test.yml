@@ -1,0 +1,34 @@
+version: 0.0.0
+
+questions:
+  - content: |
+      # Vilka påståenden är korrekta gällande diagrammet nedan?
+
+      Test one two three
+
+      Is this working?
+
+      ```js
+      // comment
+      const a = 0
+      ```
+    image:
+      source: './static/assets/reliability-curve-of-software.jpg'
+    options:
+      - Spikarna i kurvan indikerar att testfasen i den använda processen startar vid
+        punkt 2.
+      - Kurvan markerad med 4 visar den ideala kurvan för en mjukvaruprodukt.
+      - Software Engineering innebär att använda metoder i en strävan att få kurva 3 att
+        närma sig det utseende som kurva 4 har.
+      - Siffran 3 markerar en kurva som indikerar att en mjukvaruprodukt har dålig kvalitet.
+      - Spikarna i kurvan beror alltid på att något förändrats i mjukvaruproduktens kod
+        eller i produktens omgivning.
+      - Kurva 4 är samma kurva som man kan påvisa för hårdvara.
+    correct:
+      - 1
+      - 2
+      - 4
+    categories:
+      - software-engineering
+    source: 'DA335A-T20200305Q01'
+

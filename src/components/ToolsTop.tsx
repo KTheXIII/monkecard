@@ -17,7 +17,10 @@ export const ToolsTop: React.FC<IToolsTop> = (props) => {
   return (
     <div className="tools-top">
       <div className="left">
-        <button className="back-button ">
+        <button
+          className="back-button"
+          onClick={props.backButton}
+        >
           {ChevronLeft}
         </button>
       </div>
