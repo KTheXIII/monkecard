@@ -59,7 +59,9 @@
 
     button:active {
       background-color: inherit;
-      transform: scale(0.9);
+      .button-display {
+        transform: scale(0.95);
+      }
     }
   }
 }
