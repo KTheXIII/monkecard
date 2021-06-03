@@ -48,8 +48,9 @@ body,
 @media (prefers-color-scheme: light) {
   .auto-theme {
     --bg: var(--white);
-    --bg-1: var(--grey-9);
-    --bg-2: var(--grey-8);
+    --bg-1: var(--grey-11);
+    --bg-2: var(--grey-10);
+    --bg-3: var(--grey-9);
     --text-color: var(--grey-0);
   }
 }
@@ -62,4 +63,80 @@ body,
   -ms-user-select:       none; /* Internet Explorer/Edge */
   user-select:           none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.tools-float {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
+  height: 5rem;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select:   none; /* Safari */
+  -khtml-user-select:    none; /* Konqueror HTML */
+  -moz-user-select:      none; /* Firefox */
+  -ms-user-select:       none; /* Internet Explorer/Edge */
+  user-select:           none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+
+  .tools {
+    margin: 0 auto;
+    display: flex;
+    height: 100%;
+    height: 2.6rem;
+
+    border-radius: 5pt;
+    background-color: var(--bg-2);
+    overflow: hidden;
+
+    button {
+      display: block;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      border: none;
+      background-color: inherit;
+      color: var(--text-color);
+      transition: background-color 125ms ease-in;
+
+      text-decoration: none;
+
+      .button-display {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        .icon {
+          width: 10pt;
+          height: 10pt;
+          margin: auto 6pt;
+        }
+
+        .text {
+          margin: auto;
+          font-size: 10pt;
+          font-weight: 300;
+        }
+      }
+
+      padding-right: 8pt;
+    }
+
+    button:hover {
+      background-color: var(--bg-3);
+    }
+
+    button:active {
+      background-color: inherit;
+      .button-display {
+        transform: scale(0.95);
+      }
+    }
+  }
 }

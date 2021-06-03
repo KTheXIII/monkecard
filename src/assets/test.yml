@@ -3,15 +3,6 @@ version: 0.0.0
 questions:
   - content: |
       # Vilka påståenden är korrekta gällande diagrammet nedan?
-
-      Test one two three
-
-      Is this working?
-
-      ```js
-      // comment
-      const a = 0
-      ```
     image:
       source: './static/assets/reliability-curve-of-software.jpg'
     options:

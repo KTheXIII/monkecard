@@ -10,7 +10,6 @@ export const App: React.FC = (props): ReactElement => {
   return (
     <div className='app'>
       <Question />
-      {/* <Header title='./q' /> */}
       {/* <AppMain /> */}
       {/* <Footer
         year={2021}

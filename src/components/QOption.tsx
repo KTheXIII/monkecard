@@ -2,25 +2,27 @@ import React, { useState } from 'react'
 
 import { Circle, CircleFill } from '../assets/icons'
 
-export const OptionContainer: React.FC = (props) => {
+export const QOptionContainer: React.FC = (props) => {
   return (
-    <div className="options-container">
-      {props.children}
+    <div className="q-options-container">
+      <div className="q-options">
+        {props.children}
+      </div>
     </div>
   )
 }
 
-interface IOption {
+interface IQOption {
   text: string
   onMark: (marked: boolean) => void
 }
 
-export const Option: React.FC<IOption> = (props) => {
+export const QOption: React.FC<IQOption> = (props) => {
   const [isMarked, setMarked] = useState(false)
 
   return (
     <div
-      className="option"
+      className="q-option"
       onClick={() => {
         const marked = !isMarked
         setMarked(marked)

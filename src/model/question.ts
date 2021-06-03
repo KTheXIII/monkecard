@@ -8,5 +8,5 @@ export interface IQuestionModel {
 }
 
 export interface IImageModel {
-  source?: string
+  source: string
 }

@@ -21,13 +21,13 @@
       font-size: 10pt;
     }
 
-    .options-container {
+    .q-options-container .q-options {
       display: grid;
       grid-template-columns: auto;
       gap: 8pt;
       padding: 10pt;
 
-      .option {
+      .q-option {
         display: grid;
         cursor: pointer;
         grid-template-columns: 20pt auto;

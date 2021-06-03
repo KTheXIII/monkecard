@@ -1,50 +1,30 @@
-import React, { useState } from 'react'
+import React, { ReactElement } from 'react'
 
-import {
-  Files,
-  Flag,
-  FlagFill,
-  ChevronRight
-} from '../assets/icons'
-
-import '../style/toolsfloat.scss'
-
-interface IToolsFloat {
-  onAnswered: () => void
-  onMark: () => void
-  onNext: () => void
-  isFlagOn: boolean
+interface IFloatTool {
+  title?: string
+  icon: ReactElement
+  text: string
+  onClick?: () => void
 }
 
-export const ToolsFloat: React.FC<IToolsFloat> = (props) => {
+export const FloatTool: React.FC<IFloatTool> = (props) => {
   return (
-    <div className="tools-floating noselect">
+    <button
+      title={props.title}
+      onClick={props.onClick}>
+      <div className="button-display">
+        <div className="icon">{props.icon}</div>
+        <div className="text">{props.text}</div>
+      </div>
+    </button>
+  )
+}
+
+export const FloatToolsContainer: React.FC = (props) => {
+  return (
+    <div className="tools-float">
       <div className="tools">
-        <button
-          onClick={props.onAnswered}
-        >
-          <div className="button-display">
-            <div className="icon">{Files}</div>
-            <span className="text">answered</span>
-          </div>
-        </button>
-        <button
-          onClick={props.onMark}
-        >
-          <div className="button-display">
-            <div className="icon">{props.isFlagOn ? FlagFill : Flag}</div>
-            <span className="text">mark</span>
-          </div>
-        </button>
-        <button
-          className="right"
-          onClick={props.onNext}
-        >
-          <div className="button-display">
-            <div className="icon">{ChevronRight}</div>
-            <span className="text">next</span>
-          </div>
-        </button>
+        {props.children}
       </div>
     </div>
   )

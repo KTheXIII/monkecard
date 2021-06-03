@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { ChevronLeft, Clock } from '../assets/icons'
+import { ChevronLeft, Stopwatch } from '../assets/icons'
 
 import '../style/toolstop.scss'
 
@@ -26,7 +26,7 @@ export const ToolsTop: React.FC<IToolsTop> = (props) => {
       </div>
       <div className="timer center">
         <div className="clock-icon">
-          {Clock}
+          {Stopwatch}
         </div>
         <div className="time-display noselect">
           {formatTimer(props.time)}

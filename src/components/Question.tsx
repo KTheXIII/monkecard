@@ -7,12 +7,14 @@ import ReactMarkdown from 'react-markdown'
 import yaml from 'js-yaml'
 
 import { ToolsTop } from './ToolsTop'
-import { ToolsFloat } from './ToolsFloat'
-import { OptionContainer, Option } from './Option'
+import { QToolsFloat } from './QToolsFloat'
+import { QOptionContainer, QOption } from './QOption'
+
+import { IQuestionModel } from '../model/question'
 
 import '../style/question.scss'
 
-const TIMER_UPDATE_DELAY = 1000
+const TIMER_UPDATE_DELAY = 1000  // ms
 
 export const Question: React.FC = () => {
   const start = Date.now()
@@ -32,23 +34,33 @@ export const Question: React.FC = () => {
     }
   }, [])
 
+  // FIXME: Have a better logic structure
   useEffect(() => {
     fetch('./static/assets/test.yml')
-      .then(res => res.text()).then(text => {
+      .then(res => {
+        if (res.status == 200) return res.text()
+        else throw new Error('File not found: ' + res.status)
+      })
+      .then(text => {
         const parsedText = yaml.load(text) as any
-        setContent(parsedText.questions[0].content)
-        const tmpOptions: ReactElement[] = []
-        for (let i = 0;i < parsedText.questions[0].options.length;i++) {
-          tmpOptions.push(
-            <Option
-              key={i}
-              onMark={(marked) => console.log(marked)}
-              text={parsedText.questions[0].options[i]}
-            />
-          )
+        if (parsedText.version) {
+          const question = parsedText.questions[0] as IQuestionModel
+          setContent(question.content)
+          const tmpOptions: ReactElement[] = []
+          for (let i = 0;i < question.options.length;i++) {
+            tmpOptions.push(
+              <QOption
+                key={i}
+                onMark={(marked) => console.log(marked)}
+                text={question.options[i]}
+              />
+            )
+          }
+          setOptions(tmpOptions)
+          setImageLink(question.image.source)
         }
-        setOptions(tmpOptions)
-        setImageLink(parsedText.questions[0].image.source)
+      }).catch(err => {
+        console.error(err)
       })
   }, [])
 
@@ -64,11 +76,11 @@ export const Question: React.FC = () => {
             {content}
           </ReactMarkdown>
         </div>
-        <OptionContainer>
+        <QOptionContainer>
           {options}
-        </OptionContainer>
+        </QOptionContainer>
       </div>
-      <ToolsFloat
+      <QToolsFloat
         isFlagOn={isFlagOn}
         onMark={() => {
           setFlagOn(!isFlagOn)
