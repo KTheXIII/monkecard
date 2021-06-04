@@ -1,6 +1,54 @@
-main {
-  height: 100%;
+.card-list {
   display: grid;
-  grid-template-columns: 1;
-  grid-template-rows: 1;
+  grid-template-columns: auto;
+  gap: 3rem;
+  padding: 1.2rem;
+  padding-bottom: calc(var(--tools-float-height) + 2rem);
+}
+
+.card .card-title {
+  padding: 10pt;
+}
+
+.card .card-content {
+  background-color: var(--bg-1);
+  border-radius: 5pt;
+  overflow: hidden;
+}
+
+.card .card-content {
+  button {
+    display: flex;
+    cursor: pointer;
+    padding: 10pt;
+    height: 100%;
+    width: 100%;
+    border: none;
+    
+    font-size: inherit;
+    background-color: inherit;
+    color: inherit;
+
+    .button-display {
+      .icon {
+        margin: auto 0;
+        margin-right: 10pt;
+        height: 10pt;
+        width: 10pt;
+      }
+
+      .text {
+        margin: auto 0;
+        overflow-wrap: break-word;
+      }
+    }
+  }
+
+  button:hover {
+    background-color: var(--bg-3);
+  }
+
+  button:active {
+    background-color: var(--bg-2);
+  }
 }

@@ -16,7 +16,11 @@ import '../style/question.scss'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
-export const Question: React.FC = () => {
+interface IQuestion {
+  onBack: () => void
+}
+
+export const Question: React.FC<IQuestion> = (props) => {
   const start = Date.now()
   const [currentTime, setCurrentTime] = useState(0)
   const [isFlagOn, setFlagOn] = useState(false)
@@ -66,7 +70,9 @@ export const Question: React.FC = () => {
 
   return (
     <div className="question">
-      <ToolsTop time={currentTime} />
+      <ToolsTop
+        backButton={props.onBack}
+        time={currentTime} />
       <div className="display">
         <div className="image-container">
           {imageLink && <img src={imageLink} />}

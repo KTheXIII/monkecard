@@ -17,6 +17,7 @@
   font-size: 11pt;
 
   --header-height: 3.5rem;
+  --tools-float-height: 5rem;
 }
 
 .auto-theme {
@@ -70,7 +71,7 @@ body,
   bottom: 0;
   width: 100%;
 
-  height: 5rem;
+  height: var(--tools-float-height);
 
   display: flex;
   flex-direction: row;
