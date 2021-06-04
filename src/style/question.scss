@@ -35,6 +35,11 @@
         cursor: pointer;
         padding: 10pt;
         font-size: 10pt;
+
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
       }
       
       button .button-display {
