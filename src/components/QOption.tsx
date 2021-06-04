@@ -21,17 +21,19 @@ export const QOption: React.FC<IQOption> = (props) => {
   const [isMarked, setMarked] = useState(false)
 
   return (
-    <div
+    <button
       className="q-option"
       onClick={() => {
         const marked = !isMarked
         setMarked(marked)
         props.onMark(marked)
       }}>
-      <div className="icon">{isMarked ? CircleFill : Circle}</div>
-      <div className="text">
-        <span>{props.text}</span>
+      <div className="button-display">
+        <div className="icon">{isMarked ? CircleFill : Circle}</div>
+        <div className="text">
+          <span>{props.text}</span>
+        </div>
       </div>
-    </div>
+    </button>
   )
 }

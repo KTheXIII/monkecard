@@ -24,19 +24,24 @@
     .q-options-container .q-options {
       display: grid;
       grid-template-columns: auto;
-      gap: 8pt;
+      gap: 7pt;
       padding: 10pt;
 
-      .q-option {
-        display: grid;
-        cursor: pointer;
-        grid-template-columns: 20pt auto;
+      button {
+        color: inherit;
+        border: none;
         background-color: var(--bg-1);
-        padding: 10pt;
-        min-height: 21pt;
         border-radius: 5pt;
+        cursor: pointer;
+        padding: 10pt;
         font-size: 10pt;
-
+      }
+      
+      button .button-display {
+        display: grid;
+        grid-template-columns: 20pt auto;
+        text-align: left;
+        
         .icon {
           display: grid;
           width: 9pt;
