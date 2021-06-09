@@ -33,7 +33,7 @@ interface ICardOption {
 
 export const CardOption: React.FC<ICardOption> = (props) => {
   return (
-    <button onClick={props.onClick}>
+    <button onClick={() => props.onClick()}>
       <div className="button-display">
         {props.icon && <div className="icon">{props.icon}</div>}
         <span className="text">{props.text}</span>

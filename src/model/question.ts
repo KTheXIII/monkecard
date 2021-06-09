@@ -1,6 +1,6 @@
 export interface IQuestionModel {
   content: string
-  image: IImageModel
+  image?: IImageModel
   options: string[]
   correct: number[]
   categories: string[]

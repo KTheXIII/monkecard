@@ -4,11 +4,10 @@ import React, {
   useState
 } from 'react'
 import ReactMarkdown from 'react-markdown'
-import yaml from 'js-yaml'
 
 import { ToolsTop } from './ToolsTop'
 import { QToolsFloat } from './QToolsFloat'
-import { QOptionContainer, QOption } from './QOption'
+import { QOptionContainer, QCreateOptions } from './QOption'
 
 import { IQuestionModel } from '../model/question'
 
@@ -17,6 +16,7 @@ import '../style/question.scss'
 const TIMER_UPDATE_DELAY = 1000  // ms
 
 interface IQuestion {
+  questions: IQuestionModel[]
   onBack: () => void
 }
 
@@ -29,6 +29,8 @@ export const Question: React.FC<IQuestion> = (props) => {
   const [content, setContent] = useState('')
   const [options, setOptions] = useState<ReactElement[]>([])
 
+  let activeQuestion: IQuestionModel
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(Date.now() - start)
@@ -38,35 +40,30 @@ export const Question: React.FC<IQuestion> = (props) => {
     }
   }, [])
 
-  // FIXME: Have a better logic structure
   useEffect(() => {
-    fetch('./static/assets/test.yml')
-      .then(res => {
-        if (res.status == 200) return res.text()
-        else throw new Error('File not found: ' + res.status)
-      })
-      .then(text => {
-        const parsedText = yaml.load(text) as any
-        if (parsedText.version) {
-          const question = parsedText.questions[0] as IQuestionModel
-          setContent(question.content)
-          const tmpOptions: ReactElement[] = []
-          for (let i = 0;i < question.options.length;i++) {
-            tmpOptions.push(
-              <QOption
-                key={i}
-                onMark={(marked) => console.log(marked)}
-                text={question.options[i]}
-              />
-            )
-          }
-          setOptions(tmpOptions)
-          setImageLink(question.image.source)
-        }
-      }).catch(err => {
-        console.error(err)
-      })
+    const { questions } = props
+    activeQuestion = questions[Math.floor(questions.length * Math.random())]
+    if (activeQuestion.image) setImageLink(activeQuestion.image.source)
+    setContent(activeQuestion.content)
+    setOptions(QCreateOptions(activeQuestion.options, onMark))
   }, [])
+
+  function onFlag() {
+    setFlagOn(!isFlagOn)
+    // TODO: On when question is flagged
+  }
+
+  function onNext() {
+    // TODO: On next question
+  }
+
+  function onAnswered() {
+    // TODO: On show answered
+  }
+
+  function onMark(index: number, marked: boolean) {
+    // TODO: On when option is marked
+  }
 
   return (
     <div className="question">
@@ -89,13 +86,13 @@ export const Question: React.FC<IQuestion> = (props) => {
       <QToolsFloat
         isFlagOn={isFlagOn}
         onMark={() => {
-          setFlagOn(!isFlagOn)
+          onFlag()
         }}
         onAnswered={() => {
-          console.log('answered')
+          onAnswered()
         }}
         onNext={() => {
-          console.log('next')
+          onNext()
         }} />
     </div>
   )

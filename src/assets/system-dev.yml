@@ -1,0 +1,62 @@
+version: '0.0'
+
+questions:
+  - content: |
+      # Vilka påståenden är korrekta gällande diagrammet nedan?
+    image:
+      source: './static/assets/reliability-curve-of-software.jpg'
+    options:
+      - Spikarna i kurvan indikerar att testfasen i den använda processen startar vid
+        punkt 2.
+      - Kurvan markerad med 4 visar den ideala kurvan för en mjukvaruprodukt.
+      - Software Engineering innebär att använda metoder i en strävan att få kurva 3 att
+        närma sig det utseende som kurva 4 har.
+      - Siffran 3 markerar en kurva som indikerar att en mjukvaruprodukt har dålig kvalitet.
+      - Spikarna i kurvan beror alltid på att något förändrats i mjukvaruproduktens kod
+        eller i produktens omgivning.
+      - Kurva 4 är samma kurva som man kan påvisa för hårdvara.
+    correct:
+      - 1
+      - 2
+      - 4
+    categories:
+      - software-engineering
+    source: 'DA335A-T20200305Q01'
+  - content: |
+      # Vad är korrekta påståenden gällande iterativa processer?
+    image: null
+    options:
+      - Iterationerna i en iterativ process beskrivs av V-modellen.
+      - En iterativ process innebär också att man alltid levererar inkrementellt.
+      - Spiralmodeller är en typ av iterativa processer.
+      - I en iterativ process så måste koden innehålla en viss mängd loopar.
+      - Iterativa processer är i sin natur dokumenttunga.
+      - I en iterativ process så upprepas alltid något steg någon gång.
+    correct:
+      - 2
+      - 5
+    categories:
+      - processmodeller
+      - iterativa-processer
+    source: 'DA335A-T20200305Q02'
+  - content: |
+      # Vad är korrekta påståenden om agila processer och processmodeller?
+    image: null
+    options:
+      - Agila processmodeller lämpar sig inte för projekt som spänner över långa perioder så som ett eller flera år.
+      - Agila processmodeller är alltid iterativa.
+      - Agila processmodeller fungerar bra i kombination med en traditionell linjestyrning
+        då denna går på tvären mot en projektorganisation.
+      - Disciplin hos utvecklarna är en viktig del i aglia processmodeller.
+      - XP kan ha svårt att hantera kvalitativa krav utan utökning av processmodellen.
+      - Scrum och Kanban är två agila processmodeller som lämpar sig att kombinera med varandra.
+    correct:
+      - 1
+      - 3
+      - 4
+      - 5
+    categories:
+      - processmodeller
+      - agile-processmodeller
+      - agila-processer
+    source: 'DA335A-T20200305Q03'
