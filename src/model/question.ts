@@ -1,3 +1,4 @@
+// Model description for fetched data
 export interface IQuestionModel {
   content: string
   image?: IImageModel
@@ -9,4 +10,20 @@ export interface IQuestionModel {
 
 export interface IImageModel {
   source: string
+}
+
+// Model for thet actual use
+export interface IQOptionModel {
+  text: string
+  marked: boolean
+  correct: boolean
+}
+
+export interface IQuizModel {
+  content: string
+  image?: IImageModel
+  options: IQOptionModel[]
+  source: string
+
+  isMarked: boolean
 }

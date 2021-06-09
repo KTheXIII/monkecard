@@ -1,6 +1,9 @@
 {
+  "name": "./quiz",
   "short_name": "q-react",
-  "name": "Quiz",
+  "start_url": "./",
+  "display": "standalone",
+  "description": "A quiz app.",
   "icons": [
     {
       "src": "favicon.png",
@@ -18,8 +21,6 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "./",
-  "display": "standalone",
   "theme_color": "#101010",
   "background_color": "#101010"
 }

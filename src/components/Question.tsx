@@ -7,16 +7,16 @@ import ReactMarkdown from 'react-markdown'
 
 import { ToolsTop } from './ToolsTop'
 import { QToolsFloat } from './QToolsFloat'
-import { QOptionContainer, QCreateOptions } from './QOption'
+import { QOptionContainer, QOption } from './QOption'
 
-import { IQuestionModel } from '../model/question'
+import { IQuizModel } from '../model/question'
 
 import '../style/question.scss'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
 interface IQuestion {
-  questions: IQuestionModel[]
+  questions: IQuizModel[]
   onBack: () => void
 }
 
@@ -25,11 +25,14 @@ export const Question: React.FC<IQuestion> = (props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [isFlagOn, setFlagOn] = useState(false)
 
-  const [imageLink, setImageLink] = useState<string | null>(null)
+  const [imageLink, setImageLink] = useState<string | undefined>()
   const [content, setContent] = useState('')
   const [options, setOptions] = useState<ReactElement[]>([])
 
-  let activeQuestion: IQuestionModel
+  let qIndex = 0 // A hack for getting questionIndex value
+  const [questionIndex, setQuestionIndex] = useState(qIndex)
+
+  const questions = props.questions
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,29 +44,50 @@ export const Question: React.FC<IQuestion> = (props) => {
   }, [])
 
   useEffect(() => {
-    const { questions } = props
-    activeQuestion = questions[Math.floor(questions.length * Math.random())]
-    if (activeQuestion.image) setImageLink(activeQuestion.image.source)
-    setContent(activeQuestion.content)
-    setOptions(QCreateOptions(activeQuestion.options, onMark))
-  }, [])
+    qIndex = questionIndex
+  }, [questionIndex])
 
   function onFlag() {
-    setFlagOn(!isFlagOn)
+    questions[qIndex].isMarked = !isFlagOn
+    setFlagOn(questions[qIndex].isMarked)
     // TODO: On when question is flagged
   }
 
   function onNext() {
     // TODO: On next question
+    qIndex = (questionIndex + 1) % props.questions.length
+    const quiz = questions[qIndex]
+    setQuestionIndex(qIndex)
+
+    setFlagOn(quiz.isMarked)
+
+    setImageLink(quiz.image?.source)
+    setContent(quiz.content)
+
+    setOptions(
+      quiz.options.map((data, index) => {
+        return <QOption
+          key={quiz.source + '-' + index}
+          text={data.text}
+          isMarked={data.marked}
+          index={index}
+          onMark={onMark}
+        />
+      })
+    )
   }
 
   function onAnswered() {
-    // TODO: On show answered
+    // TODO: On show answered list
   }
 
-  function onMark(index: number, marked: boolean) {
-    // TODO: On when option is marked
+  function onMark(i: number, mark: boolean) {
+    questions[qIndex].options[i].marked = mark
   }
+
+  useEffect(() => {
+    onNext()
+  }, [])
 
   return (
     <div className="question">
