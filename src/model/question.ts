@@ -26,4 +26,5 @@ export interface IQuizModel {
   source: string
 
   isMarked: boolean
+  isAnswered: boolean
 }

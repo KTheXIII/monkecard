@@ -4,7 +4,7 @@ questions:
   - content: |
       # Vilka påståenden är korrekta gällande diagrammet nedan?
     image:
-      source: './static/assets/reliability-curve-of-software.jpg'
+      source: './static/assets/images/reliability-curve-of-software.jpg'
     options:
       - Spikarna i kurvan indikerar att testfasen i den använda processen startar vid
         punkt 2.

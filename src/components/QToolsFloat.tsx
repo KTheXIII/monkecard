@@ -6,14 +6,17 @@ import {
   Files,
   Flag,
   FlagFill,
-  ChevronRight
+  ChevronRight,
+  Check2
 } from '../assets/icons'
 
 interface IQToolsFloat {
   onAnswered: () => void
   onMark: () => void
   onNext: () => void
+
   isFlagOn: boolean
+  isLast: boolean
 }
 
 export const QToolsFloat: React.FC<IQToolsFloat> = (props) => {
@@ -22,15 +25,15 @@ export const QToolsFloat: React.FC<IQToolsFloat> = (props) => {
       <FloatTool
         onClick={props.onAnswered}
         icon={Files}
-        text='answered' />
+        text="answered" />
       <FloatTool
         onClick={props.onMark}
         icon={props.isFlagOn ? FlagFill : Flag}
-        text='mark' />
+        text="mark" />
       <FloatTool
         onClick={props.onNext}
-        icon={ChevronRight}
-        text='next' />
+        icon={props.isLast ? Check2 : ChevronRight}
+        text={props.isLast ? 'done' : 'next'} />
     </FloatToolsContainer>
   )
 }

@@ -9,12 +9,12 @@ export const MToolsFloat: React.FC = () => {
     <FloatToolsContainer>
       <FloatTool
         icon={FileEarmarkCodeFill}
-        text='home'
+        text="home"
       />
       <FloatTool
-        title='more settings'
+        title="more settings"
         icon={UIRadios}
-        text='more'
+        text="more"
       />
     </FloatToolsContainer>
   )

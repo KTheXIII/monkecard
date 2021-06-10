@@ -44,7 +44,8 @@ export const App: React.FC = () => {
         image: data.image,
         options,
         source: data.source,
-        isMarked: false
+        isMarked: false,
+        isAnswered: false
       }
     })
 
@@ -55,14 +56,14 @@ export const App: React.FC = () => {
   useEffect(() => {
     fetch(URL)
       .then(res => {
-        if (res.status == 200) return res.text()
+        if (res.ok) return res.text()
         else throw new Error('File not found: ' + res.status)
       })
       .then(text => {
         try {
-          const questionData = yaml.load(text) as any
-          if (questionData.version == '0.0') {
-            setIsLoaded(processQuiz(questionData.questions as IQuestionModel[]))
+          const data = yaml.load(text) as any
+          if (data.version == '0.0') {
+            setIsLoaded(processQuiz(data.questions as IQuestionModel[]))
           }
         } catch (e) {
           throw new Error('Not correct yaml format')
@@ -77,8 +78,10 @@ export const App: React.FC = () => {
       {active == Pages.Main &&
         <AppMain
           onStart={() => {
-            if (isLoaded)
+            if (isLoaded) {
+              // FIXME: The questions needs to be reset when launch again
               setActive(Pages.Quiz)
+            }
           }} />
       }
       {active == Pages.Quiz &&

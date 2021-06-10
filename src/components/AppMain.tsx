@@ -20,7 +20,7 @@ export const AppMain: React.FC<IAppMain> = (props) => {
       <CardOptionList>
         <CardOptions title="main">
           <CardOption
-            text='start'
+            text="start"
             onClick={() => {
               props.onStart()
             }} />

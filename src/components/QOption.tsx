@@ -6,8 +6,6 @@ import React, {
 
 import { Circle, CircleFill } from '../assets/icons'
 
-import { IQOptionModel } from '../model/question'
-
 export const QOptionContainer: React.FC = (props) => {
   return (
     <div className="q-options-container">
