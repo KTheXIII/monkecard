@@ -38,7 +38,9 @@ export const Question: React.FC<IQuestion> = (props) => {
   const [content, setContent] = useState('')
   const [options, setOptions] = useState<ReactElement[]>([])
 
-  const [currentQIndex, setCurrentQIndex] = useState(0)
+  // Hack for fixing state not updating fast enough
+  let currentIndex = 0
+  const [questionIndex, setQuestionIndex] = useState(currentIndex)
 
   const session = props.session
   const questions = session.questions
@@ -53,31 +55,30 @@ export const Question: React.FC<IQuestion> = (props) => {
   }, [])
 
   useEffect(() => {
-    setQuestion(0)
-    questions[0].isAnswered = true
-    console.log(questions)
+    setQuestion(currentIndex)
+    questions[currentIndex].isAnswered = true
   }, [])
 
   function onFlag() {
-    questions[currentQIndex].isMarked = !isFlagOn
-    setFlagOn(questions[currentQIndex].isMarked)
+    questions[questionIndex].isMarked = !isFlagOn
+    setFlagOn(questions[questionIndex].isMarked)
     // TODO: On when question is flagged
   }
 
   function onNext() {
-    if (currentQIndex != -1 && !questions[currentQIndex].isAnswered) return
-    if (currentQIndex == questions.length - 1) {
+    if (questionIndex != -1 && !questions[questionIndex].isAnswered) return
+    if (questionIndex == questions.length - 1) {
       session.end = Date.now()
       props.onDone(session)
       return
     }
 
-    const index = (currentQIndex + 1) % questions.length
+    currentIndex = (questionIndex + 1) % questions.length
     // FIXME: NEED TO THINK MORE ABOUT THIS
-    questions[index].isAnswered = true
+    questions[currentIndex].isAnswered = true
 
-    setCurrentQIndex(index)
-    setQuestion(index)
+    setQuestionIndex(currentIndex)
+    setQuestion(currentIndex)
   }
 
   function onAnswered() {
@@ -98,7 +99,7 @@ export const Question: React.FC<IQuestion> = (props) => {
   }
 
   function onMark(i: number, mark: boolean) {
-    questions[currentQIndex].options[i].marked = mark
+    questions[currentIndex].options[i].marked = mark
   }
 
   function setQuestion(index: number) {
@@ -149,8 +150,9 @@ export const Question: React.FC<IQuestion> = (props) => {
       }}
       onClick={(index) => {
         setShowAnswered(false)
-        setCurrentQIndex(index)
+        setQuestionIndex(index)
         setQuestion(index)
+        currentIndex = index
         container.current?.style.setProperty('overflow', 'auto')
       }}
       idList={answeredIDs}
