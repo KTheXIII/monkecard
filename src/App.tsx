@@ -6,28 +6,35 @@ import yaml from 'js-yaml'
 
 import { AppMain } from './components/AppMain'
 import { Question } from './components/Question'
+import { Results } from './components/Results'
 
 import {
   IQOptionModel,
+  IFetchQuestionModel,
   IQuestionModel,
-  IQuizModel
+  IQSessionModel
 } from './model/question'
 
 enum Pages {
   Main,
-  Quiz
+  Question,
+  Results
 }
 
-const URL = './static/assets/system-dev.yml'
+const URL = './quiz/system-dev.yml'
 
 export const App: React.FC = () => {
   const [active, setActive] = useState<Pages>(Pages.Main)
-  const [questions, setQuestions] = useState<IQuizModel[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [currentSession, setCurrentSession] = useState<IQSessionModel>({
+    questions: [],
+    start: 0,
+    end: 0
+  })
 
   // TODO: Move this out
-  function processQuiz(raw: IQuestionModel[]): boolean {
-    const quizs: IQuizModel[] = raw.map((data) => {
+  function processQuiz(raw: IFetchQuestionModel[]): boolean {
+    const quizs: IQuestionModel[] = raw.map((data) => {
       const options: IQOptionModel[] = data.options
         .map((opt, optIndex) => {
           const correct = data.correct.includes(optIndex)
@@ -45,11 +52,15 @@ export const App: React.FC = () => {
         options,
         source: data.source,
         isMarked: false,
-        isAnswered: false
+        isAnswered: false,
       }
     })
 
-    setQuestions(quizs)
+    setCurrentSession({
+      questions: quizs,
+      start: 0,
+      end: 0
+    })
     return quizs.length != 0
   }
 
@@ -63,7 +74,7 @@ export const App: React.FC = () => {
         try {
           const data = yaml.load(text) as any
           if (data.version == '0.0') {
-            setIsLoaded(processQuiz(data.questions as IQuestionModel[]))
+            setIsLoaded(processQuiz(data.questions as IFetchQuestionModel[]))
           }
         } catch (e) {
           throw new Error('Not correct yaml format')
@@ -80,16 +91,50 @@ export const App: React.FC = () => {
           onStart={() => {
             if (isLoaded) {
               // FIXME: The questions needs to be reset when launch again
-              setActive(Pages.Quiz)
+              currentSession.start = Date.now()
+              setCurrentSession(currentSession)
+              setActive(Pages.Question)
             }
           }} />
       }
-      {active == Pages.Quiz &&
+      {active == Pages.Question &&
         <Question
-          questions={questions}
+          session={currentSession}
           onBack={() => {
             setActive(Pages.Main)
           }}
+          onDone={(result) => {
+            let correctCount = 0
+            result.questions.forEach(question => {
+              let isCorrect = true
+              question.options.forEach(opt => {
+                if (opt.correct != opt.marked) {
+                  isCorrect = false
+                  return
+                }
+              })
+              if (isCorrect) correctCount++
+            })
+            console.log(correctCount + ' out of ' + result.questions.length)
+            console.log(result)
+
+            const delta = result.end - result.start
+            console.log('time: ' + (delta / 1000) + ' s')
+            console.log('time per question: ' +
+             (delta / result.questions.length / 1000) + ' s')
+
+            // setActive(Pages.Main)
+            setActive(Pages.Results)
+          }}
+        />
+      }
+      {active == Pages.Results &&
+        <Results
+          onBack={() => {
+          // FIXME: Save result and reset the questions
+            setActive(Pages.Main)
+          }}
+          session={currentSession}
         />
       }
     </div>

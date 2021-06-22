@@ -1,5 +1,5 @@
 // Model description for fetched data
-export interface IQuestionModel {
+export interface IFetchQuestionModel {
   content: string
   image?: IImageModel
   options: string[]
@@ -19,7 +19,7 @@ export interface IQOptionModel {
   correct: boolean
 }
 
-export interface IQuizModel {
+export interface IQuestionModel {
   content: string
   image?: IImageModel
   options: IQOptionModel[]
@@ -27,4 +27,10 @@ export interface IQuizModel {
 
   isMarked: boolean
   isAnswered: boolean
+}
+
+export interface IQSessionModel {
+  questions: IQuestionModel[]
+  start: number
+  end: number
 }

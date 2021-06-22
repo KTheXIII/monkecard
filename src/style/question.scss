@@ -1,64 +1,84 @@
 .question {
-  margin-top: 3.4rem;
+  --margin-top: 3.4rem;
+  margin-top: var(--margin-top);
   padding-bottom: 5.5rem;
+  overflow: auto;
+}
 
-  .display {
+.q-display {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+
+  .q-image-container {
+    max-height: 128pt;
+    text-align: center;
+    img, svg {
+      max-height: inherit;
+    }
+  }
+
+  .q-content-container {
+    min-height: 96pt;
+    padding: 10pt;
+    font-size: 10pt;
+  }
+}
+
+.question-options {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 7pt;
+  padding: 10pt;
+
+  button {
+    color: inherit;
+    border: none;
+    background-color: var(--bg-1);
+    border-radius: 5pt;
+    cursor: pointer;
+    padding: 12pt;
+    font-size: 10pt;
+
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  button .button-display {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-
-    .image-container {
-      max-height: 128pt;
-      text-align: center;
-      img, svg {
-        max-height: inherit;
-      }
-    }
-
-    .content-container {
-      min-height: 96pt;
-      padding: 10pt;
-      font-size: 10pt;
-    }
-
-    .q-options-container .q-options {
+    grid-template-columns: 20pt auto;
+    text-align: left;
+    
+    .icon {
       display: grid;
-      grid-template-columns: auto;
-      gap: 7pt;
-      padding: 10pt;
+      width: 9pt;
+      height: 9pt;
+      margin: auto 0;
+      margin-right: 10pt;
+    }
 
-      button {
-        color: inherit;
-        border: none;
-        background-color: var(--bg-1);
-        border-radius: 5pt;
-        cursor: pointer;
-        padding: 12pt;
-        font-size: 10pt;
+    .text {
+      margin: auto 0;
+    }
+  }
+}
 
-        -webkit-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
-        user-select: text;
-      }
-      
-      button .button-display {
-        display: grid;
-        grid-template-columns: 20pt auto;
-        text-align: left;
-        
-        .icon {
-          display: grid;
-          width: 9pt;
-          height: 9pt;
-          margin: auto 0;
-          margin-right: 10pt;
-        }
+.question {
+  .answered {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg);
+    overflow: hidden;
 
-        .text {
-          margin: auto 0;
-        }
-      }
+    .a-container {
+      overflow: auto;
+      height: 100%;
     }
   }
 }

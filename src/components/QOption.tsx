@@ -1,7 +1,6 @@
 import React, {
   useState,
   useEffect,
-  ReactElement
 } from 'react'
 
 import { Circle, CircleFill } from '../assets/icons'
@@ -9,7 +8,7 @@ import { Circle, CircleFill } from '../assets/icons'
 export const QOptionContainer: React.FC = (props) => {
   return (
     <div className="q-options-container">
-      <div className="q-options">
+      <div className="question-options">
         {props.children}
       </div>
     </div>
@@ -34,7 +33,7 @@ export const QOption: React.FC<IQOption> = (props) => {
 
   return (
     <button
-      className="q-option"
+      className="question-opt"
       onClick={() => {
         const mark = !isMarked
         setIsMarked(mark)

@@ -1,39 +1,47 @@
 import React, {
   ReactElement,
   useEffect,
-  useState
+  useState,
+  useRef
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { ToolsTop } from './ToolsTop'
 import { QToolsFloat } from './QToolsFloat'
 import { QOptionContainer, QOption } from './QOption'
+import { Answered } from './Answered'
 
-import { IQuizModel } from '../model/question'
+import { IQSessionModel, IQuestionModel } from '../model/question'
 
 import '../style/question.scss'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
 interface IQuestion {
-  questions: IQuizModel[]
+  session: IQSessionModel
   onBack: () => void
+  onDone: (session: IQSessionModel) => void
 }
 
 export const Question: React.FC<IQuestion> = (props) => {
-  const start = Date.now()
+  const start = props.session.start
+  const container = useRef<HTMLDivElement | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [isFlagOn, setFlagOn] = useState(false)
   const [isLast, setIsLast] = useState(false)
+
+  const [answeredList, setAnsweredList] = useState<IQuestionModel[]>([])
+  const [answeredIDs, setAnsweredIDs] = useState<number[]>([])
+  const [showAnswered, setShowAnswered] = useState(false)
 
   const [imageLink, setImageLink] = useState<string | undefined>()
   const [content, setContent] = useState('')
   const [options, setOptions] = useState<ReactElement[]>([])
 
-  let qIndex = -1 // A hack for getting questionIndex value
-  const [questionIndex, setQuestionIndex] = useState(qIndex)
+  const [currentQIndex, setCurrentQIndex] = useState(0)
 
-  const questions = props.questions
+  const session = props.session
+  const questions = session.questions
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,38 +53,64 @@ export const Question: React.FC<IQuestion> = (props) => {
   }, [])
 
   useEffect(() => {
-    onNext()
+    setQuestion(0)
+    questions[0].isAnswered = true
   }, [])
 
   function onFlag() {
-    questions[questionIndex].isMarked = !isFlagOn
-    setFlagOn(questions[questionIndex].isMarked)
+    questions[currentQIndex].isMarked = !isFlagOn
+    setFlagOn(questions[currentQIndex].isMarked)
     // TODO: On when question is flagged
   }
 
   function onNext() {
-    if (questionIndex != -1 && !questions[questionIndex].isAnswered) return
-    if (questionIndex == questions.length - 1) {
-      // TODO: Check the questions
-      console.log('done!')
+    if (currentQIndex != -1 && !questions[currentQIndex].isAnswered) return
+    if (currentQIndex == questions.length - 1) {
+      session.end = Date.now()
+      props.onDone(session)
       return
     }
 
-    qIndex = (questionIndex + 1) % questions.length
-    const quiz = questions[qIndex]
-    setQuestionIndex(qIndex)
-
+    const index = (currentQIndex + 1) % questions.length
     // FIXME: NEED TO THINK MORE ABOUT THIS
-    questions[qIndex].isAnswered = true
+    questions[index].isAnswered = true
 
-    // Show the questions and option to view
-    setFlagOn(quiz.isMarked)
-    setImageLink(quiz.image?.source)
-    setContent(quiz.content)
+    setCurrentQIndex(index)
+    setQuestion(index)
+  }
+
+  function onAnswered() {
+    // TODO: On show answered list
+    const ids: number[] = []
+    const answered: IQuestionModel[] = questions
+      .filter((data, index) => {
+        if (data.isAnswered)
+          ids.push(index)
+        return data.isAnswered
+      })
+
+    if (answered.length === 0 && answered.length !== ids.length) return
+    container.current?.style.setProperty('overflow', 'hidden')
+    setAnsweredIDs(ids)
+    setAnsweredList(answered)
+    setShowAnswered(true)
+  }
+
+  function onMark(i: number, mark: boolean) {
+    questions[currentQIndex].options[i].marked = mark
+  }
+
+  function setQuestion(index: number) {
+    const question = questions[index]
+
+    setIsLast(index == questions.length - 1)
+    setFlagOn(question.isMarked)
+    setImageLink(question.image?.source)
+    setContent(question.content)
     setOptions(
-      quiz.options.map((data, index) => {
+      question.options.map((data, index) => {
         return <QOption
-          key={quiz.source + '-' + index}
+          key={question.source + '-' + index}
           text={data.text}
           isMarked={data.marked}
           index={index}
@@ -84,31 +118,21 @@ export const Question: React.FC<IQuestion> = (props) => {
         />
       })
     )
-
-    setIsLast(qIndex == questions.length - 1)
-  }
-
-  function onAnswered() {
-    // TODO: On show answered list
-    const answered: IQuizModel[] = questions
-      .filter(data => data.isAnswered == true)
-    console.log(answered)
-  }
-
-  function onMark(i: number, mark: boolean) {
-    questions[qIndex].options[i].marked = mark
   }
 
   return (
-    <div className="question">
+    <div
+      className="question"
+      ref={container}
+    >
       <ToolsTop
         backButton={props.onBack}
         time={currentTime} />
-      <div className="display">
-        <div className="image-container">
+      <div className="q-display">
+        <div className="q-image-container">
           {imageLink && <img src={imageLink} />}
         </div>
-        <div className="content-container">
+        <div className="q-content-container">
           <ReactMarkdown>
             {content}
           </ReactMarkdown>
@@ -117,15 +141,27 @@ export const Question: React.FC<IQuestion> = (props) => {
           {options}
         </QOptionContainer>
       </div>
+      {showAnswered &&
+      <Answered onCancel={() => {
+        setShowAnswered(false)
+        container.current?.style.setProperty('overflow', 'auto')
+      }}
+      onClick={(index) => {
+        setShowAnswered(false)
+        setCurrentQIndex(index)
+        setQuestion(index)
+        container.current?.style.setProperty('overflow', 'auto')
+      }}
+      idList={answeredIDs}
+      questionList={answeredList}
+      />}
       <QToolsFloat
         isFlagOn={isFlagOn}
         isLast={isLast}
         onMark={() => {
           onFlag()
         }}
-        onAnswered={() => {
-          onAnswered()
-        }}
+        onAnswered={onAnswered}
         onNext={() => {
           onNext()
         }} />

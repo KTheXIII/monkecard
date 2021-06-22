@@ -9,15 +9,13 @@ export default {
     '@snowpack/plugin-dotenv',
     ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],
     ['@snowpack/plugin-typescript'],
-    [
-      '@snowpack/plugin-run-script',
+    ['@snowpack/plugin-run-script',
       {
         cmd: 'eslint src --ext .js,.jsx,.ts,.tsx',
         watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
       },
     ],
-    [
-      '@snowpack/plugin-optimize',
+    ['@snowpack/plugin-optimize',
       {
         'preloadCSS': true,
         'preloadCSSFileName': (process.env.PUBLIC_URL || '/') + 'style.css'
@@ -33,7 +31,6 @@ export default {
     treeshake: true,
   },
   packageOptions: {
-    /* ... */
   },
   devOptions: {
     open: 'none'
