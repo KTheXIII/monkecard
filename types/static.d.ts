@@ -57,3 +57,16 @@ declare module '*.png' {
 }
 
 /* CUSTOM: ADD YOUR OWN HERE */
+
+// snowpack environment variables type definition
+declare let __SNOWPACK_ENV__ : {
+  VERSION: string,
+  AUTHOR: string,
+  DESCRIPTION: string,
+  HOMEPAGE: string,
+  REPOSITORY_URL: string,
+
+  MODE: string,
+  MODE_ENV: string
+  SSR: boolean
+}

@@ -91,6 +91,8 @@ export const App: React.FC = () => {
           onStart={() => {
             if (isLoaded) {
               // FIXME: The questions needs to be reset when launch again
+
+              // unix time in milliseconds since 1970-01-01 00:00:00 UTC.
               currentSession.start = Date.now()
               setCurrentSession(currentSession)
               setActive(Pages.Question)

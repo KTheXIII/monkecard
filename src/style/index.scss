@@ -66,6 +66,10 @@ body,
                                   supported by Chrome and Opera */
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 .tools-float {
   position: fixed;
   bottom: 0;

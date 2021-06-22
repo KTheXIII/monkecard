@@ -4,7 +4,7 @@ import React, {
   ReactElement
 } from 'react'
 
-import { CircleFill, Circle } from '../assets/icons'
+import { Flag, FlagFill } from '../assets/icons'
 
 import { IQuestionModel } from '../model/question'
 
@@ -37,7 +37,7 @@ export const Answered: React.FC<IAnswered> = (props) => {
             onClick={() => props.onClick(id)}
           >
             <div className="button-display">
-              <div className="icon">{data.isMarked ? CircleFill : Circle}</div>
+              <div className="icon">{data.isMarked ? FlagFill : Flag}</div>
               <div className="text">{title}</div>
             </div>
           </button>

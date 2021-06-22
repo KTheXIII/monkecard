@@ -55,6 +55,7 @@ export const Question: React.FC<IQuestion> = (props) => {
   useEffect(() => {
     setQuestion(0)
     questions[0].isAnswered = true
+    console.log(questions)
   }, [])
 
   function onFlag() {

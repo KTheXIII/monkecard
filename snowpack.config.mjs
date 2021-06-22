@@ -1,5 +1,12 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 export default {
+  env: {
+    VERSION: process.env.npm_package_version,
+    AUTHOR: process.env.npm_config_init_author_name,
+    DESCRIPTION: process.env.npm_package_description,
+    HOMEPAGE: process.env.npm_package_homepage,
+    REPOSITORY_URL: process.env.npm_package_repository_url
+  },
   mount: {
     public: { url: '/', static: true },
     src: { url: '/static' },
