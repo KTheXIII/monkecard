@@ -4,14 +4,14 @@ interface IFloatTool {
   title?: string
   icon: ReactElement
   text: string
-  onClick?: () => void
+  onButtonClick?: () => void
 }
 
 export const FloatTool: React.FC<IFloatTool> = (props) => {
   return (
     <button
       title={props.title}
-      onClick={props.onClick}>
+      onClick={props.onButtonClick}>
       <div className="button-display">
         <div className="icon">{props.icon}</div>
         <div className="text">{props.text}</div>

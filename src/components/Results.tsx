@@ -49,7 +49,7 @@ export const Results: React.FC<IResults> = (props) => {
         <FloatTool
           icon={FileEarmarkCodeFill}
           text="home"
-          onClick={props.onBack}
+          onButtonClick={props.onBack}
         />
       </FloatToolsContainer>
     </div>

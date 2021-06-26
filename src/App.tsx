@@ -97,7 +97,8 @@ export const App: React.FC = () => {
               setCurrentSession(currentSession)
               setActive(Pages.Question)
             }
-          }} />
+          }}
+        />
       }
       {active == Pages.Question &&
         <Question

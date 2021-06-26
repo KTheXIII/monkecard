@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-export const CardOptionList: React.FC = (props) => {
+export const CardContainer: React.FC = (props) => {
   return (
     <div className="card-list">
       {props.children}
@@ -12,7 +12,7 @@ interface ICardOptions {
   title: string
 }
 
-export const CardOptions: React.FC<ICardOptions> = (props) => {
+export const CardComponent: React.FC<ICardOptions> = (props) => {
   return (
     <div className="card">
       <div className="card-title">
@@ -25,13 +25,13 @@ export const CardOptions: React.FC<ICardOptions> = (props) => {
   )
 }
 
-interface ICardOption {
+interface ICardElement {
   icon?: ReactElement
   text: string
   onClick: () => void
 }
 
-export const CardOption: React.FC<ICardOption> = (props) => {
+export const CardElement: React.FC<ICardElement> = (props) => {
   return (
     <button onClick={() => props.onClick()}>
       <div className="button-display">
