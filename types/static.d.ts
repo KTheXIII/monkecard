@@ -59,7 +59,7 @@ declare module '*.png' {
 /* CUSTOM: ADD YOUR OWN HERE */
 
 // snowpack environment variables type definition
-declare let __SNOWPACK_ENV__ : {
+declare const __SNOWPACK_ENV__ : {
   VERSION: string,
   AUTHOR: string,
   DESCRIPTION: string,
