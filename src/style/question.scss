@@ -24,46 +24,6 @@
   }
 }
 
-.question-options {
-  display: grid;
-  grid-template-columns: auto;
-  gap: 7pt;
-  padding: 10pt;
-
-  button {
-    color: inherit;
-    border: none;
-    background-color: var(--bg-1);
-    border-radius: 5pt;
-    cursor: pointer;
-    padding: 12pt;
-    font-size: 10pt;
-
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-  }
-  
-  button .button-display {
-    display: grid;
-    grid-template-columns: 20pt auto;
-    text-align: left;
-    
-    .icon {
-      display: grid;
-      width: 9pt;
-      height: 9pt;
-      margin: auto 0;
-      margin-right: 10pt;
-    }
-
-    .text {
-      margin: auto 0;
-    }
-  }
-}
-
 .question {
   .answered {
     position: fixed;

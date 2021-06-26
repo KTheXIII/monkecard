@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown'
 
 import { ToolsTop } from './ToolsTop'
 import { QToolsFloat } from './QToolsFloat'
-import { QOptionContainer, QOption } from './QOption'
+import { OptionContainer, OptionMarkElement } from './OptionComponent'
 import { Answered } from './Answered'
 
 import { IQSessionModel, IQuestionModel } from '../model/question'
@@ -62,7 +62,6 @@ export const Question: React.FC<IQuestion> = (props) => {
   function onFlag() {
     questions[questionIndex].isMarked = !isFlagOn
     setFlagOn(questions[questionIndex].isMarked)
-    // TODO: On when question is flagged
   }
 
   function onNext() {
@@ -111,7 +110,7 @@ export const Question: React.FC<IQuestion> = (props) => {
     setContent(question.content)
     setOptions(
       question.options.map((data, index) => {
-        return <QOption
+        return <OptionMarkElement
           key={question.source + '-' + index}
           text={data.text}
           isMarked={data.marked}
@@ -123,10 +122,7 @@ export const Question: React.FC<IQuestion> = (props) => {
   }
 
   return (
-    <div
-      className="question"
-      ref={container}
-    >
+    <div className="question" ref={container}>
       <ToolsTop
         backButton={props.onBack}
         time={currentTime} />
@@ -139,9 +135,9 @@ export const Question: React.FC<IQuestion> = (props) => {
             {content}
           </ReactMarkdown>
         </div>
-        <QOptionContainer>
+        <OptionContainer>
           {options}
-        </QOptionContainer>
+        </OptionContainer>
       </div>
       {showAnswered &&
       <Answered onCancel={() => {

@@ -4,7 +4,7 @@ import React, {
   ReactElement
 } from 'react'
 
-import { Flag, FlagFill } from '../assets/icons'
+import { OptionElement, OptionContainer } from './OptionComponent'
 
 import { IQuestionModel } from '../model/question'
 
@@ -20,41 +20,27 @@ export const Answered: React.FC<IAnswered> = (props) => {
   const [options, setOptions] = useState<ReactElement[]>()
 
   useEffect(() => {
-    console.log('hello')
-    console.log(props.idList)
-    console.log(props.questionList)
-
     if (props.idList.length != props.questionList.length)
       props.onCancel()
     else {
       const opts = props.questionList.map((data, index) => {
         const title = data.content.split('\n')[0].replaceAll('#', '')
         const id = props.idList[index]
-        return (
-          <button
-            className="question-opt"
-            key={data.source + '-' + id}
-            onClick={() => props.onClick(id)}
-          >
-            <div className="button-display">
-              <div className="icon">{data.isMarked ? FlagFill : Flag}</div>
-              <div className="text">{title}</div>
-            </div>
-          </button>
-        )
+        return <OptionElement
+          key={data.source + '-' + id}
+          onButtonClick={() => props.onClick(id)}
+          text={title}
+          isMarked={data.isMarked}/>
       })
-
       setOptions(opts)
     }
   }, [])
 
   return (
     <div className="answered">
-      <div className="a-container">
-        <div className="question-options">
-          {options}
-        </div>
-      </div>
+      <OptionContainer>
+        {options}
+      </OptionContainer>
     </div>
   )
 }

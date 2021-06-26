@@ -31,11 +31,7 @@ export const Results: React.FC<IResults> = (props) => {
       })
 
       if (questionPoint > 0) correct += questionPoint
-      console.log(questionPoint)
-
     })
-
-    console.log(correct)
 
     setScore({ points: correct, total })
   }, [])
