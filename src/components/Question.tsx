@@ -151,7 +151,6 @@ export const Question: React.FC<IQuestion> = (props) => {
         currentIndex = index
         container.current?.style.setProperty('overflow', 'auto')
       }}
-      idList={answeredIDs}
       questionList={answeredList}
       />}
       <QToolsFloat
