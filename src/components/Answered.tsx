@@ -12,28 +12,26 @@ interface IAnswered {
   onCancel: () => void
   onClick: (index: number) => void
 
-  idList: number[]
   questionList: IQuestionModel[]
 }
 
 export const Answered: React.FC<IAnswered> = (props) => {
+  const { questionList } = props
   const [options, setOptions] = useState<ReactElement[]>()
 
   useEffect(() => {
-    if (props.idList.length != props.questionList.length)
-      props.onCancel()
-    else {
-      const opts = props.questionList.map((data, index) => {
-        const title = data.content.split('\n')[0].replaceAll('#', '')
-        const id = props.idList[index]
-        return <OptionElement
-          key={data.source + '-' + id}
-          onButtonClick={() => props.onClick(id)}
+    const opts = questionList.map((data, index) => {
+      const title = data.content.split('\n')[0].replaceAll('#', '')
+      return (
+        <OptionElement
+          key={data.source + '-' + index}
+          onButtonClick={() => props.onClick(index)}
           text={title}
-          isMarked={data.isMarked}/>
-      })
-      setOptions(opts)
-    }
+          isMarked={data.isMarked}
+        />
+      )
+    })
+    setOptions(opts)
   }, [])
 
   return (

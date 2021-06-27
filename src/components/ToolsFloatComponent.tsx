@@ -1,5 +1,7 @@
 import React, { ReactElement } from 'react'
 
+import '../style/toolsfloat.scss'
+
 interface IFloatTool {
   title?: string
   icon: ReactElement

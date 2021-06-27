@@ -1,10 +1,11 @@
 # Model version
-version: '0.0'
+version: '0.0.0'
 
 questions:
-  - content:  ''    # text with markdown support
-    image:
+  - image:
       source: ''    # image source
+      alt: ''       # image alt text
+    content: ''     # text with markdown support
     options: []     # string array of options
     correct: []     # number array of correct options
     categories: []  # string array of categories

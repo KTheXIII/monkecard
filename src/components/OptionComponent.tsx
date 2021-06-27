@@ -17,8 +17,6 @@ export const OptionContainer: React.FC = (props) => {
   )
 }
 
-type TOnMark = (index: number, mark: boolean) => void
-
 export interface IOptionBase {
   text: string
   isMarked: boolean
@@ -27,6 +25,8 @@ export interface IOptionBase {
 interface IOptionElement extends IOptionBase{
   onButtonClick: () => void
 }
+
+type TOnMark = (index: number, mark: boolean) => void
 
 interface IMarkOption extends IOptionBase{
   index: number

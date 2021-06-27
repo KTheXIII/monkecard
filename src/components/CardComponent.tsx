@@ -9,17 +9,20 @@ export const CardContainer: React.FC = (props) => {
 }
 
 interface ICardOptions {
-  title: string
+  title?: string
 }
 
 export const CardComponent: React.FC<ICardOptions> = (props) => {
+  const { title, children } = props
   return (
     <div className="card">
-      <div className="card-title">
-        <span className="text">{props.title}</span>
-      </div>
+      {title &&
+        <div className="card-title">
+          <span className="text">{title}</span>
+        </div>
+      }
       <div className="card-content">
-        {props.children}
+        {children}
       </div>
     </div>
   )
@@ -28,12 +31,12 @@ export const CardComponent: React.FC<ICardOptions> = (props) => {
 interface ICardElement {
   icon?: ReactElement
   text: string
-  onClick: () => void
+  onButtonClick: () => void
 }
 
 export const CardElement: React.FC<ICardElement> = (props) => {
   return (
-    <button onClick={() => props.onClick()}>
+    <button onClick={() => props.onButtonClick()}>
       <div className="button-display">
         {props.icon && <div className="icon">{props.icon}</div>}
         <span className="text">{props.text}</span>

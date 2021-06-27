@@ -66,6 +66,12 @@ declare const __SNOWPACK_ENV__ : {
   HOMEPAGE: string,
   REPOSITORY_URL: string,
 
+  DESCRIPTOR_URL: string
+
+  DESCRIPTOR_VERSION: string
+  SUBJECT_VERSION: string
+  QUESTION_VERSION: string
+
   MODE: string,
   MODE_ENV: string
   SSR: boolean

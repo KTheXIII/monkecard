@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { FileEarmarkCodeFill } from '../assets/icons'
 import { IQSessionModel } from '../model/question'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloat'
+import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
 
 import '../style/results.scss'
 

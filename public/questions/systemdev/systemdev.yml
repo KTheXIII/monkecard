@@ -1,10 +1,10 @@
-version: '0.0'
+version: '0.0.0'
 
 questions:
   - content: |
       # Vilka påståenden är korrekta gällande diagrammet nedan?
     image:
-      source: './quiz/images/reliability-curve-of-software.jpg'
+      source: './questions/systemdev/images/reliability-curve-of-software.jpg'
     options:
       - Spikarna i kurvan indikerar att testfasen i den använda processen startar vid
         punkt 2.

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloat'
+import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
 
 import {
   Files,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloat'
+import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
 
 import { FileEarmarkCodeFill, UIRadios } from '../assets/icons'
 

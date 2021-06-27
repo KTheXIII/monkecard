@@ -5,7 +5,8 @@ export default {
     AUTHOR: process.env.npm_config_init_author_name,
     DESCRIPTION: process.env.npm_package_description,
     HOMEPAGE: process.env.npm_package_homepage,
-    REPOSITORY_URL: process.env.npm_package_repository_url
+    REPOSITORY_URL: process.env.npm_package_repository_url,
+    DESCRIPTOR_URL: './descriptor.yml'
   },
   mount: {
     public: { url: '/', static: true },
