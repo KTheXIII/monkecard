@@ -6,6 +6,7 @@ export default {
     DESCRIPTION: process.env.npm_package_description,
     HOMEPAGE: process.env.npm_package_homepage,
     REPOSITORY_URL: process.env.npm_package_repository_url,
+    COMMIT_HASH: process.env.GITHUB_SHA,
     DESCRIPTOR_URL: './descriptor.yml'
   },
   mount: {

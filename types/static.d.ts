@@ -65,6 +65,7 @@ declare const __SNOWPACK_ENV__ : {
   DESCRIPTION: string,
   HOMEPAGE: string,
   REPOSITORY_URL: string,
+  COMMIT_HASH: string
 
   DESCRIPTOR_URL: string
 

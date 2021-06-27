@@ -15,7 +15,6 @@ import {
   IQSessionModel,
   IQuestionModel
 } from '../model/question'
-import { DESCRIPTOR_URL } from '../scripts/config'
 
 import '../style/main.scss'
 
