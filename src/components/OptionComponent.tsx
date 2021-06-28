@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  ReactElement
 } from 'react'
 
 import { Circle, CircleFill } from '../assets/icons'
@@ -20,6 +21,7 @@ export const OptionContainer: React.FC = (props) => {
 export interface IOptionBase {
   text: string
   isMarked: boolean
+  icons?: [ReactElement, ReactElement]
 }
 
 interface IOptionElement extends IOptionBase{
@@ -35,13 +37,14 @@ interface IMarkOption extends IOptionBase{
 
 export const OptionElement: React.FC<IOptionElement> = (props) => {
   const { isMarked, text, onButtonClick } = props
+  const [OFF, ON] = props.icons || [Circle, CircleFill]
   return (
     <button
       className="option-element"
       onClick={() => onButtonClick()}
     >
       <div className="button-display">
-        <div className="icon">{isMarked ? CircleFill : Circle}</div>
+        <div className="icon">{isMarked ? ON : OFF}</div>
         <div className="text">
           <span>{text}</span>
         </div>

@@ -5,6 +5,7 @@ import React, {
 } from 'react'
 
 import { OptionElement, OptionContainer } from './OptionComponent'
+import { Flag, FlagFill } from '../assets/icons'
 
 import { IQuestionModel } from '../model/question'
 
@@ -24,6 +25,7 @@ export const Answered: React.FC<IAnswered> = (props) => {
       const title = data.content.split('\n')[0].replaceAll('#', '')
       return (
         <OptionElement
+          icons={[Flag, FlagFill]}
           key={data.source + '-' + index}
           onButtonClick={() => props.onClick(index)}
           text={title}
