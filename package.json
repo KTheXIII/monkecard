@@ -1,6 +1,6 @@
 {
   "name": "q-react",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "author": "KTheXIII",
   "license": "MIT",
   "homepage": "https://quiz.kthexiii.xyz",
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "snowpack dev",
     "build": "snowpack build",
-    "test": "NODE_ENV=test web-test-runner \"src/**/*.test.tsx\" --node-resolve",
+    "test": "NODE_ENV=test web-test-runner \"./src/**/*.test.tsx\" --node-resolve",
     "clean": "rimraf build .cache",
     "clean:build": "rimraf build",
     "clean:cache": "rimraf .cache"

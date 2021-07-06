@@ -6,14 +6,17 @@ import React, {
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-import { ToolsTop } from './ToolsTop'
-import { QToolsFloat } from './QToolsFloat'
-import { OptionContainer, OptionMarkElement } from './OptionComponent'
-import { Answered } from './Answered'
+import { ToolsTop } from '@components/Toolstop/ToolsTop'
+import { QToolsFloat } from '@components/QToolsFloat'
+import {
+  OptionContainer,
+  OptionMarkElement
+} from '@components/Option/Option'
+import { Answered } from '@components/Answered'
 
-import { IQSessionModel, IQuestionModel } from '../model/question'
+import { IQSessionModel, IQuestionModel } from '@models/question.model'
 
-import '../style/question.scss'
+import './question.scss'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
@@ -31,7 +34,6 @@ export const Question: React.FC<IQuestion> = (props) => {
   const [isLast, setIsLast] = useState(false)
 
   const [answeredList, setAnsweredList] = useState<IQuestionModel[]>([])
-  const [answeredIDs, setAnsweredIDs] = useState<number[]>([])
   const [showAnswered, setShowAnswered] = useState(false)
 
   const [imageLink, setImageLink] = useState<string | undefined>()
@@ -60,20 +62,18 @@ export const Question: React.FC<IQuestion> = (props) => {
   }, [])
 
   function onFlag() {
-    questions[questionIndex].isMarked = !isFlagOn
-    setFlagOn(questions[questionIndex].isMarked)
+    questions[currentIndex].isMarked = !isFlagOn
+    setFlagOn(questions[currentIndex].isMarked)
   }
 
   function onNext() {
-    if (questionIndex != -1 && !questions[questionIndex].isAnswered) return
-    if (questionIndex == questions.length - 1) {
+    if (questionIndex === questions.length - 1) {
       session.end = Date.now()
       props.onDone(session)
       return
     }
 
     currentIndex = (questionIndex + 1) % questions.length
-    // FIXME: NEED TO THINK MORE ABOUT THIS
     questions[currentIndex].isAnswered = true
 
     setQuestionIndex(currentIndex)
@@ -92,7 +92,6 @@ export const Question: React.FC<IQuestion> = (props) => {
 
     if (answered.length === 0 && answered.length !== ids.length) return
     container.current?.style.setProperty('overflow', 'hidden')
-    setAnsweredIDs(ids)
     setAnsweredList(answered)
     setShowAnswered(true)
   }

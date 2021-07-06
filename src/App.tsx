@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 
-import { AppMain } from './components/AppMain'
-import { Question } from './components/Question'
-import { Results } from './components/Results'
+import { Main } from '@pages/Main/Main'
+import { Question } from '@pages/Question/Question'
+import { Results } from '@pages/Results/Results'
 
-import { IQSessionModel } from './model/question'
+import { IQSessionModel } from '@models/question.model'
+
+import './app.scss'
 
 enum EPages {
   Main,
@@ -23,7 +25,7 @@ export const App: React.FC = () => {
   return (
     <div className='app'>
       {active == EPages.Main &&
-        <AppMain
+        <Main
           onStart={(session) => {
             setCurrentSession(session)
             setActive(EPages.Question)

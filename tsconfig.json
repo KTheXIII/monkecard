@@ -1,5 +1,6 @@
 {
   "include": ["src", "types"],
+  "exclude": ["build", ".cache"],
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
@@ -13,6 +14,11 @@
       // Add this line to get types for streaming imports (packageOptions.source="remote"):
       //     "*": [".snowpack/types/*"]
       // More info: https://www.snowpack.dev/guides/streaming-imports
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@models/*": ["./src/models/*"],
+      "@scripts/*": ["./src/scripts/*"],
     },
     /* noEmit - Snowpack builds (emits) files, not tsc. */
     "noEmit": true,

@@ -4,10 +4,13 @@ import React, {
   ReactElement
 } from 'react'
 
-import { OptionElement, OptionContainer } from './OptionComponent'
-import { Flag, FlagFill } from '../assets/icons'
+import {
+  OptionElement,
+  OptionContainer
+} from './Option/Option'
+import { Flag, FlagFill } from '@assets/icons'
 
-import { IQuestionModel } from '../model/question'
+import { IQuestionModel } from '@models/question.model'
 
 interface IAnswered {
   onCancel: () => void

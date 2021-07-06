@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-import '../style/toolsfloat.scss'
+import './tools-float.scss'
 
 interface IFloatTool {
   title?: string

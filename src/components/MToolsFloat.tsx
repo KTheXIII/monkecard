@@ -1,8 +1,11 @@
 import React from 'react'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
+import {
+  FloatTool,
+  FloatToolsContainer
+} from './ToolsFloat/ToolsFloat'
 
-import { FileEarmarkCodeFill, UIRadios } from '../assets/icons'
+import { FileEarmarkCodeFill, UIRadios } from '@assets/icons'
 
 interface IMTools {
   onHome: () => void

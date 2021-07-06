@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
+import {
+  FloatTool,
+  FloatToolsContainer
+} from './ToolsFloat/ToolsFloat'
 
 import {
   Files,
@@ -8,7 +11,7 @@ import {
   FlagFill,
   ChevronRight,
   Check2
-} from '../assets/icons'
+} from '@assets/icons'
 
 interface IQToolsFloat {
   onAnswered: () => void

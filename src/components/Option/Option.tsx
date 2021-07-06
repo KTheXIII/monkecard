@@ -4,9 +4,9 @@ import React, {
   ReactElement
 } from 'react'
 
-import { Circle, CircleFill } from '../assets/icons'
+import { Circle, CircleFill } from '@assets/icons'
 
-import '../style/option.scss'
+import './option.scss'
 
 export const OptionContainer: React.FC = (props) => {
   return (

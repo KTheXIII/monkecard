@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { FileEarmarkCodeFill } from '../assets/icons'
-import { IQSessionModel } from '../model/question'
+import { FileEarmarkCodeFill } from '../../assets/icons'
+import { IQSessionModel } from '../../models/question.model'
 
-import { FloatTool, FloatToolsContainer } from './ToolsFloatComponent'
+import {
+  FloatTool,
+  FloatToolsContainer
+} from '@components/ToolsFloat/ToolsFloat'
 
-import '../style/results.scss'
+import './results.scss'
 
 interface IResults {
   session: IQSessionModel
@@ -18,11 +21,12 @@ interface IScore {
 
 export const Results: React.FC<IResults> = (props) => {
   const [score, setScore] = useState<IScore>({ points: 0, total: 0 })
+  const { session } = props
 
   useEffect(() => {
     let correct = 0
     let total = 0
-    props.session.questions.forEach((data) => {
+    session.questions.forEach((data) => {
       let questionPoint = 0
       data.options.forEach(opt => {
         if (opt.correct) total++

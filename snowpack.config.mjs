@@ -9,6 +9,13 @@ export default {
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
     DESCRIPTOR_URL: './descriptor.yml'
   },
+  alias: {
+    '@assets': './src/assets',
+    '@components': './src/components',
+    '@pages': './src/pages',
+    '@models': './src/models',
+    '@scripts': './src/scripts',
+  },
   mount: {
     public: { url: '/', static: true },
     src: { url: '/static' },

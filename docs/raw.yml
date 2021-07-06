@@ -1,5 +1,6 @@
-# Model version
-version: '0.0.0'
+# Raw Questions defined by users spec
+
+version: 0.0.0
 
 questions:
   - image:

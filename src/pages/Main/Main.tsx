@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import yaml from 'js-yaml'
 
-import { MToolsFloat } from './MToolsFloat'
+import { MToolsFloat } from '@components/MToolsFloat'
 import {
   CardContainer,
   CardComponent,
-  CardElement
-} from './CardComponent'
-import { Settings } from './Settings'
+  CardElement,
+  CardMarkElement
+} from '@components/Card/Card'
+import { Preference } from '@pages/Settings/Settings'
 
 import {
-  IFetchQuestionModel,
   IQOptionModel,
   IQSessionModel,
   IQuestionModel
-} from '../model/question'
+} from '@models/question.model'
+import { IRawQuestionModel } from '@models/raw.model'
 
-import '../style/main.scss'
+import './main.scss'
 
 enum EMain {
   Home,
-  Settings
+  Preference
 }
 
 interface IAppMain {
@@ -29,7 +30,7 @@ interface IAppMain {
 
 const QUESTION_URL = './questions/systemdev/systemdev.yml'
 
-function processQuestions(questions: IFetchQuestionModel[]): IQuestionModel[] {
+function processQuestions(questions: IRawQuestionModel[]): IQuestionModel[] {
   const quizs: IQuestionModel[] = questions.map((data) => {
     const options: IQOptionModel[] = data.options
       .map((opt, index) => {
@@ -53,9 +54,9 @@ function processQuestions(questions: IFetchQuestionModel[]): IQuestionModel[] {
   return  quizs
 }
 
-export const AppMain: React.FC<IAppMain> = (props) => {
+export const Main: React.FC<IAppMain> = (props) => {
   const [active, setActive] = useState<EMain>(EMain.Home)
-  const [rawQuestions, setRawQuestions] = useState<IFetchQuestionModel[]>([])
+  const [rawQuestions, setRawQuestions] = useState<IRawQuestionModel[]>([])
   const [currentSession, setCurrentSession] = useState<IQSessionModel>({
     questions: [],
     start: 0,
@@ -70,9 +71,9 @@ export const AppMain: React.FC<IAppMain> = (props) => {
       })
       .then(text => {
         try {
-          const data = yaml.load(text) as any
-          if (data.version == '0.0.0') {
-            const quizes = data.questions as IFetchQuestionModel[]
+          const data = yaml.load(text) as TAny
+          if (data.version && data.version == '0.0.0') {
+            const quizes = data.questions as IRawQuestionModel[]
             setRawQuestions(quizes)
           }
         } catch (e) {
@@ -99,12 +100,12 @@ export const AppMain: React.FC<IAppMain> = (props) => {
           </CardComponent>
         </CardContainer>
       }
-      {active == EMain.Settings &&
-        <Settings/>
+      {active == EMain.Preference &&
+        <Preference/>
       }
       <MToolsFloat
         onHome={() => setActive(EMain.Home)}
-        onSettings={() => setActive(EMain.Settings)}
+        onSettings={() => setActive(EMain.Preference)}
       />
     </main>
   )

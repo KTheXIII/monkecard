@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { ChevronLeft, Stopwatch } from '../assets/icons'
+import { ChevronLeft, Stopwatch } from '@assets/icons'
 
-import '../style/toolstop.scss'
+import './toolstop.scss'
 
 interface IToolsTop {
   backButton?: () => void

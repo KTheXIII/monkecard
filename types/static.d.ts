@@ -56,7 +56,8 @@ declare module '*.png' {
   export default ref
 }
 
-/* CUSTOM: ADD YOUR OWN HERE */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TAny = any
 
 // snowpack environment variables type definition
 declare const __SNOWPACK_ENV__ : {
