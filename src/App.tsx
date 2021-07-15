@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { Main } from '@pages/Main/Main'
-import { Question } from '@pages/Question/Question'
-import { Results } from '@pages/Results/Results'
+import { Main } from '@pages/Main'
+import { Question } from '@pages/Question'
+import { Results } from '@pages/Results'
 
-import { IQSessionModel } from '@models/question.model'
+import { ISession } from '@models/question.model'
 
 import './app.scss'
 
@@ -16,7 +16,7 @@ enum EPages {
 
 export const App: React.FC = () => {
   const [active, setActive] = useState<EPages>(EPages.Main)
-  const [currentSession, setCurrentSession] = useState<IQSessionModel>({
+  const [currentSession, setCurrentSession] = useState<ISession>({
     questions: [],
     start: 0,
     end: 0

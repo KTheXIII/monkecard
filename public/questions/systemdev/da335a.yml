@@ -1,0 +1,13 @@
+version: 0.0.0
+
+info:
+  title: System Development and Project for Engineering Students
+  root: './questions/systemdev/'
+
+categories:
+  - name: 'Software Engineering'
+    id: 'software-engineering'
+
+files:
+  - 'DA335A-T20200305.yml'
+  - 'DA335A-T20190820.yml'

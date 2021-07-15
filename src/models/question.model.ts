@@ -1,28 +1,40 @@
-import { IImageModel } from './image.model'
+export type TQuestions = Map<string, IQuestion>
 
-// Model for thet actual use
-export interface IQOptionModel {
+export interface ICategory {
+  id: string
+  name?: string
+  questions: string[]
+}
+
+export interface ISubject {
+  title: string
+  categories: ICategory[]
+  files: string[]
+}
+
+export interface IPageIndex {
+  absolute: number
+  page: number
+  index: number
+}
+
+export interface IQuestionOption {
   text: string
   marked: boolean
   correct: boolean
 }
 
-export interface IQuestionModel {
+export interface IQuestion {
   content: string
-  image?: IImageModel
-  options: IQOptionModel[]
+  image?: { source: string, alt?: string }
+  options: IQuestionOption[]
   source: string
-
   isMarked: boolean
   isAnswered: boolean
 }
 
-export interface IQSessionModel {
-  questions: IQuestionModel[]
-  start: number
-  end: number
-}
-
-export interface IProcessedModel {
-  questions: IQuestionModel
+export interface ISession {
+  questions: IQuestion[]
+  start: number  // Unix time in milliseconds
+  end:   number  // Unix time in milliseconds
 }

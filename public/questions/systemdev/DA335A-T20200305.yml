@@ -1,6 +1,6 @@
 version: '0.0.0'
 
-questions:
+datas:
   - content: |
       # Software Engineering: Vilka påståenden är korrekta gällande diagrammet nedan?
     image:

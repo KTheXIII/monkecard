@@ -13,13 +13,23 @@
     margin: auto;
     margin-left: 5pt;
   }
-}
 
-.tools-top {
-  .left .back-button {
-    width: 20pt;
-    height: 20pt;
+  .right {
+    margin: auto;
+    margin-right: 10pt;
+  }
 
+  .back-button {
+    width: 18pt;
+    height: 18pt;
+  }
+  
+  .bookmark-button {
+    width: 17pt;
+    height: 17pt;
+  }
+
+  button {
     cursor: pointer;
     padding: 0;
     border-radius: 5pt;

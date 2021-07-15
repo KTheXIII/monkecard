@@ -13,9 +13,11 @@ export const Preference: React.FC = (props) => {
 
   return (
     <div className="settings">
-      <span>{VERSION}</span>
-      <span>-</span>
-      <span>{COMMIT_HASH.substring(0, 7)}</span>
+      <div className="info">
+        <span>{VERSION}</span>
+        <span>-</span>
+        <span>{COMMIT_HASH.substring(0, 7)}</span>
+      </div>
     </div>
   )
 }

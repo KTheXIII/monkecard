@@ -1,11 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { ChevronLeft, Stopwatch } from '@assets/icons'
+import {
+  Bookmark,
+  BookmarkCheckFill,
+  ChevronLeft,
+  Stopwatch
+} from '@assets/icons'
 
 import './toolstop.scss'
 
 interface IToolsTop {
-  backButton?: () => void
+  onBack: () => void
+  onBookmark: (isMarked: boolean) => void
+  isBookmarked: boolean
   time: number
 }
 
@@ -14,12 +21,19 @@ function formatTimer(time: number) {
 }
 
 export const ToolsTop: React.FC<IToolsTop> = (props) => {
+  const { isBookmarked } = props
+  const [isMarked, setIsMarked] = useState(false)
+
+  useEffect(() => {
+    setIsMarked(isBookmarked)
+  }, [])
+
   return (
     <div className="tools-top">
       <div className="left">
         <button
           className="back-button"
-          onClick={props.backButton}>
+          onClick={() => props.onBack()}>
           {ChevronLeft}
         </button>
       </div>
@@ -31,7 +45,16 @@ export const ToolsTop: React.FC<IToolsTop> = (props) => {
           {formatTimer(props.time)}
         </div>
       </div>
-      <div className="right"></div>
+      <div className="right">
+        <button
+          className="bookmark-button"
+          onClick={() => {
+            // TODO: Implement the callback for Question page
+            setIsMarked(!isMarked)
+          }}>
+          {isMarked ? BookmarkCheckFill : Bookmark}
+        </button>
+      </div>
     </div>
   )
 }

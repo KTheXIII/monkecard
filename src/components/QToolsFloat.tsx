@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import {
   FloatTool,
   FloatToolsContainer
-} from './ToolsFloat/ToolsFloat'
+} from './ToolsFloat'
 
 import {
   Files,

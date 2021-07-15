@@ -3,7 +3,7 @@ import React from 'react'
 import {
   FloatTool,
   FloatToolsContainer
-} from './ToolsFloat/ToolsFloat'
+} from './ToolsFloat'
 
 import { FileEarmarkCodeFill, UIRadios } from '@assets/icons'
 

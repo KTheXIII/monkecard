@@ -1,3 +1,11 @@
-.preference {
+.settings {
+    position: absolute;
     background-color: inherit;
+    display: flex;
+    height: 100%;
+    width: 100%;
+
+    .info {
+        margin: auto;
+    }
 }

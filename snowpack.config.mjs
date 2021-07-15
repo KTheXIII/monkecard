@@ -1,13 +1,14 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 export default {
   env: {
+    APP_NAME: process.env.npm_package_name,
     VERSION: process.env.npm_package_version,
     AUTHOR: process.env.npm_config_init_author_name,
     DESCRIPTION: process.env.npm_package_description,
     HOMEPAGE: process.env.npm_package_homepage,
     REPOSITORY_URL: process.env.npm_package_repository_url,
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
-    DESCRIPTOR_URL: './descriptor.yml'
+    FILES_URL: (process.env.PUBLIC_URL || '') + 'files.yml'
   },
   alias: {
     '@assets': './src/assets',

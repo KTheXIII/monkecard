@@ -6,34 +6,35 @@ import React, {
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-import { ToolsTop } from '@components/Toolstop/ToolsTop'
+import { ToolsTop } from '@components/ToolsTop'
 import { QToolsFloat } from '@components/QToolsFloat'
 import {
   OptionContainer,
   OptionMarkElement
-} from '@components/Option/Option'
+} from '@components/Option'
 import { Answered } from '@components/Answered'
 
-import { IQSessionModel, IQuestionModel } from '@models/question.model'
+import { ISession, IQuestion } from '@models/question.model'
 
 import './question.scss'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
-interface IQuestion {
-  session: IQSessionModel
+interface ICQuestion {
+  session: ISession
   onBack: () => void
-  onDone: (session: IQSessionModel) => void
+  onDone: (session: ISession) => void
 }
 
-export const Question: React.FC<IQuestion> = (props) => {
+export const Question: React.FC<ICQuestion> = (props) => {
   const start = props.session.start
   const container = useRef<HTMLDivElement | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [isFlagOn, setFlagOn] = useState(false)
   const [isLast, setIsLast] = useState(false)
+  const [isBookmark, setIsBookmark] = useState(false)
 
-  const [answeredList, setAnsweredList] = useState<IQuestionModel[]>([])
+  const [answeredList, setAnsweredList] = useState<IQuestion[]>([])
   const [showAnswered, setShowAnswered] = useState(false)
 
   const [imageLink, setImageLink] = useState<string | undefined>()
@@ -83,7 +84,7 @@ export const Question: React.FC<IQuestion> = (props) => {
   function onAnswered() {
     // TODO: On show answered list
     const ids: number[] = []
-    const answered: IQuestionModel[] = questions
+    const answered: IQuestion[] = questions
       .filter((data, index) => {
         if (data.isAnswered)
           ids.push(index)
@@ -100,6 +101,10 @@ export const Question: React.FC<IQuestion> = (props) => {
     questions[currentIndex].options[i].marked = mark
   }
 
+  function onBookmark(mark: boolean) {
+    console.log(`bookmark: ${currentIndex} - ${mark}`)
+  }
+
   function setQuestion(index: number) {
     const question = questions[index]
 
@@ -107,23 +112,26 @@ export const Question: React.FC<IQuestion> = (props) => {
     setFlagOn(question.isMarked)
     setImageLink(question.image?.source)
     setContent(question.content)
-    setOptions(
-      question.options.map((data, index) => {
-        return <OptionMarkElement
+    setOptions(question.options.map((data, index) => {
+      return (
+        <OptionMarkElement
           key={question.source + '-' + index}
           text={data.text}
           isMarked={data.marked}
           index={index}
           onMark={onMark}
         />
-      })
+      )
+    })
     )
   }
 
   return (
     <div className="question" ref={container}>
       <ToolsTop
-        backButton={props.onBack}
+        onBack={props.onBack}
+        onBookmark={onBookmark}
+        isBookmarked={isBookmark}
         time={currentTime} />
       <div className="q-display">
         <div className="q-image-container">

@@ -1,30 +1,7 @@
-type TKeyDate = { key: string, unix: number }
-
-export interface IUserModel {
-  name: string
-  created: Date
-  updated: Date
-  sessionCount: number
-
-  saved: TKeyDate[]
-
-  questions: Map<string, IQuestionStat>
-}
-
-// export interface IUserJSON {
-
-// }
-
-// function UserToJSON(user: IUserModel) {
-
-// }
-
-// Map.prototype.toJSON = function () {
-//   return JSON.stringify({
-//     keys: Array.from(this.keys()),
-//     values: Array.from(this.values())
-//   })
-// }
+type TMapQuestions = Map<string, IQuestionStat>
+type TMapSaved = Map<string, number>
+export type TKeyDate = { key: string, value: number }
+export type TKeyStat = { key: string, value: IQuestionStat }
 
 export interface IQuestionStat {
   history: IHistoryModel[]
@@ -32,5 +9,19 @@ export interface IQuestionStat {
 
 export interface IHistoryModel {
   correct: boolean
-  date: number     // UNIX Time
+  unix: number    // UNIX Time
 }
+
+interface IUserBase<DATE, SAVED, QUESTIONS> {
+  _tag: 'User'
+  name: string
+  sessionCount: number
+  created: DATE
+  updated: DATE
+  saved: SAVED
+  questions: QUESTIONS
+}
+
+export type IUserJSON = IUserBase<number, TKeyDate[], TKeyStat[]>
+export type IUserModel = IUserBase<Date, TMapSaved, TMapQuestions>
+export type TUserList = { key: string, value: IUserJSON }[]

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { FileEarmarkCodeFill } from '../../assets/icons'
-import { IQSessionModel } from '../../models/question.model'
+import { FileEarmarkCodeFill } from '@assets/icons'
+import { ISession } from '@models/question.model'
 
 import {
   FloatTool,
   FloatToolsContainer
-} from '@components/ToolsFloat/ToolsFloat'
+} from '@components/ToolsFloat'
 
 import './results.scss'
 
 interface IResults {
-  session: IQSessionModel
+  session: ISession
   onBack: () => void
 }
 

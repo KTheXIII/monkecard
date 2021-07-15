@@ -61,18 +61,15 @@ type TAny = any
 
 // snowpack environment variables type definition
 declare const __SNOWPACK_ENV__ : {
-  VERSION: string,
-  AUTHOR: string,
-  DESCRIPTION: string,
-  HOMEPAGE: string,
-  REPOSITORY_URL: string,
+  APP_NAME: string
+  VERSION: string
+  AUTHOR: string
+  DESCRIPTION: string
+  HOMEPAGE: string
+  REPOSITORY_URL: string
   COMMIT_HASH: string
 
-  DESCRIPTOR_URL: string
-
-  DESCRIPTOR_VERSION: string
-  SUBJECT_VERSION: string
-  QUESTION_VERSION: string
+  FILES_URL: string
 
   MODE: string,
   MODE_ENV: string

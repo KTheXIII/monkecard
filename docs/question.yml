@@ -1,0 +1,13 @@
+# Raw Questions defined by users spec
+
+version: 0.0.0
+
+questions:
+  - image:
+      source: 'string' # image source
+      alt: 'string'    # image alt text
+    content: 'string'  # text with markdown support
+    options: []        # string array of options
+    correct: []        # number array of correct options
+    categories: []     # string array of categories
+    source: ''         # CCCCC-TYYYYMMDDQNN

@@ -5,14 +5,17 @@ import { App } from './App'
 
 import './index.scss'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
-)
+async function main() {
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
+  )
+}
+
+window.onload = main
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
 // Learn more: https://snowpack.dev/concepts/hot-module-replacement
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-if ((import.meta as any).hot) (import.meta as any).hot.accept()
+if (import.meta.hot) import.meta.hot.accept()

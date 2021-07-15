@@ -7,16 +7,16 @@ import React, {
 import {
   OptionElement,
   OptionContainer
-} from './Option/Option'
+} from './Option'
 import { Flag, FlagFill } from '@assets/icons'
 
-import { IQuestionModel } from '@models/question.model'
+import { IQuestion } from '@models/question.model'
 
 interface IAnswered {
   onCancel: () => void
   onClick: (index: number) => void
 
-  questionList: IQuestionModel[]
+  questionList: IQuestion[]
 }
 
 export const Answered: React.FC<IAnswered> = (props) => {

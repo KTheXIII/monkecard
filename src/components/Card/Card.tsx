@@ -6,6 +6,8 @@ import React, {
 
 import { Circle, CircleFill } from '@assets/icons'
 
+import './card.scss'
+
 export const CardContainer: React.FC = (props) => {
   return (
     <div className="card-list">
@@ -36,16 +38,25 @@ export const CardComponent: React.FC<ICardOptions> = (props) => {
 
 interface ICardElement {
   icon?: ReactElement
+  isLast?: boolean
   text: string
+  isEnable?: boolean
   onButtonClick: () => void
 }
 
 export const CardElement: React.FC<ICardElement> = (props) => {
+  const { icon, text } = props
+  const isLast = props.isLast !== undefined ? props.isLast : true
+  const isDisabled = props.isEnable !== undefined ? !props.isEnable : false
+
   return (
-    <button onClick={() => props.onButtonClick()}>
+    <button
+      disabled={isDisabled}
+      className={isLast ? 'is-last' : ''}
+      onClick={() => props.onButtonClick()}>
       <div className="button-display">
-        {props.icon && <div className="icon">{props.icon}</div>}
-        <span className="text">{props.text}</span>
+        {icon && <div className="icon">{icon}</div>}
+        <span className="text">{text}</span>
       </div>
     </button>
   )
@@ -54,12 +65,15 @@ export const CardElement: React.FC<ICardElement> = (props) => {
 interface ICardMarkElement {
   icons?: [ReactElement, ReactElement]
   text: string
+  page?: number
   index: number
-  onMark: (index: number, mark: boolean) => void
+  isLast?: boolean
   isMarked: boolean
+  onMark: (mark: boolean) => void
 }
 
 export const CardMarkElement: React.FC<ICardMarkElement> = (props) => {
+  const { onMark } = props
   const [isMarked, setIsMarked] = useState(false)
   const [OFF, ON] = props.icons || [Circle, CircleFill]
   useEffect(() => setIsMarked(props.isMarked), [])
@@ -69,10 +83,11 @@ export const CardMarkElement: React.FC<ICardMarkElement> = (props) => {
       onButtonClick={() => {
         const mark = !isMarked
         setIsMarked(mark)
-        props.onMark(props.index, mark)
+        onMark(mark)
       }}
       text={props.text}
       icon={isMarked ? ON : OFF}
+      isLast={props.isLast || false}
     />
   )
 }

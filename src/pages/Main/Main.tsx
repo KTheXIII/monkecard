@@ -1,21 +1,30 @@
-import React, { useState, useEffect } from 'react'
-import yaml from 'js-yaml'
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  ReactElement
+} from 'react'
 
 import { MToolsFloat } from '@components/MToolsFloat'
 import {
   CardContainer,
   CardComponent,
   CardElement,
-  CardMarkElement
-} from '@components/Card/Card'
-import { Preference } from '@pages/Settings/Settings'
+  CardMarkElement,
+} from '@components/Card'
+import { Preference } from '@pages/Settings'
 
+import * as Download from '@scripts/download'
+import * as User from '@scripts/user'
+
+import { IUserModel } from '@models/user.model'
 import {
-  IQOptionModel,
-  IQSessionModel,
-  IQuestionModel
+  ISession,
+  ISubject,
+  TQuestions,
+  ICategory,
+  IQuestion,
 } from '@models/question.model'
-import { IRawQuestionModel } from '@models/raw.model'
 
 import './main.scss'
 
@@ -24,83 +33,117 @@ enum EMain {
   Preference
 }
 
-interface IAppMain {
-  onStart: (session: IQSessionModel) => void
+interface IMain {
+  onStart: (session: ISession) => void
 }
 
-const QUESTION_URL = './questions/systemdev/systemdev.yml'
-
-function processQuestions(questions: IRawQuestionModel[]): IQuestionModel[] {
-  const quizs: IQuestionModel[] = questions.map((data) => {
-    const options: IQOptionModel[] = data.options
-      .map((opt, index) => {
-        return {
-          text: opt,
-          marked: false,
-          correct:  data.correct.includes(index)
-        }
-      })
-
-    return {
-      content: data.content,
-      image: data.image,
-      options,
-      source: data.source,
-      isMarked: false,
-      isAnswered: false,
-    }
-  })
-
-  return  quizs
-}
-
-export const Main: React.FC<IAppMain> = (props) => {
+export const Main: React.FC<IMain> = (props) => {
   const [active, setActive] = useState<EMain>(EMain.Home)
-  const [rawQuestions, setRawQuestions] = useState<IRawQuestionModel[]>([])
-  const [currentSession, setCurrentSession] = useState<IQSessionModel>({
-    questions: [],
-    start: 0,
-    end: 0
-  })
+  const [cards, setCards] = useState<ReactElement[]>([])
+  const [enableStart, setEnableStart] = useState<boolean>(false)
+
+  let userData: IUserModel
+  let questions: TQuestions
+  let subjects: ISubject[]
+  const categories = new Set<ICategory>()
+
+  function onMark(page: number, index: number, mark: boolean) {
+    const subject = subjects[page].categories[index]
+    if (mark)
+      categories.add(subject)
+    else
+      categories.delete(subject)
+
+    setEnableStart(categories.size > 0)
+  }
+
+  const onStart = useCallback(() => {
+    const questionSet = new Set<string>()
+    for (const { questions } of categories) {
+      questions.forEach(value => {
+        questionSet.add(value)
+      })
+    }
+
+    const questionToBeUse: IQuestion[] = []
+    for (const id of questionSet) {
+      const question = questions.get(id)
+      if (question)
+        questionToBeUse.push({ ...question })
+    }
+
+    props.onStart({
+      start: Date.now(),
+      end: 0,
+      questions: questionToBeUse,
+    })
+  }, [])
+
+  async function init() {
+    try {
+      const files = await Download.files()
+      subjects = await Download.subjects(files)
+      questions = await Download.questions(subjects)
+      userData = await User.request()
+    } catch (err) {
+      return Promise.reject(err)
+    }
+
+    // const size = subjects.map(v => v.categories.length)
+    //                      .reduce((a, b) => a + b)
+
+    // Generate card component with subject ids or name
+    const cardList = subjects.map((value, page) => {
+      const { title, categories } = value
+      const selectIndex = 0
+      const children = categories.map((value, index) => {
+        return (
+          <CardMarkElement
+            key={value.id + '-' + index}
+            text={value.name || value.id}
+            page={page}
+            index={index}
+            onMark={(mark) => onMark(page, index, mark)}
+            isMarked={false}
+            isLast={index === categories.length - 1}
+          />
+        )
+      })
+      return (
+        <CardComponent
+          key={title + '-' + page}
+          title={title}>
+          {children}
+        </CardComponent>
+      )
+    })
+
+    // setUser(userData)
+    setCards(cardList)
+    return Promise.resolve()
+  }
 
   useEffect(() => {
-    fetch(QUESTION_URL)
-      .then(res => {
-        if (res.ok) return res.text()
-        else throw new Error('Can\'t fetch the data')
-      })
-      .then(text => {
-        try {
-          const data = yaml.load(text) as TAny
-          if (data.version && data.version == '0.0.0') {
-            const quizes = data.questions as IRawQuestionModel[]
-            setRawQuestions(quizes)
-          }
-        } catch (e) {
-          throw new Error('Not correct yaml format')
-        }
-      })
+    init().catch(err => console.error(err))
   }, [])
 
   return (
     <main>
-      {active == EMain.Home &&
+      {active === EMain.Home &&
         <CardContainer>
-          <CardComponent title="main">
+          {cards}
+          <CardComponent>
             <CardElement
-              text="start"
+              text="start selected"
               onButtonClick={() => {
-                currentSession.questions = processQuestions(rawQuestions)
-                // unix time in milliseconds since 1970-01-01 00:00:00 UTC.
-                currentSession.start = Date.now()
-                setCurrentSession(currentSession)
-
-                props.onStart(currentSession)
-              }} />
+                onStart()
+              }}
+              isEnable={enableStart}
+            />
           </CardComponent>
         </CardContainer>
       }
-      {active == EMain.Preference &&
+      {active === EMain.Preference &&
         <Preference/>
       }
       <MToolsFloat
