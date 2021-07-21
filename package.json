@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "snowpack dev",
     "build": "snowpack build",
-    "test": "NODE_ENV=test web-test-runner \"./src/**/*.test.tsx\" --node-resolve",
+    "test": "NODE_ENV=test web-test-runner './src/**/*.test.*' --node-resolve",
     "clean": "rimraf build .cache",
     "clean:build": "rimraf build",
     "clean:cache": "rimraf .cache"
