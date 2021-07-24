@@ -29,7 +29,7 @@ export const Answered: React.FC<IAnswered> = (props) => {
       return (
         <OptionElement
           icons={[Flag, FlagFill]}
-          key={data.source + '-' + index}
+          key={`${data.source}-${index}`}
           onButton={() => props.onClick(index)}
           text={title}
           isMarked={data.isMarked}

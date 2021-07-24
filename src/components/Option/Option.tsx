@@ -43,9 +43,7 @@ export const Option: React.FC<IOption> = (props) => {
     <button
       disabled={disabled}
       className={'option-element' + ` ${css}`}
-      onClick={() => {
-        if (onButton) onButton()
-      }}>
+      onClick={onButton}>
       <div className="button-display">
         {icon && <div className="icon">{icon}</div>}
         <div className="text">

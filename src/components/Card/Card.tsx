@@ -50,7 +50,7 @@ export const CardElement: React.FC<ICardElement> = (props) => {
   return (
     <button
       disabled={isDisabled}
-      className={(isLast ? 'is-last ' : '') + 'default'}
+      className={`default${isLast ? ' is-last' : ''}`}
       onClick={() => props.onButtonClick()}>
       <div className="button-display">
         {icon && <div className="icon">{icon}</div>}

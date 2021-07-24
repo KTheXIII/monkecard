@@ -5,10 +5,10 @@
   padding: 10pt;
 
   button.wrong {
-    background-color: #ffb3b3 !important;
+    background-color: var(--red) !important;
   }
   button.right {
-    background-color: #b3ffb3 !important;
+    background-color: var(--green) !important;
   }
 
   button.option-element {
@@ -25,8 +25,9 @@
     -ms-user-select: text;
     user-select: text;
 
-    &:disabled {
+    &:disabled:disabled {
       cursor: default;
+      background-color: var(--bg-1);
     }
 
     &:hover {

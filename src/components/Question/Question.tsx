@@ -18,6 +18,33 @@ import {
 
 import { IQuestion, IImage } from '@models/question.model'
 
+interface IQuestionContent {
+  text: string
+}
+
+export const QuestionContent: React.FC<IQuestionContent> = (props) => {
+  return (
+    <div className="question-content">
+      <ReactMarkdown>
+        {props.text}
+      </ReactMarkdown>
+    </div>
+  )
+}
+
+interface IQuestionImage {
+  src: string
+  alt?: string
+}
+
+export const QuestionImage: React.FC<IQuestionImage> = (props) => {
+  return (
+    <div className="question-image">
+      <img src={props.src} alt={props.alt} />
+    </div>
+  )
+}
+
 interface IQuestionMulit {
   question: IQuestion
   onMark: (i: number, mark: boolean) => void
@@ -40,7 +67,7 @@ export const QuestionMulti: React.FC<IQuestionMulit> = (props) => {
       setOptions(question.options.map((opt, i) => {
         return (
           <OptionMarkElement
-            key={question.source + '-' + i}
+            key={`${question.source}-${i}`}
             text={opt.text}
             isMarked={opt.marked}
             index={i}
@@ -52,16 +79,10 @@ export const QuestionMulti: React.FC<IQuestionMulit> = (props) => {
   }, [question])
 
   return (
-    <div className={'question'}>
+    <div className="question">
       {isPadTop && <div className="pad-top"></div>}
-      <div className="image-container">
-        {image && <img src={image.source} alt={image.alt} />}
-      </div>
-      <div className="content-container">
-        <ReactMarkdown>
-          {content}
-        </ReactMarkdown>
-      </div>
+      {image && <QuestionImage src={image.source} alt={image.alt} />}
+      <QuestionContent text={content} />
       <OptionContainer>
         {options}
       </OptionContainer>

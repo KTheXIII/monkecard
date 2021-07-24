@@ -3,7 +3,7 @@
   grid-template-columns: auto;
   gap: 2rem;
   padding: 1.2rem;
-  padding-bottom: calc(var(--tools-float-height) + 2rem);
+  padding-bottom: calc(var(--tools-float-height) + 4rem);
 }
 
 .card .card-title {
@@ -62,8 +62,9 @@
       background-color: var(--bg-2);
     }
     &:disabled {
+      cursor: default;
       background-color: var(--bg-1);
-      color: var(--bg-3)
+      color: var(--bg-3);
     }
   }
 }

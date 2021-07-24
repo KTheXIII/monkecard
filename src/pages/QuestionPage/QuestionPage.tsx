@@ -6,7 +6,7 @@ import React, {
   useRef
 } from 'react'
 
-import { ToolsTop } from '@components/ToolsTop'
+import { ToolsTimerTop } from '@components/ToolsTimerTop'
 import { QToolsFloat } from '@components/QToolsFloat'
 import { Answered } from '@components/Answered'
 import { QuestionMulti } from '@components/Question'
@@ -115,7 +115,7 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
 
   return (
     <div className="question-page" ref={container}>
-      <ToolsTop
+      <ToolsTimerTop
         onBack={props.onBack}
         onBookmark={onBookmark}
         isBookmarked={isBookmark}
@@ -136,13 +136,10 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
       <QToolsFloat
         isFlagOn={isFlagOn}
         isLast={isLast}
-        onMark={() => {
-          onFlag()
-        }}
+        onMark={() => onFlag()}
         onAnswered={onAnswered}
-        onNext={() => {
-          onNext()
-        }} />
+        onNext={() => onNext()}
+      />
     </div>
   )
 }
