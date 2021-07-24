@@ -7,16 +7,13 @@ import {
   Stopwatch
 } from '@assets/icons'
 import { ToolsTop } from '@components/ToolsTop'
+import * as Timer from '@scripts/timer'
 
 interface IToolTimerTop {
   onBack: () => void
   onBookmark: (isMarked: boolean) => void
   isBookmarked: boolean
   time: number
-}
-
-function formatTimer(time: number) {
-  return new Date(time).toLocaleTimeString('en-SE', { timeZone: 'utc' })
 }
 
 export const ToolsTimerTop: React.FC<IToolTimerTop> = (props) => {
@@ -42,7 +39,7 @@ export const ToolsTimerTop: React.FC<IToolTimerTop> = (props) => {
             {Stopwatch}
           </div>
           <div className="time-display noselect">
-            {formatTimer(time)}
+            {Timer.format(time)}
           </div>
         </div>
         <div className="right">

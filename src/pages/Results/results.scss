@@ -2,26 +2,30 @@
   display: flex;
   flex-direction: column;
 
-  // padding-top: 3rem;
+  .result-info {
+    .score-display {
+      text-align: center;
+      padding: 1em 0;
 
-  .score-display {
-    text-align: center;
-    padding: 1em 0;
-
-    .percent {
-      font-size: 16pt;
-      margin: 10pt 0;
+      p {
+        font-size: 14pt;
+      }
     }
 
-    p {
-      // margin: 0;
-      font-size: 14pt;
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 10pt;
+      margin: 0 1.2rem;
+      padding: 14pt 10pt;
+      border-radius: 5pt;
+      background-color: var(--bg-1);
     }
   }
 
   .result-review {
     padding-top: 3.4rem;
-    padding-bottom: 2rem;
+    padding-bottom: 7rem;
 
     .top {
       display: grid;

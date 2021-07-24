@@ -9,8 +9,7 @@ import {
   ChevronRight
 } from '@assets/icons'
 import { IQuestion, ISession } from '@models/question.model'
-import { IHistoryModel } from '@models/user.model'
-import * as User from '@scripts/user'
+import * as Timer from '@scripts/timer'
 
 import {
   FloatTool,
@@ -33,6 +32,8 @@ interface IResults {
 interface IResultInfo {
   score: number
   total: number
+  average: number
+  time: number
   isRightOn: boolean
   isWrongOn: boolean
   onAll: () => void
@@ -62,6 +63,11 @@ const ResultInfo: React.FC<IResultInfo> = (props) => {
       <div className="score-display">
         <p>Result</p>
         <p>{score} / {total}</p>
+      </div>
+      <div className="info">
+        <span>Time: {Timer.format(props.time)}</span>
+        <span title="Average time between question">
+          Average: {props.average / 1000} s</span>
       </div>
       <CardContainer>
         <CardComponent>
@@ -177,6 +183,8 @@ export const Results: React.FC<IResults> = (props) => {
   return (
     <div className="results">
       {state === EState.Info && <ResultInfo
+        time={session.end - session.start}
+        average={(session.end - session.start) / total}
         score={score}
         total={total}
         onAll={() => onReview()}
