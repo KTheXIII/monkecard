@@ -1,41 +1,57 @@
-.options-container
-.option-list {
-    display: grid;
-    grid-template-columns: auto;
-    gap: 7pt;
-    padding: 10pt;
-  
-    button.option-element {
-      color: inherit;
-      border: none;
-      background-color: var(--bg-1);
-      border-radius: 5pt;
-      cursor: pointer;
-      padding: 12pt;
-      font-size: 10pt;
-  
-      -webkit-user-select: text;
-      -moz-user-select: text;
-      -ms-user-select: text;
-      user-select: text;
+.options-container .option-list {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 7pt;
+  padding: 10pt;
+
+  button.wrong {
+    background-color: #ffb3b3 !important;
+  }
+  button.right {
+    background-color: #b3ffb3 !important;
+  }
+
+  button.option-element {
+    color: inherit;
+    border: none;
+    background-color: var(--bg-1);
+    border-radius: 5pt;
+    cursor: pointer;
+    padding: 12pt;
+    font-size: 10pt;
+
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+
+    &:disabled {
+      cursor: default;
     }
-    
-    button.option-element .button-display {
-      display: grid;
-      grid-template-columns: 20pt auto;
-      text-align: left;
-      
-      .icon {
-        display: grid;
-        width: 9pt;
-        height: 9pt;
-        margin: auto 0;
-        margin-right: 10pt;
-      }
-  
-      .text {
-        margin: auto 0;
-      }
+
+    &:hover {
+      background-color: var(--bg-2);
     }
   }
   
+  button.option-element .button-display {
+    display: grid;
+    grid-template-columns: 20pt auto;
+    text-align: left;
+    
+    .icon {
+      display: grid;
+      width: 9pt;
+      height: 9pt;
+      margin: auto 0;
+      margin-right: 10pt;
+    }
+
+    .text {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8pt;
+    }
+  }
+}

@@ -1,0 +1,258 @@
+version: '0.0.0'
+
+datas:
+  - content: |
+      # Processmodeller: Vad är korrekta påståenden gällande processer och processmodeller för utveckling av mjukvara?
+    image: null
+    options:
+      - Inkrementella processmodeller ger en mycket tydlig process för management.
+      - Agila processer existerade inte innan 2001.
+      - Att definiera en processmodell är inte lönsamt för en mindre organisation med färre än 10 personer.
+      - En bra process har en låg kostnad för genomförande och en låg tröskel för inlärning.
+      - Scrum är en lämplig processmodell om kraven är flyktiga.
+      - Inkrementella processer lämpar sig väl om man har svårt att involvera slutanvändare eller kund i arbetet.
+    correct:
+      - 4
+    categories:
+      - processmodeller
+    source: 'DA335A-T20210531Q01'
+  - content: |
+      # Processmodeller: Vad är korrekta påståenden gällande processer och processmodeller för utveckling av mjukvara?
+    image: null
+    options:
+      - Olika processmodeller kan användas för olika delar i samma projekt.
+      - Vattenfallsmodellen är en föråldrad processmodell som inte längre ändvänds i praktiken utan fungerar endast som utgångspunkt för att jämföra olika processmodeller.
+      - Om man i sin processmodell någon gång låter slut-användare utvärdera produkten innan release så använder man sig av processmodellen prototyping.
+      - V-modellen beskriver iterativa processers flöde mellan krav och test.
+      - Agila metoder fungerar inte i projekt som spänner över lång tid.
+      - Den nivå av kommunikation med kund och/eller slutanvändare som många agila processmodeller förespråkar kan vara svår att uppnå i praktiken.
+    correct:
+      - 0
+      - 5
+    categories:
+      - processmodeller
+    source: 'DA335A-T20210531Q02'
+  - content: |
+      # Kravhantering: Vad är korrekta påståenden gällande krav och kravhantering?
+    image: null
+    options:
+      - Att studera instruktioner för arbetsuppgifter är en tideffektiv metod för att få en bra uppfattning om hur arbetet utförs.
+      - Det kan vara nödvändigt att dokumentera spårbarhet mellan olika krav.
+      - När man arbetar med olika synvinklar för krav så är det risk att samma krav uttrycks på flera olika sätt.
+      - Validering av krav kan innebära att kontrollera så att kraven är spårbara, realistiska och kompletta.
+      - Ett användarkrav/user requirement ger oftast upphov till flera olika systemkrav
+      - Ett krav kan vara ett domänkrav och ett icke-funktionellt/kvalitativt krav samtidigt.
+    correct:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    categories:
+      - kravhantering
+    source: 'DA335A-T20210531Q03'
+  - content: |
+      # Kravhantering: Vad är korrekta påståenden gällande krav och kravhantering?
+    image: null
+    options:
+      - Icke-funktionella krav har i allmänhet större betydelse för systemets kvalitet än funktionella krav.
+      - Kvalitativa krav kan lätt hamna i konflikt med varandra.
+      - Om inte alla basic needs är uppfyllda så kan detta kompenseras genom att ha fler delighters enligt Kano-modellen.
+      - Alla intressenter är lika viktiga att ta hänsyn till vid prioritering av krav.
+      - Krav kan prioriteras efter fler eller andra faktorer än kundens önskemål.
+      - Med tiden så blir det som en gång var delighters basic needs enligt Kano-modellen.
+    correct:
+      - 0
+      - 1
+      - 4
+      - 5
+    categories:
+      - kravhantering
+    source: 'DA335A-T20210531Q04'
+  - content: |
+      # Kravdokumentation: Vad är korrekta påståenden gällande kravdokumentation?
+    image: null
+    options:
+      - Det bör etableras en process för hur ändringar i ett kravdokument får ske, exempelvis när och vem får ändra kraven.
+      - Ett kravdokument kan innehålla flera olika sätt att dokumentera krav på.
+      - För att öka tydligheten så bör förkortningar användas så ofta som möjligt i ett kravdokument skrivet i naturligt språk.
+      - Bra kravdokumentation ska kunna tillgodose flera olika intressenters tekniska kunskapsnivå och kunna skapa en förståelse för kraven på flera olika nivåer.
+      - Användningsfallsbeskrivningar (use case descriptions) kan inte visa alternativa varianter av en funktion.
+      - Krav kan dokumenteras med olika typer av diagram.
+    correct:
+      - 0
+      - 1
+      - 3
+      - 5
+    categories:
+      - kravdokumentation
+    source: 'DA335A-T20210531Q05'
+  - content: |
+      # Arkitektur: Vad är korrekta påståenden gällande arkitektur och mjukvaruutveckling?
+    image: null
+    options:
+      - Event-drivna-arkitekturer är inte lämpade för moderna GUI.
+      - Att se arkitektur ut en process-synvinkel innebär att anpassa arkitekturen utifrån den processmodell som används för att utveckla en mjukvaruprodukt.
+      - Den fysiska vyn av en arkitektur visar på vilken hårdvara olika delar av mjukvaran exekverar (för ett distribuerat system).
+      - Den logiska vyn av arkitekturen visar vilka algoritmer som finns i systemet och hur dessa fungerar. 
+      - När man utformar en arkitektur för ett system så är de icke-funktionella/kvalitativa kraven ofta viktigare att ta hänsyn till än funktionella krav.
+      - Det går att bygga system utan arkitektur.
+    correct:
+      - 2
+      - 4
+    categories:
+      - arkitektur
+    source: 'DA335A-T20210531Q06'
+  - content: |
+      # Vad är korrekta påståenden gällande metrics/mätvärden?
+    image: null
+    options:
+      - Genom att räkna antalet unika operatorer och operander i ett stycke kod så kan man få ett mätvärde för att bedömma hur svår koden är att förstå.
+      - Indirekta metrics är sådana saker som vi inte kan mäta eller räkna fram matematiskt utan är sådana metrics som vi gör en uppskattning av, exempelvis användbarhet på en skala dåligt - bra.
+      - Man bör alltid samla in så många olika metrics som det är möjligt att göra, helst automatiserat.
+      - Metrics bör inte användas för att försöka förutsäga något om koden eller processen utan kan endast användas för att illustrera ett nuläge för dessa.
+      - Mätvärden ska kunna valideras empiriskt.
+      - Slice, data-slice och data token är begrepp som kan användas för att mäta coupling i ett system.
+    correct:
+      - 0
+      - 4
+    categories:
+      - metrics
+    source: 'DA335A-T20210531Q07'
+  - content: |
+      # Design och implementation: Vad är korrekta påståenden gällande design och implementation av mjukvara?
+    image: null
+    options:
+      - Coding gudielines bör huvudsakligen användas för att göra koden så kompakt och snabbkompilerad/interpreterad som möjligt.
+      - Kodkommentarer av typen som förklarar vad koden gör är en form av kodkommentarer som bör eftersträvas.
+      - Kommentarer av typen markers bör inte raderas utan stå kvar i koden för att stödja versionshanteringen.
+      - ”Feature suprise” är en orsak till att undersöka om refactoring behövs. 
+      - Om vi ökar cohesion i ett systems moduler så minskar vi sannolikt graden av coupling i systemet.
+      - En bra implementation bör ha hög maintainability.
+    correct:
+      - 5
+    categories:
+      - implementation
+    source: 'DA335A-T20210531Q08'
+  - content: |
+      # Riskhantering: Vad är korrekta påståenden gällande riskhantering?
+    image: null
+    options:
+      - En process för riskhantering bör innehålla identifiering, analys, planering och övervakning.
+      - Det är viktigt att om möjligt koppla risker till indicator metrics.
+      - Att planera för riskhantering innebär att planera hur en risk undviks, hur en risk kan minimeras och att ta fram en plan för att risken inträffar/contingency plan.
+      - En identifierad risk bör kopplas samman med någon handlingsplan för vad man gör om risken inträffar.
+      - Risker bör övervakas genom hela projektet.
+      - Det är olämpligt att prioritera risker – alla risker bör behandlas på samma sätt då risker kan vara väldigt oförutsägbara.
+    correct:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+    categories:
+      - riskhantering
+    source: 'DA335A-T20210531Q09'
+  - content: |
+      # Kvalitetshantering: Vad är korrekta påståenden gällande kvalitetshantering?
+    image: null
+    options:
+      - Att genomföra rewiews för att öka kvalitet innebär en så kallad appraisal cost.
+      - Standarder är ofta ett bra hjälpmedel genom att vägleda hur kvalitet ska uppnås.
+      - Validering innebär exempelvis att kontrollera att de krav man identifierat stämmer med användarens verkliga behov.
+      - Kvalitet är ett subjektivt begrepp och olika intressenter kan ha olika uppfattning om vad kvalitet innebär för en produkt.
+      - Att samla in mätvärden innebär en så kallad prevention cost.
+      - Att utbilda personal innebär en så kallad prevention cost.
+    correct:
+      - 0
+      - 2
+      - 3
+      - 5
+    categories:
+      - kvalitetshantering
+    source: 'DA335A-T20210531Q10'
+  - content: |
+      # SPI
+
+      ## Vad är korrekta påståenden om SPI/processförbättring/Software Process Improvement?
+    image: null
+    options:
+      - SPI ger i allmänhet snabbt resultat i form av besparingar i tid och kostnader.
+      - Software Process Improvement genomförs under en begränsad period för att förbättra en befintlig process och sedan stabilisera denna på den nya nivån.
+      - SPI är svårt att bedriva i organisationer med stor del agila processer.
+      - Små organisationer har mindre utbyte av SPI än större organisationer.
+      - SPI anger fem olika nivåer av mognadsgrad för en organisation.
+      - SPI bör utformas via en utomstående organisation för att kunna se objektivt på en organisations process.
+    correct: []
+    categories:
+      - software-process-improvement
+    source: 'DA335A-T20210531Q11'
+  - content: |
+      # Mjukvarutestning allmänt: Vilka av följande påståenden om mjukvarutestning är sanna?
+    image: null
+    options:
+      - Komponent-testning bör göras med “black-box”-tekniker och Systemtestning bör göras med “white-box”- tekniker
+      - Om man hittar få fel under testning kan detta vara ett tecken på att det testade programmet har bra kvalitet, men kan också vara ett tecken på att testningen inte är bra
+      - En nackdel med ”coverage”-baserad testning är att man måste ha tillgång till koden
+      - Unit testing innebär testning av stora system
+      - All pairs är en testmetod för kombinationer av indata
+      - Inmatning av icke-valida värden är ett sätt att hitta defekter i ett program
+    correct:
+      - 1
+      - 2
+      - 4
+      - 5
+    categories:
+      - testning
+    source: 'DA335A-T20210531Q12'
+  - content: |
+      # Mjukvarutestning Granskning: Vilka av följande påståenden om granskning är sanna?
+    image: null
+    options:
+      - Granskning är en form av så kallad ”Statisk testning”
+      - Granskning hittar alltid fler buggar än dynamisk testning
+      - I en så kallad ”Walkthrough” får inte författaren presentera sitt alster och man använde checklistor för att förbättra granskningsresultatet
+      - Om man ber en jobb-kompis kolla igenom ens kod, så är detta en form av granskning
+      - ”Desk Checking” innebär att man granskar hur skrivborden är anpassade för programutveckling
+      - ”Inspektion” är en mer formell typ av granskning än ”Walkthrough”
+    correct:
+      - 0
+      - 3
+      - 5
+    categories:
+      - testning
+    source: 'DA335A-T20210531Q13'
+  - content: |
+      # Mjukvarutestning Integrationstest: Vilka av följande påståenden är korrekta om integrationstest?
+    image: null
+    options:
+      - ”Big Bang” är en av de kända principerna för integrationstestning.
+      - Innan det körs ett större integrationstest, så utförs det ett så kallat ”Smoke test”.
+      - Versionshantering är inte lika viktigt för integrationstester som för andra tester.
+      - ”integrationstest” utförs alltid på daglig basis.
+      - Integrationstest testar om fungerande självständiga komponenter fungerar tillsammans.
+      - Processen av ”Top-Down”-integration innebär att delar av koden ersätts med så kallade ”stubbar”.
+    correct:
+      - 0
+      - 4
+      - 5
+    categories:
+      - testning
+    source: 'DA335A-T20210531Q14'
+  - content: |
+      # Mjukvarutestning Equivalence Partitioning (EP): Vad är korrekt gällande EP?
+    image: null
+    options:
+      - Tekniken kan endast användas när ett system är levererat och i bruk
+      - Tekniken kan användas när som helst under en testfas och kräver därmed ingen färdig produkt
+      - Equivalence partitioning innebär att en uppsättning indata kan delas in i grupper där medlemmarna i gruppen förväntas bedömas likvärdigt av systemet. 
+      - Equivalence partitioning kan endast användas en gång i testfasen, därefter bedöms den vara förbrukad
+      - Om en grupp med likvärdig indata ger ett förväntat resultat kan övriga grupper med indata därmed förväntas ge samma resultat
+      - Equivalence partitioning bygger på att testaren gör en kvalificerad gissning när testet körs om hur programmet kommer att behandla indata
+    correct:
+      - 1
+      - 2
+      - 4
+    categories:
+      - testning
+    source: 'DA335A-T20210531Q15'

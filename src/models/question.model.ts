@@ -1,4 +1,4 @@
-export type TQuestions = Map<string, IQuestion>
+export type TQuestionMap = Map<string, IQuestion>
 
 export interface ICategory {
   id: string
@@ -12,21 +12,20 @@ export interface ISubject {
   files: string[]
 }
 
-export interface IPageIndex {
-  absolute: number
-  page: number
-  index: number
-}
-
 export interface IQuestionOption {
   text: string
   marked: boolean
   correct: boolean
 }
 
+export interface IImage {
+  source: string
+  alt?: string
+}
+
 export interface IQuestion {
   content: string
-  image?: { source: string, alt?: string }
+  image?: IImage
   options: IQuestionOption[]
   source: string
   isMarked: boolean

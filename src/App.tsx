@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Main } from '@pages/Main'
-import { Question } from '@pages/Question'
+import { QuestionPage } from '@pages/QuestionPage'
 import { Results } from '@pages/Results'
 
 import { ISession } from '@models/question.model'
@@ -13,6 +13,11 @@ enum EPages {
   Question,
   Results
 }
+
+// TODO: Move the fetch logic service here
+//       and send it as a prop to other pages.
+//       This will allow us to have control over when data is fetched.
+//       Reload data and refresh the page can be done more easily.
 
 export const App: React.FC = () => {
   const [active, setActive] = useState<EPages>(EPages.Main)
@@ -33,7 +38,7 @@ export const App: React.FC = () => {
         />
       }
       {active == EPages.Question &&
-        <Question
+        <QuestionPage
           session={currentSession}
           onBack={() => {
             setActive(EPages.Main)
@@ -60,6 +65,7 @@ export const App: React.FC = () => {
              (delta / session.questions.length / 1000) + ' s')
 
             // setActive(Pages.Main)
+            // setCurrentSession(session)
             setActive(EPages.Results)
           }}
         />

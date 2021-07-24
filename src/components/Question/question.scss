@@ -1,0 +1,25 @@
+.question {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+
+  .pad-top {
+    padding-top: 3.4rem;
+  }
+
+  .image-container {
+    max-height: 128pt;
+    text-align: center;
+    img, svg {
+      max-height: inherit;
+    }
+  }
+
+  .content-container {
+    min-height: 96pt;
+    padding: 10pt;
+    font-size: 10pt;
+  }
+
+  padding-bottom: 5.5rem;
+}

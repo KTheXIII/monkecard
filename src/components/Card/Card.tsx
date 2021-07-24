@@ -6,8 +6,6 @@ import React, {
 
 import { Circle, CircleFill } from '@assets/icons'
 
-import './card.scss'
-
 export const CardContainer: React.FC = (props) => {
   return (
     <div className="card-list">
@@ -52,7 +50,7 @@ export const CardElement: React.FC<ICardElement> = (props) => {
   return (
     <button
       disabled={isDisabled}
-      className={isLast ? 'is-last' : ''}
+      className={(isLast ? 'is-last ' : '') + 'default'}
       onClick={() => props.onButtonClick()}>
       <div className="button-display">
         {icon && <div className="icon">{icon}</div>}

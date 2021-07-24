@@ -7,8 +7,6 @@ import {
   Stopwatch
 } from '@assets/icons'
 
-import './toolstop.scss'
-
 interface IToolsTop {
   onBack: () => void
   onBookmark: (isMarked: boolean) => void
@@ -21,7 +19,7 @@ function formatTimer(time: number) {
 }
 
 export const ToolsTop: React.FC<IToolsTop> = (props) => {
-  const { isBookmarked } = props
+  const { isBookmarked, time } = props
   const [isMarked, setIsMarked] = useState(false)
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export const ToolsTop: React.FC<IToolsTop> = (props) => {
           {Stopwatch}
         </div>
         <div className="time-display noselect">
-          {formatTimer(props.time)}
+          {formatTimer(time)}
         </div>
       </div>
       <div className="right">

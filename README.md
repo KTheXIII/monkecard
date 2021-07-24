@@ -4,7 +4,7 @@ Build with Snowpack, ReactJS and TypeScript.
 
 ## Requirements
 
-- [nodejs](https://nodejs.org/)
+- [nodejs](https://nodejs.dev)
 
 ## Development
 

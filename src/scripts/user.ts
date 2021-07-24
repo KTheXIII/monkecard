@@ -15,7 +15,6 @@ export function of(username = 'some-user'): IUserModel {
     name: username,
     created: date,
     updated: date,
-    sessionCount: 0,
     saved: new Map<string, number>(),
     questions: new Map<string, IQuestionStat>()
   }
@@ -52,6 +51,8 @@ export async function save(user: IUserModel): Promise<IUserModel> {
     keyStats.push({ key, value })
   for (const [key, value] of saved)
     keySaved.push({ key, value })
+
+  user.updated = new Date()
 
   const saving: IUserJSON = {
     ...user,

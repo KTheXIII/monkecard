@@ -1,8 +1,21 @@
 .results {
-    padding-top: 3rem;
+  display: flex;
+  flex-direction: column;
 
-    .score-display {
-        text-align: center;
-        padding: 1em 0;
+  padding-top: 3rem;
+
+  .score-display {
+    text-align: center;
+    padding: 1em 0;
+
+    .percent {
+      font-size: 16pt;
+      margin: 10pt 0;
     }
+
+    p {
+      // margin: 0;
+      font-size: 14pt;
+    }
+  }
 }

@@ -11,6 +11,7 @@
   --grey-9: #b5b5b5;
   --grey-10: #cfcfcf;
   --grey-11: #e8e8e8;
+  --grey-12: hsl(0, 0%, 96%);
 
   --white: #ffffff;
 
@@ -25,7 +26,16 @@
   --bg-1: var(--grey-1);
   --bg-2: var(--grey-2);
   --bg-3: var(--grey-3);
+
   --text-color: var(--white);
+  --text-dim: var(--grey-5);
+
+  --black: #181a1c;
+  --red: #fb617e;
+  --green: #9ed06c;
+  --yellow: #f0c362;
+  --blue: #6dcae8;
+  --magenta: #bb97ee;
 }
 
 html,
@@ -36,16 +46,28 @@ body,
 
   background-color: var(--bg);
   color: var(--text-color);
-  height: 100%;
+  // height: 100%;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+h2 {
+  font-size: 1.4rem;
+}
+h3 {
+  font-size: 1.3rem;
 }
 
 @media (prefers-color-scheme: light) {
   .auto-theme {
-    --bg: var(--white);
-    --bg-1: var(--grey-11);
-    --bg-2: var(--grey-10);
-    --bg-3: var(--grey-9);
+    --bg: var(--grey-12);
+    --bg-1: var(--white);
+    --bg-2: var(--grey-11);
+    --bg-3: var(--grey-10);
     --text-color: var(--grey-0);
+
+    --text-dim: var(--grey-7);
   }
 }
 

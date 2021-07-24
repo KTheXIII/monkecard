@@ -1,11 +1,22 @@
 .settings {
-    position: absolute;
-    background-color: inherit;
-    display: flex;
-    height: 100%;
-    width: 100%;
+  position: absolute;
+  background-color: inherit;
+  display: flex;
+  height: 100%;
+  width: 100%;
 
-    .info {
-        margin: auto;
+  .info {
+    margin: auto;
+
+    .github-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-weight: 400;
+      transition: 125ms ease-out color;
     }
+
+    .github-link:hover {
+      color: var(--text-color);
+    }
+  }
 }

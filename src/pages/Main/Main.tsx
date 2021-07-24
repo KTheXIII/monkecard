@@ -21,12 +21,10 @@ import { IUserModel } from '@models/user.model'
 import {
   ISession,
   ISubject,
-  TQuestions,
+  TQuestionMap,
   ICategory,
   IQuestion,
 } from '@models/question.model'
-
-import './main.scss'
 
 enum EMain {
   Home,
@@ -37,29 +35,31 @@ interface IMain {
   onStart: (session: ISession) => void
 }
 
+// TODO: Move out fetch logic and take in question, user and subject data
+
 export const Main: React.FC<IMain> = (props) => {
   const [active, setActive] = useState<EMain>(EMain.Home)
   const [cards, setCards] = useState<ReactElement[]>([])
   const [enableStart, setEnableStart] = useState<boolean>(false)
 
   let userData: IUserModel
-  let questions: TQuestions
+  let questionMap: TQuestionMap
   let subjects: ISubject[]
-  const categories = new Set<ICategory>()
+  const categorySet = new Set<ICategory>()
 
   function onMark(page: number, index: number, mark: boolean) {
     const subject = subjects[page].categories[index]
     if (mark)
-      categories.add(subject)
+      categorySet.add(subject)
     else
-      categories.delete(subject)
+      categorySet.delete(subject)
 
-    setEnableStart(categories.size > 0)
+    setEnableStart(categorySet.size > 0)
   }
 
   const onStart = useCallback(() => {
     const questionSet = new Set<string>()
-    for (const { questions } of categories) {
+    for (const { questions } of categorySet) {
       questions.forEach(value => {
         questionSet.add(value)
       })
@@ -67,7 +67,7 @@ export const Main: React.FC<IMain> = (props) => {
 
     const questionToBeUse: IQuestion[] = []
     for (const id of questionSet) {
-      const question = questions.get(id)
+      const question = questionMap.get(id)
       if (question)
         questionToBeUse.push({ ...question })
     }
@@ -83,19 +83,24 @@ export const Main: React.FC<IMain> = (props) => {
     try {
       const files = await Download.files()
       subjects = await Download.subjects(files)
-      questions = await Download.questions(subjects)
+      questionMap = await Download.questions(subjects)
       userData = await User.request()
     } catch (err) {
       return Promise.reject(err)
     }
 
+    renderList()
+
+    return Promise.resolve()
+  }
+
+  function renderList() {
     // const size = subjects.map(v => v.categories.length)
     //                      .reduce((a, b) => a + b)
 
     // Generate card component with subject ids or name
     const cardList = subjects.map((value, page) => {
       const { title, categories } = value
-      const selectIndex = 0
       const children = categories.map((value, index) => {
         return (
           <CardMarkElement
@@ -104,7 +109,7 @@ export const Main: React.FC<IMain> = (props) => {
             page={page}
             index={index}
             onMark={(mark) => onMark(page, index, mark)}
-            isMarked={false}
+            isMarked={categorySet.has(value)}
             isLast={index === categories.length - 1}
           />
         )
@@ -120,15 +125,19 @@ export const Main: React.FC<IMain> = (props) => {
 
     // setUser(userData)
     setCards(cardList)
-    return Promise.resolve()
   }
 
   useEffect(() => {
     init().catch(err => console.error(err))
   }, [])
 
+  const onHome = useCallback(() => {
+    setActive(EMain.Home)
+    renderList()
+  }, [])
+
   return (
-    <main>
+    <div className="main-page">
       {active === EMain.Home &&
         <CardContainer>
           {cards}
@@ -147,9 +156,9 @@ export const Main: React.FC<IMain> = (props) => {
         <Preference/>
       }
       <MToolsFloat
-        onHome={() => setActive(EMain.Home)}
+        onHome={() => onHome()}
         onSettings={() => setActive(EMain.Preference)}
       />
-    </main>
+    </div>
   )
 }

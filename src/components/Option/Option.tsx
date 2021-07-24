@@ -6,8 +6,6 @@ import React, {
 
 import { Circle, CircleFill } from '@assets/icons'
 
-import './option.scss'
-
 export const OptionContainer: React.FC = (props) => {
   return (
     <div className="options-container">
@@ -18,14 +16,61 @@ export const OptionContainer: React.FC = (props) => {
   )
 }
 
-export interface IOptionBase {
+interface IOptionBase {
   text: string
   isMarked: boolean
   icons?: [ReactElement, ReactElement]
 }
 
+interface IOption {
+  text: string
+  icon?: ReactElement
+  onButton?: () => void
+  css?: string
+  disabled?: boolean
+}
+
+export const Option: React.FC<IOption> = (props) => {
+  const { icon, onButton } = props
+  const css = props.css || ''
+  const disabled = props.disabled !== undefined ? props.disabled : false
+
+  const text = props.text
+    .split('\n')
+    .map((line, i) => <span key={i}>{line}</span>)
+
+  return (
+    <button
+      disabled={disabled}
+      className={'option-element' + ` ${css}`}
+      onClick={() => {
+        if (onButton) onButton()
+      }}>
+      <div className="button-display">
+        {icon && <div className="icon">{icon}</div>}
+        <div className="text">
+          {text}
+        </div>
+      </div>
+    </button>
+  )
+}
+
 interface IOptionElement extends IOptionBase{
-  onButtonClick: () => void
+  onButton: () => void
+}
+
+export const OptionElement: React.FC<IOptionElement> = (props) => {
+  const { isMarked, onButton: onButtonClick } = props
+  const [OFF, ON] = props.icons || [Circle, CircleFill]
+
+  return (
+    <Option
+      text={props.text}
+      onButton={onButtonClick}
+      icon={isMarked ? ON : OFF}
+    />
+  )
 }
 
 type TOnMark = (index: number, mark: boolean) => void
@@ -35,31 +80,13 @@ interface IMarkOption extends IOptionBase{
   onMark: TOnMark
 }
 
-export const OptionElement: React.FC<IOptionElement> = (props) => {
-  const { isMarked, text, onButtonClick } = props
-  const [OFF, ON] = props.icons || [Circle, CircleFill]
-  return (
-    <button
-      className="option-element"
-      onClick={() => onButtonClick()}
-    >
-      <div className="button-display">
-        <div className="icon">{isMarked ? ON : OFF}</div>
-        <div className="text">
-          <span>{text}</span>
-        </div>
-      </div>
-    </button>
-  )
-}
-
 export const OptionMarkElement: React.FC<IMarkOption> = (props) => {
   const [isMarked, setIsMarked] = useState(false)
   useEffect(() => setIsMarked(props.isMarked), [])
 
   return (
     <OptionElement
-      onButtonClick={() => {
+      onButton={() => {
         const mark = !isMarked
         setIsMarked(mark)
         props.onMark(props.index, mark)

@@ -29,11 +29,9 @@
     height: 100%;
     width: 100%;
     border: none;
-    border-bottom: 1px solid var(--bg-2);
-    
+    border-bottom: 1px solid var(--bg);
+ 
     font-size: inherit;
-    background-color: inherit;
-    color: inherit;
 
     .button-display {
       display: flex;
@@ -50,18 +48,22 @@
         overflow-wrap: break-word;
       }
     }
+
   }
 
-  button:hover {
-    background-color: var(--bg-3);
-  }
+  button.default {
+    background-color: inherit;
+    color: inherit;
 
-  button:active {
-    background-color: var(--bg-2);
-  }
-
-  button:disabled {
-    background-color: var(--bg-1);
-    color: var(--bg-3)
+    &:hover {
+      background-color: var(--bg-2);
+    }
+    &:active {
+      background-color: var(--bg-2);
+    }
+    &:disabled {
+      background-color: var(--bg-1);
+      color: var(--bg-3)
+    }
   }
 }

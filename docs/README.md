@@ -1,3 +1,3 @@
 # docs
 
-This map contains how the question is model and how the yaml file should look like.
+Use `subject.yml` and `question.yml` file as a template.

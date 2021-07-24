@@ -5,6 +5,7 @@ datas:
       # Software Engineering: Vilka påståenden är korrekta gällande diagrammet nedan?
     image:
       source: './questions/systemdev/images/reliability-curve-of-software.jpg'
+      alt: Show reliability curve under a software development
     options:
       - Spikarna i kurvan indikerar att testfasen i den använda processen
         startar vid punkt 2.
@@ -62,7 +63,7 @@ datas:
       - 5
     categories:
       - processmodeller
-      - agile-processmodeller
+      - agila-processmodeller
       - agila-processer
     source: 'DA335A-T20200305Q03'
   - content: |
@@ -89,7 +90,7 @@ datas:
       - 2
     categories:
       - processmodeller
-      - agile-processmodeller
+      - agila-processmodeller
       - agila-processer
     source: 'DA335A-T20200305Q04'
   - content: |
@@ -156,7 +157,7 @@ datas:
       - 2
       - 4
     categories:
-      - architecture
+      - arkitektur
     source: 'DA335A-T20200305Q07'
   - content: |
       # Implementation: Vilka påståenden gällande implementation av mjukvara är korrekta?
@@ -218,7 +219,7 @@ datas:
       - 2
     categories:
       - risk-based-testing
-      - testing
+      - testning
     source: 'DA335A-T20200305Q10'
   - content: |
       # Integrationstest: Vilken/vilka av följande påståenden förklarar begreppet integrationstest korrekt?
@@ -241,7 +242,7 @@ datas:
       - 5
     categories:
       - integrationstest
-      - testing
+      - testning
     source: 'DA335A-T20200305Q11'
   - content: |
       # Testning: Vilket/vilka av nedanstående påståenden stämmer?
@@ -262,7 +263,7 @@ datas:
       - 1
       - 2
     categories:
-      - testing
+      - testning
     source: 'DA335A-T20200305Q12'
   - content: |
       # Granskning: Vilken/Vilka svarsalternativ (A-F) nedan passar bäst beträffande kopplingen mellan följande påståenden (1-5) och granskningsmetoder (s-v)?

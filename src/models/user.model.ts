@@ -15,7 +15,6 @@ export interface IHistoryModel {
 interface IUserBase<DATE, SAVED, QUESTIONS> {
   _tag: 'User'
   name: string
-  sessionCount: number
   created: DATE
   updated: DATE
   saved: SAVED

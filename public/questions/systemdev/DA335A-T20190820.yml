@@ -85,7 +85,7 @@ datas:
       - 2
       - 5
     categories:
-      - testing
+      - testning
     source: 'DA335A-T20190820Q05'
   - content: |
       # Kravhantering: Vad är korrekta påståenden om användningsfall/use cases?
