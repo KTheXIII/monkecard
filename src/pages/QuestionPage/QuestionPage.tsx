@@ -11,14 +11,17 @@ import { QToolsFloat } from '@components/QToolsFloat'
 import { Answered } from '@components/Answered'
 import { QuestionMulti } from '@components/Question'
 
+import { IUser } from '@models/user.model'
 import { ISession, IQuestion } from '@models/question.model'
 
 const TIMER_UPDATE_DELAY = 1000  // ms
 
 interface IQuestionPage {
   session: ISession
+  user: IUser
   onBack: () => void
   onDone: (session: ISession) => void
+  onSave: (user: IUser) => void
 }
 
 export const QuestionPage: React.FC<IQuestionPage> = (props) => {
@@ -35,22 +38,23 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
 
   let currentIndex = 0
 
-  const { session } = props
+  const { session, user } = props
   const { questions } = session
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(Date.now() - start)
     }, TIMER_UPDATE_DELAY)
+
+    if (questions.length > 0) {
+      setQuestion(currentIndex)
+      questions[currentIndex].isAnswered = true
+    }
+
     return () => {
       clearInterval(interval)
     }
-  }, [])
-
-  useEffect(() => {
-    setQuestion(currentIndex)
-    questions[currentIndex].isAnswered = true
-  }, [])
+  }, [session])
 
   const onFlag = useCallback(() => {
     questions[currentIndex].isMarked = !questions[currentIndex].isMarked
@@ -71,7 +75,6 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
   }, [currentIndex])
 
   const onAnswered = useCallback(() => {
-    // TODO: On show answered list
     const ids: number[] = []
     const answered: IQuestion[] = questions
       .filter((data, index) => {
@@ -90,8 +93,18 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
     questions[currentIndex].options[i].marked = mark
   }, [currentIndex])
 
-  const onBookmark = useCallback((mark: boolean) => {
-    console.log(`bookmark: ${currentIndex} - ${mark}`)
+  const onBookmark = useCallback(() => {
+    const id = questions[currentIndex].source
+    if (!user.saved.has(questions[currentIndex].source))
+      user.saved.set(id,  Date.now())
+    else
+      user.saved.delete(id)
+
+    const exist = user.saved.has(questions[currentIndex].source)
+    setIsBookmark(exist)
+    console.log(currentIndex, exist)
+
+    props.onSave(user)
   }, [currentIndex])
 
   const setQuestion = useCallback((index: number) => {
@@ -100,10 +113,11 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
     setIsLast(index == questions.length - 1)
     setFlagOn(question.isMarked)
     setCurrentQuestion(question)
+    setIsBookmark(user.saved.has(question.source))
 
     // Scoll to the top when a new question is rendered
     window.scrollTo(0, 0)
-  }, [])
+  }, [user])
 
   const onSelectQuestion = useCallback((index: number) => {
     currentIndex = index

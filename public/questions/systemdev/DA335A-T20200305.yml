@@ -202,7 +202,7 @@ datas:
       - 1
       - 5
     categories:
-      - quality-management
+      - kvalitetshantering
     source: 'DA335A-T20200305Q09'
   - content: |
       # Riskbaserad testning: Vilken/Vilka är den/de grundläggande idén/idéerna för en riskbaserad strategi?

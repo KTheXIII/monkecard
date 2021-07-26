@@ -11,19 +11,13 @@ import * as Timer from '@scripts/timer'
 
 interface IToolTimerTop {
   onBack: () => void
-  onBookmark: (isMarked: boolean) => void
+  onBookmark: () => void
   isBookmarked: boolean
   time: number
 }
 
 export const ToolsTimerTop: React.FC<IToolTimerTop> = (props) => {
-  const { isBookmarked, time } = props
-  const [isMarked, setIsMarked] = useState(false)
-
-  useEffect(() => {
-    setIsMarked(isBookmarked)
-  }, [])
-
+  const { isBookmarked, time, onBookmark } = props
   return (
     <ToolsTop>
       <div className="tool-timer-top">
@@ -46,10 +40,9 @@ export const ToolsTimerTop: React.FC<IToolTimerTop> = (props) => {
           <button
             className="bookmark-button"
             onClick={() => {
-            // TODO: Implement the callback for Question page
-              setIsMarked(!isMarked)
+              onBookmark()
             }}>
-            {isMarked ? BookmarkCheckFill : Bookmark}
+            {isBookmarked ? BookmarkCheckFill : Bookmark}
           </button>
         </div>
       </div>

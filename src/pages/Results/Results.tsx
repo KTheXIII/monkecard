@@ -3,29 +3,33 @@ import React, {
   useEffect,
   useCallback
 } from 'react'
+
 import {
   FileEarmarkCodeFill,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  CheckCircle,
+  XCircle,
 } from '@assets/icons'
-import { IQuestion, ISession } from '@models/question.model'
-import * as Timer from '@scripts/timer'
-
 import {
   FloatTool,
   FloatToolsContainer
 } from '@components/ToolsFloat'
 import {
-  CardContainer,
-  CardComponent,
-  CardElement
-} from '@components/Card'
-
+  ListComponent,
+  ListItemButton
+} from '@components/List'
 import { Review } from '@components/Review'
 import { ToolsTop } from '@components/ToolsTop'
 
+import { IQuestion, ISession } from '@models/question.model'
+import * as Timer from '@scripts/timer'
+import { IUser } from '@models/user.model'
+
 interface IResults {
   session: ISession
+  user: IUser
+  onSave: () => void
   onBack: () => void
 }
 
@@ -69,24 +73,28 @@ const ResultInfo: React.FC<IResultInfo> = (props) => {
         <span title="Average time between question">
           Average: {props.average / 1000} s</span>
       </div>
-      <CardContainer>
-        <CardComponent>
-          <CardElement
+      <div className="options">
+        <ListComponent>
+          <ListItemButton
             text="all answers"
-            isLast={false}
-            onButtonClick={onAll}/>
-          <CardElement
-            text="right answers"
-            isLast={false}
-            isEnable={isRightOn}
-            onButtonClick={onRight}
+            onButton={onAll}
           />
-          <CardElement
+          <ListItemButton
+            text="right answers"
+            preview={`${score}`}
+            isEnable={isRightOn}
+            onButton={onRight}
+            icon={CheckCircle}
+          />
+          <ListItemButton
             text="wrong answers"
+            preview={`${total - score}`}
             isEnable={isWrongOn}
-            onButtonClick={onWrong}/>
-        </CardComponent>
-      </CardContainer>
+            onButton={onWrong}
+            icon={XCircle}
+          />
+        </ListComponent>
+      </div>
       {props.children}
     </div>
   )
@@ -138,7 +146,7 @@ const ResultReview: React.FC<IResultReview> = (props) => {
 }
 
 export const Results: React.FC<IResults> = (props) => {
-  const { session } = props
+  const { session, user } = props
   const total = session.questions.length
   const [state, setState] = useState(EState.Info)
   const [score, setScore] = useState(0)
@@ -165,11 +173,33 @@ export const Results: React.FC<IResults> = (props) => {
       } else {
         wrongList.push(question)
       }
+
+      // Store the history data for the user
+      const stat = user.questions.get(question.source)
+      if (stat) {
+        stat.history.push({
+          correct: isCorrect,
+          unix: session.end
+        })
+        const correct = stat.history
+          .filter(h => h.correct)
+          .reduce((a) => a + 1, 0)
+        stat.confidence = correct / stat.history.length
+      } else {
+        user.questions.set(question.source, {
+          confidence: isCorrect ? 1 : 0,
+          history: [{
+            correct: isCorrect,
+            unix: session.end
+          }]
+        })
+      }
     })
 
     setWrongList(wrongList)
     setCorrectList(correctList)
     setScore(score)
+    props.onSave()
   }, [session])
 
   const onReview = useCallback((correct: boolean | undefined = undefined) => {

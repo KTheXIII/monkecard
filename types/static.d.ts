@@ -71,6 +71,7 @@ declare const __SNOWPACK_ENV__ : {
 
   FILES_URL: string
 
+  PUBLIC_URL: string
   MODE: string,
   MODE_ENV: string
   SSR: boolean

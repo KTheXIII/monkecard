@@ -6,14 +6,8 @@ import React, {
 import ReactMarkdown from 'react-markdown'
 
 import {
-  Circle,
-  CircleFill,
-  CircleSlash
-} from '@assets/icons'
-import {
   OptionContainer,
   OptionMarkElement,
-  Option
 } from '@components/Option'
 
 import { IQuestion, IImage } from '@models/question.model'

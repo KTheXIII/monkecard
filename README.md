@@ -1,4 +1,4 @@
-# q
+# quiz
 
 Build with Snowpack, ReactJS and TypeScript.
 

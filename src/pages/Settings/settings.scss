@@ -1,22 +1,48 @@
 .settings {
-  position: absolute;
   background-color: inherit;
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 
-  .info {
-    margin: auto;
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16pt;
+    padding: 1.2rem;
 
-    .github-link {
+    .user-info {
+      padding-top: 2rem;
+      padding-bottom: 3rem;
+
+      display: flex;
+      .username {
+        margin: auto;
+        font-size: 1.8rem;
+        overflow: scroll;
+      }
+    }
+  }
+
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .app-info {
+    margin: auto;
+    margin-bottom: 8rem;
+    display: flex;
+    gap: 10pt;
+
+    a {
       color: var(--text-dim);
       text-decoration: none;
-      font-weight: 400;
+      font-weight: 300;
       transition: 125ms ease-out color;
-    }
 
-    .github-link:hover {
-      color: var(--text-color);
+      &:hover {
+        color: var(--text-color);
+      }
     }
   }
 }

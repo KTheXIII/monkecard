@@ -1,15 +1,18 @@
+import { IUserSettings } from './settings.model'
+
 type TMapQuestions = Map<string, IQuestionStat>
 type TMapSaved = Map<string, number>
 export type TKeyDate = { key: string, value: number }
 export type TKeyStat = { key: string, value: IQuestionStat }
 
 export interface IQuestionStat {
+  confidence: number
   history: IHistoryModel[]
 }
 
 export interface IHistoryModel {
   correct: boolean
-  unix: number    // UNIX Time
+  unix: number
 }
 
 interface IUserBase<DATE, SAVED, QUESTIONS> {
@@ -19,8 +22,9 @@ interface IUserBase<DATE, SAVED, QUESTIONS> {
   updated: DATE
   saved: SAVED
   questions: QUESTIONS
+  settings: IUserSettings
 }
 
 export type IUserJSON = IUserBase<number, TKeyDate[], TKeyStat[]>
-export type IUserModel = IUserBase<Date, TMapSaved, TMapQuestions>
+export type IUser = IUserBase<Date, TMapSaved, TMapQuestions>
 export type TUserList = { key: string, value: IUserJSON }[]

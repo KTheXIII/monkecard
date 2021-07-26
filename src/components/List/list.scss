@@ -1,0 +1,164 @@
+.list__component {
+  background-color: inherit;
+
+  font-size: 11pt;
+  $pad-size: 12pt;
+  $icon-size: 11pt;
+
+  .list__header {
+    padding: $pad-size;
+  }
+
+  .list__body {
+    background-color: var(--bg-1);
+    overflow: hidden;
+    border-radius: 5pt;
+
+    button {
+      cursor: pointer;
+      color: inherit;
+      background-color: inherit;
+      border: none;
+      font-size: inherit;
+      font-weight: 300;
+      padding: 0;
+      margin: 0;
+
+      &:hover {
+        background-color: var(--bg-2);
+      }
+      &:active {
+        background-color: var(--bg-3);
+      }
+      &:disabled {
+        background-color: var(--bg-1);
+        color: var(--text-dim);
+      }
+    }
+
+    input[type="text"] {
+      padding: $pad-size;
+      background-color: inherit;
+      width: 100%;
+      height: 100%;
+      font-size: 12pt;
+      box-sizing: border-box;
+      outline-width: 0;
+      border: none;
+      color: inherit;
+      overflow: hidden;
+    }
+
+    input[type="text"]:focus {
+      background-color: var(--bg-2);
+    }
+
+    .list__item {
+      display: flex;
+      width: 100%;
+      height: 100%;
+
+      .icon {
+        padding-left: $pad-size;
+        margin: auto;
+        height: $icon-size;
+        width: $icon-size;
+        svg {
+          margin: auto;
+          padding-right: 5pt;
+        }
+      }
+
+      .container {
+        padding: $pad-size;
+        padding-left: 0;
+        margin-left: $pad-size;
+        flex-grow: 1;
+
+        .display {
+          display: flex;
+          margin: auto;
+          width: 100%;
+
+          .text {
+            font-size: inherit;
+            flex-grow: 1;
+            text-align: left;
+          }
+
+          .preview {
+            text-align: right;
+            margin-left: auto;
+            // max-width: 65%;
+            max-width: 10rem;
+            color: var(--text-dim);
+            overflow: hidden;
+            // margin-right: 10pt;
+          }
+
+          .right-icon {
+            margin-left: 10pt;
+            width: 12pt;
+            height: 12pt;
+          }
+        }
+      }
+
+      .options {
+        display: flex;
+        padding-right: 5pt;
+        padding-left: 5pt;
+        gap: 5pt;
+
+        .cancel {
+          color: var(--red);
+        }
+
+        .confirm {
+          color: var(--green);
+        }
+
+        button {
+          margin: auto;
+          padding: 6pt;
+          border-radius: 50%;
+          background-color: var(--bg-3);
+
+          .icon {
+            width: 12pt;
+            height: 12pt;
+            padding: 0;
+          }
+
+          &:hover {
+            background-color: var(--bg-2);
+          }
+          &:active {
+            background-color: var(--bg-1);
+          }
+        }
+      }
+
+      &:first-child {
+        input[type="text"] {
+          border-radius: 5pt 0 0 0;
+        }
+      }
+
+      &:not(:last-child) {
+        .container,
+        input[type="text"],
+        .options {
+          border-bottom: 1px solid var(--bg);
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+        input[type="text"] {
+          border-radius: 0 0 0 5pt;
+        }
+      }
+    }
+  }
+}

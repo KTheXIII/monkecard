@@ -1,9 +1,12 @@
 {
-  "name": "Quizes",
+  "name": "Quiz App",
   "short_name": "./quiz",
   "start_url": "./",
   "display": "standalone",
   "description": "A quiz app.",
+  "theme_color": "#101010",
+  "background_color": "#101010",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "favicon.png",
@@ -28,14 +31,23 @@
     {
       "src": "logo@5x.png",
       "type": "image/png",
-      "sizes": "320x320"
+      "sizes": "320x320",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo@6x.png",
+      "type": "image/png",
+      "sizes": "384x384"
+    },
+    {
+      "src": "logo@7x.png",
+      "type": "image/png",
+      "sizes": "448x448"
     },
     {
       "src": "logo@8x.png",
       "type": "image/png",
       "sizes": "512x512"
     }
-  ],
-  "theme_color": "#101010",
-  "background_color": "#101010"
+  ]
 }

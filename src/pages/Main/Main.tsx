@@ -7,17 +7,13 @@ import React, {
 
 import { MToolsFloat } from '@components/MToolsFloat'
 import {
-  CardContainer,
-  CardComponent,
-  CardElement,
-  CardMarkElement,
-} from '@components/Card'
-import { Preference } from '@pages/Settings'
+  ListComponent,
+  ListItemMark,
+  ListItemButton
+} from '@components/List'
+import { Settings } from '@pages/Settings'
 
-import * as Download from '@scripts/download'
-import * as User from '@scripts/user'
-
-import { IUserModel } from '@models/user.model'
+import { IUser } from '@models/user.model'
 import {
   ISession,
   ISubject,
@@ -28,36 +24,65 @@ import {
 
 enum EMain {
   Home,
-  Preference
+  Settings
 }
 
 interface IMain {
   onStart: (session: ISession) => void
+  onSave: () => void
+  isLoading: boolean
+  user: IUser
+  questions: TQuestionMap
+  subjects: ISubject[]
 }
-
-// TODO: Move out fetch logic and take in question, user and subject data
 
 export const Main: React.FC<IMain> = (props) => {
   const [active, setActive] = useState<EMain>(EMain.Home)
-  const [cards, setCards] = useState<ReactElement[]>([])
+  const [questionList, setQuestionList] = useState<ReactElement[]>([])
   const [enableStart, setEnableStart] = useState<boolean>(false)
 
-  let userData: IUserModel
-  let questionMap: TQuestionMap
-  let subjects: ISubject[]
+  const { isLoading } = props
+  const [subjects, setSubjects] = useState<ISubject[]>(props.subjects)
+  const [questionMap, setQuestionMap] = useState<TQuestionMap>(props.questions)
   const categorySet = new Set<ICategory>()
 
-  function onMark(page: number, index: number, mark: boolean) {
-    const subject = subjects[page].categories[index]
-    if (mark)
-      categorySet.add(subject)
-    else
-      categorySet.delete(subject)
+  function renderList() {
+    // Generate card component with subject ids or name
+    const questionList = subjects.map((value, page) => {
+      const { title, categories } = value
+      const children = categories.map((value, index) => {
+        return (
+          <ListItemMark
+            key={value.id + '-' + index}
+            text={value.name || value.id}
+            preview={`${value.questions.length}`}
+            onMark={(mark) => onMark(page, index, mark)}
+            isMarked={categorySet.has(value)}
+            hideRightIcon={true}
+          />
+        )
+      })
+      return (
+        <ListComponent
+          key={title + '-' + page}
+          header={title}>
+          {children}
+        </ListComponent>
+      )
+    })
 
-    setEnableStart(categorySet.size > 0)
+    setQuestionList(questionList)
   }
 
+  useEffect(() => {
+    setSubjects(props.subjects)
+    setQuestionMap(props.questions)
+    renderList()
+
+  }, [isLoading, props.questions, props.subjects])
+
   const onStart = useCallback(() => {
+    const { user } = props
     const questionSet = new Set<string>()
     for (const { questions } of categorySet) {
       questions.forEach(value => {
@@ -72,92 +97,77 @@ export const Main: React.FC<IMain> = (props) => {
         questionToBeUse.push({ ...question })
     }
 
+    // FIXME: Move this out of here
+    // NOTE: This is a hack for randomising the question with confidence metric.
+    //       This will need to be re-implement later when we have a better way
+    const sortConfidence = questionToBeUse.sort((a, b) => {
+      const qa = user.questions.get(a.source)
+      const qb = user.questions.get(b.source)
+      if (qa && qb) {
+        return qa.confidence - qb.confidence
+      } else if (qa) {
+        return qa.confidence - Math.random()
+      } else if (qb) {
+        return qb.confidence - Math.random()
+      } else {
+        return Math.random() > 0.5 ? 1 : -1
+      }
+    })
+
+    // NOTE: Get the maximum number of questions according to user's
+    //       max question per session
+    const questions = sortConfidence
+      .filter((value, index) => index < user.settings.maxQuestions)
+
     props.onStart({
       start: Date.now(),
       end: 0,
-      questions: questionToBeUse,
+      questions
     })
-  }, [])
+  }, [questionMap, props.user])
 
-  async function init() {
-    try {
-      const files = await Download.files()
-      subjects = await Download.subjects(files)
-      questionMap = await Download.questions(subjects)
-      userData = await User.request()
-    } catch (err) {
-      return Promise.reject(err)
-    }
+  function onMark(page: number, index: number, mark: boolean) {
+    const subject = subjects[page].categories[index]
+    if (mark)
+      categorySet.add(subject)
+    else
+      categorySet.delete(subject)
 
-    renderList()
-
-    return Promise.resolve()
+    setEnableStart(categorySet.size > 0)
   }
-
-  function renderList() {
-    // const size = subjects.map(v => v.categories.length)
-    //                      .reduce((a, b) => a + b)
-
-    // Generate card component with subject ids or name
-    const cardList = subjects.map((value, page) => {
-      const { title, categories } = value
-      const children = categories.map((value, index) => {
-        return (
-          <CardMarkElement
-            key={value.id + '-' + index}
-            text={value.name || value.id}
-            page={page}
-            index={index}
-            onMark={(mark) => onMark(page, index, mark)}
-            isMarked={categorySet.has(value)}
-            isLast={index === categories.length - 1}
-          />
-        )
-      })
-      return (
-        <CardComponent
-          key={title + '-' + page}
-          title={title}>
-          {children}
-        </CardComponent>
-      )
-    })
-
-    // setUser(userData)
-    setCards(cardList)
-  }
-
-  useEffect(() => {
-    init().catch(err => console.error(err))
-  }, [])
 
   const onHome = useCallback(() => {
     setActive(EMain.Home)
     renderList()
-  }, [])
+  }, [questionMap, subjects, props.user])
 
   return (
     <div className="main-page">
       {active === EMain.Home &&
-        <CardContainer>
-          {cards}
-          <CardComponent>
-            <CardElement
+        <div className="subjects">
+          {isLoading && <p>loading...</p>}
+          {questionList}
+          <ListComponent>
+            <ListItemButton
               text="start selected"
-              onButtonClick={() => {
-                onStart()
-              }}
+              onButton={() => onStart()}
+              hideIcon={true}
+              rightIcon="🚀"
               isEnable={enableStart}
             />
-          </CardComponent>
-        </CardContainer>
+          </ListComponent>
+        </div>
       }
-      {active === EMain.Preference &&
-        <Preference/>
+      {active === EMain.Settings &&
+        <Settings
+          questions={questionMap}
+          user={props.user}
+          onSave={() => props.onSave()}
+        />
       }
       <MToolsFloat
         onHome={() => onHome()}
-        onSettings={() => setActive(EMain.Preference)}
+        onSettings={() => setActive(EMain.Settings)}
       />
     </div>
   )
