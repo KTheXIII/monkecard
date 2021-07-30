@@ -94,7 +94,7 @@ export const Main: React.FC<IMain> = (props) => {
     for (const id of questionSet) {
       const question = questionMap.get(id)
       if (question)
-        questionToBeUse.push({ ...question })
+        questionToBeUse.push(question)
     }
 
     // FIXME: Move this out of here
@@ -116,8 +116,14 @@ export const Main: React.FC<IMain> = (props) => {
 
     // NOTE: Get the maximum number of questions according to user's
     //       max question per session
-    const questions = sortConfidence
-      .filter((value, index) => index < user.settings.maxQuestions)
+    const questions: IQuestion[] = sortConfidence
+      .filter((_, index) => index < user.settings.maxQuestions)
+      .map(value => {
+        return {
+          ...value,
+          options: value.options.map(op => {return { ...op }})
+        }
+      })
 
     props.onStart({
       start: Date.now(),

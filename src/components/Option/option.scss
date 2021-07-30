@@ -7,6 +7,7 @@
   button.wrong {
     background-color: var(--red) !important;
   }
+
   button.right {
     background-color: var(--green) !important;
   }
@@ -34,12 +35,12 @@
       background-color: var(--bg-2);
     }
   }
-  
+
   button.option-element .button-display {
     display: grid;
     grid-template-columns: 20pt auto;
     text-align: left;
-    
+
     .icon {
       display: grid;
       width: 9pt;

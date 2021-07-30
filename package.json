@@ -1,10 +1,10 @@
 {
   "name": "q-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "KTheXIII",
   "license": "MIT",
   "homepage": "https://quiz.kthexiii.xyz",
-  "description": "Question game in React",
+  "description": "Quiz game built in TypeScript with ReactJS and SnowPack.",
   "repository": "https://github.com/KTheXIII/q-react",
   "private": true,
   "scripts": {

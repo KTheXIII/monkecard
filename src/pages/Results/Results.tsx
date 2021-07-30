@@ -175,6 +175,9 @@ export const Results: React.FC<IResults> = (props) => {
       }
 
       // Store the history data for the user
+      // TODO: Calculate the confidence with the total correct answers.
+      //       For now it only a question only has 2 state (right/wrong).
+      //       So the confidence is always 100% or 0%.
       const stat = user.questions.get(question.source)
       if (stat) {
         stat.history.push({

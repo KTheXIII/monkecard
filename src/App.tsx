@@ -10,7 +10,7 @@ import { Results } from '@pages/Results'
 import * as Download from '@scripts/download'
 import * as User from '@scripts/user'
 
-import { TestPage } from '@pages/TestPage'
+// import { TestPage } from '@pages/TestPage'
 
 import {
   ISession,

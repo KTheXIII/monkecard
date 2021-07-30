@@ -13,7 +13,8 @@
 .question-image {
   max-height: 128pt;
   text-align: center;
-  img, svg {
+  img,
+  svg {
     max-height: inherit;
   }
 }
