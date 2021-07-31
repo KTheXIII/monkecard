@@ -17,3 +17,13 @@
     }
   }
 }
+
+@media only screen and (min-width: 768px) {
+  .question-page {
+    width: 512px;
+    margin: auto;
+    .tools-top {
+      width: inherit;
+    }
+  }
+}

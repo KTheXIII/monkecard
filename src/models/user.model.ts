@@ -6,11 +6,11 @@ export type TKeyDate = { key: string, value: number }
 export type TKeyStat = { key: string, value: IQuestionStat }
 
 export interface IQuestionStat {
-  confidence: number
   history: IHistoryModel[]
 }
 
 export interface IHistoryModel {
+  confidence: number
   correct: boolean
   unix: number
 }

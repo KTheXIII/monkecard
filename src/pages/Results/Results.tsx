@@ -71,7 +71,7 @@ const ResultInfo: React.FC<IResultInfo> = (props) => {
       <div className="info">
         <span>Time: {Timer.format(props.time)}</span>
         <span title="Average time between question">
-          Average: {props.average / 1000} s</span>
+          Average: {(props.average / 1000).toFixed(3)} s</span>
       </div>
       <div className="options">
         <ListComponent>
@@ -160,13 +160,15 @@ export const Results: React.FC<IResults> = (props) => {
     const wrongList: IQuestion[] = []
     let score = 0
     session.questions.forEach((question, index) => {
-      let isCorrect = true
-      for (const opt of question.options) {
-        if (opt.correct !== opt.marked) {
-          isCorrect = false
-          break
-        }
-      }
+      const correct = question.options.reduce(
+        (a, b) => (b.correct ? 1 : 0) + a
+        , 0)
+      const markedCorrect = question.options.reduce(
+        (a, b) => (b.marked ? (b.marked === b.correct ? 1 : -1) : 0) + a
+        , 0)
+      const isCorrect = correct === markedCorrect
+      const confidence = markedCorrect > -1 ? markedCorrect / correct : 0
+
       if (isCorrect) {
         correctList.push(question)
         score++
@@ -175,23 +177,17 @@ export const Results: React.FC<IResults> = (props) => {
       }
 
       // Store the history data for the user
-      // TODO: Calculate the confidence with the total correct answers.
-      //       For now it only a question only has 2 state (right/wrong).
-      //       So the confidence is always 100% or 0%.
       const stat = user.questions.get(question.source)
       if (stat) {
         stat.history.push({
+          confidence,
           correct: isCorrect,
           unix: session.end
         })
-        const correct = stat.history
-          .filter(h => h.correct)
-          .reduce((a) => a + 1, 0)
-        stat.confidence = correct / stat.history.length
       } else {
         user.questions.set(question.source, {
-          confidence: isCorrect ? 1 : 0,
           history: [{
+            confidence,
             correct: isCorrect,
             unix: session.end
           }]

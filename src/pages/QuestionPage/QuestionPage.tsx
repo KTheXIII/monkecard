@@ -102,7 +102,6 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
 
     const exist = user.saved.has(questions[currentIndex].source)
     setIsBookmark(exist)
-    console.log(currentIndex, exist)
 
     props.onSave(user)
   }, [currentIndex])

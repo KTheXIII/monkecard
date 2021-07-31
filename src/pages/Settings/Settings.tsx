@@ -60,7 +60,7 @@ export const Settings: React.FC<ISettings> = (props) => {
             }}
           />
           <ListItemInputSwitch
-            isEnable={false}
+            isEnable={true}
             text="question/session"
             preview={`${user.settings.maxQuestions}`}
             icon={Hash}

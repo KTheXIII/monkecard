@@ -70,9 +70,11 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
       {!hideIcon && <div className="icon">{props.icon}</div>}
       <div className="container">
         <div className="display">
-          <span className="text">{props.text}</span>
-          <div className="preview">{props.preview}</div>
-          {!props.hideRightIcon && <div className="right-icon">{icon}</div>}
+          <div className="text"><span>{props.text}</span></div>
+          <div className="preview"><span>{props.preview}</span></div>
+          {!props.hideRightIcon && <div className="right-icon">
+            <div>{icon}</div>
+          </div>}
         </div>
       </div>
     </button>
@@ -153,12 +155,19 @@ export const ListItemMark: React.FC<IListItemMark> = (props) => {
   )
 }
 
-interface IListItemInputSwitch extends IListItemButton, IListItemInputText {
+interface IListItemInputSwitch {
+  text: string
   isInput?: boolean
+  preview?: string
+  onConfirm?: (value: string) => void
+  icon?: ReactElement
+  isEnable?: boolean
 }
 
 export const ListItemInputSwitch: React.FC<IListItemInputSwitch> = (props) => {
   const [isInput, setIsInput] = useState(props.isInput || false)
+  const isEnable = props.isEnable !== undefined ? props.isEnable : true
+
   return isInput ?
     <ListItemInputText
       default={props.preview}
@@ -170,11 +179,10 @@ export const ListItemInputSwitch: React.FC<IListItemInputSwitch> = (props) => {
     />
     :
     <ListItemButton
+      isEnable={isEnable}
       icon={props.icon}
       text={props.text}
       preview={props.preview}
-      onButton={() => {
-        setIsInput(true)
-      }}
+      onButton={() => setIsInput(true)}
     />
 }
