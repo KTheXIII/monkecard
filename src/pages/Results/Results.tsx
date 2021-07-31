@@ -184,8 +184,10 @@ export const Results: React.FC<IResults> = (props) => {
           correct: isCorrect,
           unix: session.end
         })
+        stat.confidence = (confidence + stat.confidence) / 2
       } else {
         user.questions.set(question.source, {
+          confidence: confidence,
           history: [{
             confidence,
             correct: isCorrect,
