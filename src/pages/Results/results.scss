@@ -43,3 +43,15 @@
     }
   }
 }
+
+@media only screen and (min-width: 768px) {
+  .results {
+    width: 512px;
+    margin: 0 auto;
+    .result-review {
+      .tools-top {
+        width: 512px;
+      }
+    }
+  }
+}

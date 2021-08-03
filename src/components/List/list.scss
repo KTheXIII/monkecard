@@ -3,7 +3,7 @@
 
   font-size: 11pt;
   $pad-size: 12pt;
-  $icon-size: 10pt;
+  $icon-size: 14px;
 
   .list__header {
     padding: $pad-size;
@@ -56,15 +56,10 @@
       height: 100%;
 
       .icon {
-        padding-left: $pad-size;
         margin: auto;
-        height: $icon-size;
+        padding-left: $pad-size;
         width: $icon-size;
-
-        svg {
-          margin: auto;
-          padding-right: 5pt;
-        }
+        height: $icon-size;
       }
 
       .container {

@@ -18,7 +18,7 @@ export async function YAML<T>(path: string): Promise<T> {
     if (!res.ok) return Promise.reject(`Error fetching file: ${path}`)
 
     const text = await res.text()
-    const data = yaml.load(text) as any
+    const data = yaml.load(text) as TAny
     if (data.version === '0.0.0')
       return Promise.resolve(data)
 

@@ -176,7 +176,7 @@ datas:
       - software-process-improvement
     source: 'DA335A-T20190308Q10'
   - content: |
-      # : Arkitektur: Vilka av följande påståenden gällande arkitektur är korrekta??
+      # Arkitektur: Vilka av följande påståenden gällande arkitektur är korrekta??
     image: null
     options:
       - Den logiska vyn av en arkitektur innebär att bedöma om logiken i koden fungerar.
