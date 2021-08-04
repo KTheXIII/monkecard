@@ -5,7 +5,7 @@ import {
   FloatToolsContainer
 } from './ToolsFloat'
 
-import { FileEarmarkCodeFill, UIRadios } from '@assets/icons'
+import { FileEarmarkCodeFill, UIRadios } from '@assets/BootstrapIcons'
 
 interface IMTools {
   onHome: () => void

@@ -11,7 +11,7 @@ import {
   Circle,
   CheckCircle,
   CheckCircleFill,
-} from '@assets/icons'
+} from '@assets/BootstrapIcons'
 
 import { IQuestion } from '@models/question.model'
 

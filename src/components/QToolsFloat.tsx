@@ -11,7 +11,7 @@ import {
   FlagFill,
   ChevronRight,
   Check2
-} from '@assets/icons'
+} from '@assets/BootstrapIcons'
 
 interface IQToolsFloat {
   onAnswered: () => void

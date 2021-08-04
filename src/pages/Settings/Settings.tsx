@@ -17,8 +17,11 @@ import {
   ClockHistory,
   Palette2,
   Hash,
-  Trash
-} from '@assets/icons'
+  Trash,
+  InfoCircle,
+  Circle,
+  CheckCircle
+} from '@assets/BootstrapIcons'
 
 import { IUser } from '@models/user.model'
 import { TQuestionMap } from '@models/question.model'
@@ -55,7 +58,7 @@ export const Settings: React.FC<ISettings> = (props) => {
             isEnable={false}
             text="change theme"
             preview={user.settings.theme}
-            icon={Palette2}
+            iconL={Palette2}
             onButton={() => {
               // TODO: open theme picker
             }}
@@ -74,19 +77,21 @@ export const Settings: React.FC<ISettings> = (props) => {
           />
           <ListItemMark
             text="show confidence"
-            hideRightIcon={false}
             onMark={(mark) => {
               user.settings.showConfidence = mark
               props.onSave()
             }}
+            icons={[CheckCircle, Circle]}
             preview={user.settings.showConfidence ? 'on' : 'off'}
             isMarked={user.settings.showConfidence}
+            stateLorR={true}
+            icon={InfoCircle}
           />
           <ListItemButton
             isEnable={false}
             text="saved questions"
             preview={`${user.saved.size}`}
-            icon={Bookmarks}
+            iconL={Bookmarks}
             onButton={() => {
               // TODO: open saved questions
               console.log(user.saved)
@@ -96,7 +101,7 @@ export const Settings: React.FC<ISettings> = (props) => {
             isEnable={false}
             text="history"
             preview={`${user.questions.size}`}
-            icon={ClockHistory}
+            iconL={ClockHistory}
             onButton={() => {
               // TODO: The history size needs to be calculated
               //       and displayed in the preview text.
@@ -110,7 +115,7 @@ export const Settings: React.FC<ISettings> = (props) => {
         <ListComponent>
           <ListItemButton
             text="clear history"
-            icon={Trash}
+            iconL={Trash}
             onButton={() => {
               if (confirm('clear all history?')) {
                 user.questions.clear()

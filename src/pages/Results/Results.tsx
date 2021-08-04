@@ -10,7 +10,7 @@ import {
   ChevronRight,
   CheckCircle,
   XCircle,
-} from '@assets/icons'
+} from '@assets/BootstrapIcons'
 import {
   FloatTool,
   FloatToolsContainer
@@ -84,14 +84,14 @@ const ResultInfo: React.FC<IResultInfo> = (props) => {
             preview={`${score}`}
             isEnable={isRightOn}
             onButton={onRight}
-            icon={CheckCircle}
+            iconL={CheckCircle}
           />
           <ListItemButton
             text="wrong answers"
             preview={`${total - score}`}
             isEnable={isWrongOn}
             onButton={onWrong}
-            icon={XCircle}
+            iconL={XCircle}
           />
         </ListComponent>
       </div>

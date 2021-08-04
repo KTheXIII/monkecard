@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronRight } from '@assets/icons'
+import { ChevronRight } from '@assets/BootstrapIcons'
 
 import {
   ListComponent,
@@ -9,7 +9,7 @@ import {
   ListItemMark,
   ListItemInputSwitch
 } from '@components/List'
-import { Palette2 } from '@assets/icons'
+import { Palette2 } from '@assets/BootstrapIcons'
 
 import './test-page.scss'
 
@@ -20,13 +20,13 @@ export const TestPage: React.FC = (props) => {
         <ListComponent header="Test list">
           <ListItemInputText placeholder="hmmm" />
           <ListItemText text="Hello World!"/>
-          <ListItemButton hideIcon={false} text="Hello There" />
+          <ListItemButton hideIconL={false} text="Hello There" />
           <ListItemButton
-            icon={Palette2}
+            iconL={Palette2}
             text="Hello Thef"
-            hideRightIcon={true}
+            hideIconR={true}
             preview="well hello there"
-            rightIcon={ChevronRight} />
+            iconR={ChevronRight} />
           <ListItemInputText default="Test" />
           <ListItemMark
             text="Mark me"

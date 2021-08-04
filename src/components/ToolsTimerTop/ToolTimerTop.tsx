@@ -5,7 +5,7 @@ import {
   BookmarkCheckFill,
   ChevronLeft,
   Stopwatch
-} from '@assets/icons'
+} from '@assets/BootstrapIcons'
 import { ToolsTop } from '@components/ToolsTop'
 import * as Timer from '@scripts/timer'
 

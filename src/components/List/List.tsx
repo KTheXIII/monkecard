@@ -10,7 +10,7 @@ import {
   Circle,
   CircleFill,
   XCircle
-} from '@assets/icons'
+} from '@assets/BootstrapIcons'
 
 interface IListComponent {
   header?: string
@@ -51,29 +51,38 @@ export const ListItemText: React.FC<IListItem> = (props) => {
   )
 }
 
-interface IListItemButton extends IListItem {
+interface IListItemButton {
+  text: string
   preview?: string
-  rightIcon?: ReactElement | string
   onButton?: () => void
   isEnable?: boolean
+
+  iconL?: ReactElement
+  iconR?: ReactElement
+  hideIconL?: boolean
+  hideIconR?: boolean
 }
 
 export const ListItemButton: React.FC<IListItemButton> = (props) => {
-  const hideIcon = props.hideIcon || false
-  const icon = props.rightIcon || ChevronRight
+  const hideIconL = props.hideIconL || false
+  const hideIconR = props.hideIconR || false
+
+  const iconL = props.iconL
+  const iconR = props.iconR || ChevronRight
+
   const isEnable = props.isEnable !== undefined ? props.isEnable : true
   return (
     <button
       disabled={!isEnable}
       className="list__item"
       onClick={props.onButton}>
-      {!hideIcon && <div className="icon">{props.icon}</div>}
+      {!hideIconL && <div className="icon">{iconL}</div>}
       <div className="container">
         <div className="display">
           <div className="text"><span>{props.text}</span></div>
           <div className="preview"><span>{props.preview}</span></div>
-          {!props.hideRightIcon && <div className="right-icon">
-            <div>{icon}</div>
+          {!hideIconR && <div className="right-icon">
+            <div>{iconR}</div>
           </div>}
         </div>
       </div>
@@ -130,27 +139,36 @@ export const ListItemInputText: React.FC<IListItemInputText> = (props) => {
   )
 }
 
-interface IListItemMark extends IListItem {
+interface IListItemMark {
+  text: string
   preview?: string
   isMarked: boolean
   onMark: (mark: boolean) => void
-  icons?: [ReactElement, ReactElement]
+
+  stateLorR?: boolean                   // false: left, true: right
+  icons?: [ReactElement, ReactElement]  // [ON, OFF]
+  icon?: ReactElement
+  hideIconL?: boolean
+  hideIconR?: boolean
 }
 
 export const ListItemMark: React.FC<IListItemMark> = (props) => {
   const [isMarked, setIsMarked] = useState(props.isMarked || false)
   const [ON, OFF] = props.icons || [CircleFill, Circle]
+  const lor = props.stateLorR || false
   return (
     <ListItemButton
+      text={props.text}
+      preview={props.preview}
+      iconL={!lor ? isMarked ? ON : OFF : props.icon}
+      hideIconL={props.hideIconL}
+      iconR={lor ? isMarked ? ON : OFF : props.icon}
+      hideIconR={props.hideIconR}
       onButton={() => {
         const mark = !isMarked
         setIsMarked(mark)
         props.onMark(mark)
       }}
-      preview={props.preview}
-      hideRightIcon={props.hideRightIcon}
-      text={props.text}
-      icon={isMarked ? ON : OFF}
     />
   )
 }
@@ -180,7 +198,7 @@ export const ListItemInputSwitch: React.FC<IListItemInputSwitch> = (props) => {
     :
     <ListItemButton
       isEnable={isEnable}
-      icon={props.icon}
+      iconL={props.icon}
       text={props.text}
       preview={props.preview}
       onButton={() => setIsInput(true)}

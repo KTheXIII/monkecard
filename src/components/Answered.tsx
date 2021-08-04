@@ -8,7 +8,7 @@ import {
   OptionElement,
   OptionContainer
 } from './Option'
-import { Flag, FlagFill } from '@assets/icons'
+import { Flag, FlagFill } from '@assets/BootstrapIcons'
 
 import { IQuestion } from '@models/question.model'
 
