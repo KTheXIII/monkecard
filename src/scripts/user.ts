@@ -19,7 +19,8 @@ export function of(username = 'some-user'): IUser {
     questions: new Map<string, IQuestionStat>(),
     settings: {
       theme: 'auto-theme',
-      maxQuestions: 5
+      maxQuestions: 5,
+      showConfidence: false
     }
   }
 }
@@ -48,7 +49,8 @@ export async function request(): Promise<IUser> {
       saved: savedMap,
       settings: {
         theme: userParsed.settings.theme,
-        maxQuestions: userParsed.settings.maxQuestions
+        maxQuestions: userParsed.settings.maxQuestions,
+        showConfidence: userParsed.settings.showConfidence
       }
     })
   }

@@ -8,7 +8,8 @@ import {
 import {
   ListComponent,
   ListItemInputSwitch,
-  ListItemButton
+  ListItemButton,
+  ListItemMark
 } from '@components/List'
 import {
   Bookmarks,
@@ -70,6 +71,16 @@ export const Settings: React.FC<ISettings> = (props) => {
                 props.onSave()
               }
             }}
+          />
+          <ListItemMark
+            text="show confidence"
+            hideRightIcon={false}
+            onMark={(mark) => {
+              user.settings.showConfidence = mark
+              props.onSave()
+            }}
+            preview={user.settings.showConfidence ? 'on' : 'off'}
+            isMarked={user.settings.showConfidence}
           />
           <ListItemButton
             isEnable={false}

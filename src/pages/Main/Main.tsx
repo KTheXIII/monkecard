@@ -51,11 +51,18 @@ export const Main: React.FC<IMain> = (props) => {
     const questionList = subjects.map((value, page) => {
       const { title, categories } = value
       const children = categories.map((value, index) => {
+        const confidence = value.questions
+          .reduce((a, c) => {
+            const uq = props.user.questions.get(c)
+            return uq ? a + uq.confidence : a
+          }, 0) / value.questions.length
+        const preview = props.user.settings.showConfidence ?
+          `${confidence.toFixed(2)}` : `${value.questions.length}`
         return (
           <ListItemMark
             key={value.id + '-' + index}
             text={value.name || value.id}
-            preview={`${value.questions.length}`}
+            preview={preview}
             onMark={(mark) => onMark(page, index, mark)}
             isMarked={categorySet.has(value)}
             hideRightIcon={true}
