@@ -1,6 +1,7 @@
 import React, {
   useState,
   ReactElement,
+  forwardRef,
   useRef,
   useEffect,
   useCallback
@@ -55,10 +56,12 @@ interface IListItemButton {
   text: string
   preview?: string
   onButton?: () => void
+  onMouseEnter?: () => void
   isEnable?: boolean
 
   iconL?: ReactElement
   iconR?: ReactElement
+  iconEmptyR?: boolean
   hideIconL?: boolean
   hideIconR?: boolean
 }
@@ -68,13 +71,14 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
   const hideIconR = props.hideIconR || false
 
   const iconL = props.iconL
-  const iconR = props.iconR || ChevronRight
-
+  const iconR = props.iconEmptyR  ? undefined : props.iconR || ChevronRight
   const isEnable = props.isEnable !== undefined ? props.isEnable : true
+
   return (
     <button
       disabled={!isEnable}
       className="list__item"
+      onMouseEnter={props.onMouseEnter}
       onClick={props.onButton}>
       {!hideIconL && <div className="icon">{iconL}</div>}
       <div className="container">
@@ -82,7 +86,7 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
           <div className="text"><span>{props.text}</span></div>
           <div className="preview"><span>{props.preview}</span></div>
           {!hideIconR && <div className="right-icon">
-            <div>{iconR}</div>
+            {iconR}
           </div>}
         </div>
       </div>

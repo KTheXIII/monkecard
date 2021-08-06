@@ -5,23 +5,11 @@
   height: 100%;
   width: 100%;
 
-  .settings-content {
+  .general {
     display: flex;
     flex-direction: column;
     gap: 16pt;
     padding: 1.2rem;
-
-    .user-info {
-      padding-top: 2rem;
-      padding-bottom: 3rem;
-
-      display: flex;
-      .username {
-        margin: auto;
-        font-size: 1.8rem;
-        overflow: scroll;
-      }
-    }
   }
 
   .overlay {
@@ -30,7 +18,9 @@
 
   .app-info {
     margin: auto;
-    margin-bottom: 8rem;
+    margin-bottom: 0;
+    // margin-bottom: 16rem;
+    padding-bottom: 8rem;
     display: flex;
     gap: 10pt;
 

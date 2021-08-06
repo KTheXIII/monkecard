@@ -21,6 +21,16 @@ export const TestPage: React.FC = (props) => {
           <ListItemInputText placeholder="hmmm" />
           <ListItemText text="Hello World!"/>
           <ListItemButton hideIconL={false} text="Hello There" />
+          <ListItemButton hideIconL={false} text="Hello There"
+            preview="wowoowwo"
+          />
+          <ListItemButton
+            hideIconL={true}
+            isEnable={false}
+            iconEmptyR={true}
+            text="Hello There"
+            preview="wow"
+          />
           <ListItemButton
             iconL={Palette2}
             text="Hello Thef"

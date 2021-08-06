@@ -10,7 +10,7 @@ import { Results } from '@pages/Results'
 import * as Download from '@scripts/download'
 import * as User from '@scripts/user'
 
-// import { TestPage } from '@pages/TestPage'
+import { TestPage } from '@pages/TestPage'
 
 import {
   ISession,
@@ -21,6 +21,7 @@ import {
 import { IUser } from '@models/user.model'
 
 import './app.scss'
+import { setTheme } from '@scripts/theme'
 
 enum EPages {
   Main,
@@ -56,6 +57,8 @@ export const App: React.FC = () => {
     try {
       const user = await User.request()
       User.save(user)
+      setTheme('auto-theme', user.settings.theme)
+
       const files = await Download.files()
       const subjects = await Download.subjects(files)
       const questions = await Download.questions(subjects)

@@ -5,7 +5,7 @@ import {
   FloatToolsContainer
 } from './ToolsFloat'
 
-import { FileEarmarkCodeFill, UIRadios } from '@assets/BootstrapIcons'
+import { FileEarmarkCodeFill, MenuButtonWideFill } from '@assets/BootstrapIcons'
 
 interface IMTools {
   onHome: () => void
@@ -23,7 +23,7 @@ export const MToolsFloat: React.FC<IMTools> = (props) => {
       <FloatTool
         onButtonClick={() => props.onSettings()}
         title="more settings"
-        icon={UIRadios}
+        icon={MenuButtonWideFill}
         text="more"
       />
     </FloatToolsContainer>

@@ -6,16 +6,18 @@
 
   button.wrong {
     background-color: var(--red) !important;
+    color: white !important;
   }
 
   button.right {
     background-color: var(--green) !important;
+    color: white !important;
   }
 
   button.option-element {
     color: inherit;
     border: none;
-    background-color: var(--bg-1);
+    background-color: var(--bg1);
     border-radius: 5pt;
     cursor: pointer;
     padding: 12pt;
@@ -28,11 +30,11 @@
 
     &:disabled:disabled {
       cursor: default;
-      background-color: var(--bg-1);
+      background-color: var(--bg1);
     }
 
     &:hover {
-      background-color: var(--bg-2);
+      background-color: var(--bg2);
     }
   }
 

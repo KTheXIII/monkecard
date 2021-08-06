@@ -65,7 +65,8 @@ export const Main: React.FC<IMain> = (props) => {
             preview={preview}
             onMark={(mark) => onMark(page, index, mark)}
             isMarked={categorySet.has(value)}
-            hideIconR={true}
+            stateLorR={true}
+            hideIconL={true}
           />
         )
       })
@@ -164,6 +165,7 @@ export const Main: React.FC<IMain> = (props) => {
             <ListItemButton
               text="start selected"
               onButton={() => onStart()}
+              hideIconL={true}
               hideIconR={true}
               isEnable={enableStart}
             />
