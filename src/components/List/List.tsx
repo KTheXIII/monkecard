@@ -1,7 +1,6 @@
 import React, {
   useState,
   ReactElement,
-  forwardRef,
   useRef,
   useEffect,
   useCallback

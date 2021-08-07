@@ -42,10 +42,10 @@ export const Theme: React.FC<ITheme> = (props) => {
   useEffect(() => {
     document.body.className = user.settings.theme
     document.addEventListener('mousedown', onClickOutside)
-    // document.body.style.setProperty('transition', 'all 0.5s ease-in-out')
+    document.body.classList.add('theme-transition')
 
     return () => {
-      // document.body.style.removeProperty('transition')
+      document.body.classList.remove('theme-transition')
       document.body.className = user.settings.theme
       document.removeEventListener('mousedown', onClickOutside)
     }

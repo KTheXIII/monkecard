@@ -1,5 +1,8 @@
+.theme-transition * {
+  transition: color 25ms ease-out, background-color 125ms ease-in;
+}
+
 .theme {
-  background-color: inherit;
   padding: 12pt;
   margin-bottom: 10pt;
   display: grid;

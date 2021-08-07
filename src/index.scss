@@ -6,34 +6,6 @@
   --tools-float-height: 3.5rem;
 }
 
-.auto-theme {
-  --black: #0d0d0d;
-  --bg0: #0f0f0f;
-  --bg1: #1a1a1a;
-  --bg2: #212121;
-  --bg3: #363636;
-  --bg4: #363636;
-  --bg_red: #ff6188;
-  --diff_red: #55393d;
-  --bg_green: #a9dc76;
-  --diff_green: #394634;
-  --bg_blue: #77d5f0;
-  --diff_blue: #354157;
-  --diff_yellow: #4e432f;
-  --fg: #ffffff;
-  --red: #fb617e;
-  --orange: #f89860;
-  --yellow: #edc763;
-  --green: #9ed06c;
-  --blue: #6dcae8;
-  --purple: #bb97ee;
-  --grey: #7e8294;
-  --grey_dim: #5a5a5a;
-
-  --text-color: var(--fg);
-  --text-dim: var(--grey_dim);
-}
-
 html,
 body,
 #root {
@@ -53,37 +25,6 @@ h2 {
 }
 h3 {
   font-size: 1.3rem;
-}
-
-@media (prefers-color-scheme: light) {
-  .auto-theme {
-    --black: #0d0d0d;
-    --bg0: hsl(0, 0%, 96%);
-    --bg1: white;
-    --bg2: #e8e8e8;
-    --bg3: hsl(0, 0%, 94%);
-    --bg4: #b5b5b5;
-
-    --bg_red: #ff6188;
-    --diff_red: #55393d;
-    --bg_green: #a9dc76;
-    --diff_green: #394634;
-    --bg_blue: #77d5f0;
-    --diff_blue: #354157;
-    --diff_yellow: #4e432f;
-    --fg: #ffffff;
-    --red: #fb617e;
-    --orange: #f89860;
-    --yellow: #edc763;
-    --green: #9ed06c;
-    --blue: #6dcae8;
-    --purple: #bb97ee;
-    --grey: #7e8294;
-    --grey_dim: #5a5a5a;
-
-    --text-color: #0f0f0f;
-    --text-dim: #828282;
-  }
 }
 
 .noselect {

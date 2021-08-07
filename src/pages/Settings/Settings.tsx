@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+  forwardRef,
+  useState,
+  useEffect,
+  useImperativeHandle
+} from 'react'
 
 import {
   COMMIT_HASH,
@@ -32,6 +37,10 @@ interface ISettings {
   user: IUser
   questions: TQuestionMap
   onSave: () => void
+}
+
+export interface ISettingsRef {
+  onShow: () => void
 }
 
 enum Sections {
@@ -83,7 +92,7 @@ const General: React.FC<IGeneral> = (props) => {
             props.onSave()
           }}
           icons={[CheckCircle, Circle]}
-          preview={user.settings.showConfidence ? 'on' : 'off'}
+          preview={user.settings.showConfidence ? 'true' : 'false'}
           isMarked={user.settings.showConfidence}
           stateLorR={true}
           icon={InfoCircle}
@@ -129,20 +138,18 @@ const General: React.FC<IGeneral> = (props) => {
   )
 }
 
-export const Settings: React.FC<ISettings> = (props) => {
+export const Settings = forwardRef<ISettingsRef, ISettings>((props, ref) => {
   const [section, setSection] = useState(Sections.General)
+
+  useImperativeHandle(ref, () => ({
+    onShow: () => {
+      setSection(Sections.General)
+    }
+  }))
 
   useEffect(() => {
     props.onSave()
   }, [])
-
-  // return (
-  //   <div className="settings">
-  //     <div className="settings-content">
-  //       <Theme onSave={props.onSave} user={props.user} />
-  //     </div>
-  //   </div>
-  // )
 
   return (
     <div className="settings">
@@ -175,4 +182,4 @@ export const Settings: React.FC<ISettings> = (props) => {
       </div>
     </div>
   )
-}
+})

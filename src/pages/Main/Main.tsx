@@ -2,7 +2,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  ReactElement
+  ReactElement,
+  useRef
 } from 'react'
 
 import { MToolsFloat } from '@components/MToolsFloat'
@@ -11,7 +12,7 @@ import {
   ListItemMark,
   ListItemButton
 } from '@components/List'
-import { Settings } from '@pages/Settings'
+import { Settings, ISettingsRef } from '@pages/Settings'
 
 import { IUser } from '@models/user.model'
 import {
@@ -36,7 +37,11 @@ interface IMain {
   subjects: ISubject[]
 }
 
+// Global state to the main component
+const categorySet = new Set<ICategory>()
+
 export const Main: React.FC<IMain> = (props) => {
+  const settingsRef = useRef<ISettingsRef>(null)
   const [active, setActive] = useState<EMain>(EMain.Home)
   const [questionList, setQuestionList] = useState<ReactElement[]>([])
   const [enableStart, setEnableStart] = useState<boolean>(false)
@@ -44,7 +49,6 @@ export const Main: React.FC<IMain> = (props) => {
   const { isLoading } = props
   const [subjects, setSubjects] = useState<ISubject[]>(props.subjects)
   const [questionMap, setQuestionMap] = useState<TQuestionMap>(props.questions)
-  const categorySet = new Set<ICategory>()
 
   function renderList() {
     // Generate card component with subject ids or name
@@ -87,6 +91,7 @@ export const Main: React.FC<IMain> = (props) => {
     setQuestionMap(props.questions)
     renderList()
 
+    setEnableStart(categorySet.size > 0)
   }, [isLoading, props.questions, props.subjects])
 
   const onStart = useCallback(() => {
@@ -174,6 +179,7 @@ export const Main: React.FC<IMain> = (props) => {
       }
       {active === EMain.Settings &&
         <Settings
+          ref={settingsRef}
           questions={questionMap}
           user={props.user}
           onSave={() => props.onSave()}
@@ -181,7 +187,10 @@ export const Main: React.FC<IMain> = (props) => {
       }
       <MToolsFloat
         onHome={() => onHome()}
-        onSettings={() => setActive(EMain.Settings)}
+        onSettings={() => {
+          setActive(EMain.Settings)
+          settingsRef.current?.onShow()
+        }}
       />
     </div>
   )
