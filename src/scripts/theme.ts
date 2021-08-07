@@ -1,7 +1,12 @@
 export const DEFAULT_THEME = 'auto-theme'
 export const THEME_LIST = [
   DEFAULT_THEME,
-  'sonokai-andromeda-theme'
+  'sonokai-andromeda-theme',
+  'sonokai-default-theme',
+  'sonokai-shusia-theme',
+  'sonokai-atlantis-theme',
+  'sonokai-espresso-theme',
+  'nord-dark-theme'
 ]
 
 export function setTheme(current: string, theme: string): void {
