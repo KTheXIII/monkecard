@@ -77,7 +77,6 @@
           display: flex;
           margin: auto;
           width: 100%;
-          gap: 10pt;
 
           .text {
             font-size: inherit;
@@ -96,9 +95,10 @@
             word-break: break-all;
           }
 
-          .right-icon {
+          .icon-r {
             display: grid;
             width: 14px;
+            padding-left: 10pt;
             svg {
               margin: auto;
               width: inherit;
@@ -112,7 +112,6 @@
         display: flex;
         padding-right: 5pt;
         padding-left: 5pt;
-        gap: 5pt;
 
         .cancel {
           color: var(--red);
@@ -120,6 +119,10 @@
 
         .confirm {
           color: var(--green);
+        }
+
+        > :first-child {
+          margin-right: 5pt;
         }
 
         button {

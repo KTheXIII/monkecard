@@ -3,8 +3,7 @@
 
   .subjects {
     padding: 12pt;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 12pt;
     padding-bottom: 8rem;
   }

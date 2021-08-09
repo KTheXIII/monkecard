@@ -110,7 +110,7 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
         <div className="display">
           <div className="text"><span>{props.text}</span></div>
           <div className="preview"><span>{props.preview}</span></div>
-          {!hideIconR && <div className="right-icon">
+          {!hideIconR && <div className="icon-r">
             {iconR}
           </div>}
         </div>

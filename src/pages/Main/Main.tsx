@@ -190,7 +190,8 @@ export const Main: React.FC<IMain> = (props) => {
         onHome={() => onHome()}
         onSettings={() => {
           setActive(EMain.Settings)
-          settingsRef.current?.onShow()
+          if (settingsRef.current)
+            settingsRef.current.onShow()
         }}
       />
     </div>

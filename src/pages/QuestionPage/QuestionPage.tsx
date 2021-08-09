@@ -84,7 +84,8 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
       })
 
     if (answered.length === 0 && answered.length !== ids.length) return
-    container.current?.style.setProperty('overflow', 'hidden')
+    if (container.current)
+      container.current.style.setProperty('overflow', 'hidden')
     setAnsweredList(answered)
     setShowAnswered(true)
   }, [currentIndex])
@@ -123,7 +124,8 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
     setShowAnswered(false)
     setQuestion(index)
     currentIndex = index
-    container.current?.style.setProperty('overflow', 'auto')
+    if (container.current)
+      container.current.style.setProperty('overflow', 'auto')
   }, [currentIndex])
 
   return (
@@ -141,7 +143,8 @@ export const QuestionPage: React.FC<IQuestionPage> = (props) => {
       {showAnswered && <Answered
         onCancel={() => {
           setShowAnswered(false)
-          container.current?.style.setProperty('overflow', 'auto')
+          if (container.current)
+            container.current.style.setProperty('overflow', 'auto')
         }}
         onClick={onSelectQuestion}
         questionList={answeredList}
