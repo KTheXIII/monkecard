@@ -14,7 +14,8 @@ import {
   ListComponent,
   ListItemInputSwitch,
   ListItemButton,
-  ListItemMark
+  ListItemMark,
+  ListItemInputFile
 } from '@components/List'
 import {
   Bookmarks,
@@ -25,10 +26,15 @@ import {
   Trash,
   InfoCircle,
   Circle,
-  CheckCircle
+  CheckCircle,
+  Download,
+  Upload
 } from '@assets/BootstrapIcons'
 
 import { Theme } from '@pages/Theme'
+
+import { APP_NAME } from '@scripts/config'
+import * as User from '@scripts/user'
 
 import { IUser } from '@models/user.model'
 import { TQuestionMap } from '@models/question.model'
@@ -36,7 +42,7 @@ import { TQuestionMap } from '@models/question.model'
 interface ISettings {
   user: IUser
   questions: TQuestionMap
-  onSave: () => void
+  onSave: (user: IUser) => void
 }
 
 export interface ISettingsRef {
@@ -52,6 +58,17 @@ interface IGeneral extends ISettings {
   onTheme: () => void
 }
 
+function saveJSON(filename: string, json: string) {
+  const e = document.createElement('a')
+  e.setAttribute('href',
+    'data:text/json;charset=utf-8,' + encodeURIComponent(json))
+  e.setAttribute('download', filename + '.json')
+  e.style.display = 'none'
+  document.body.appendChild(e)
+  e.click()
+  document.body.removeChild(e)
+}
+
 const General: React.FC<IGeneral> = (props) => {
   const { user } = props
 
@@ -64,7 +81,7 @@ const General: React.FC<IGeneral> = (props) => {
           preview={user.name}
           onConfirm={(value) => {
             user.name = value
-            props.onSave()
+            props.onSave(user)
           }}/>
         <ListItemButton
           isEnable={true}
@@ -81,7 +98,7 @@ const General: React.FC<IGeneral> = (props) => {
           onConfirm={(value) => {
             if (!isNaN(parseInt(value))) {
               user.settings.maxQuestions = parseInt(value)
-              props.onSave()
+              props.onSave(user)
             }
           }}
         />
@@ -89,7 +106,7 @@ const General: React.FC<IGeneral> = (props) => {
           text="show confidence"
           onMark={(mark) => {
             user.settings.showConfidence = mark
-            props.onSave()
+            props.onSave(user)
           }}
           icons={[CheckCircle, Circle]}
           preview={user.settings.showConfidence ? 'true' : 'false'}
@@ -124,12 +141,43 @@ const General: React.FC<IGeneral> = (props) => {
       </ListComponent>
       <ListComponent>
         <ListItemButton
+          text="download data"
+          title="download user data"
+          iconL={Download}
+          onButton={() => {
+            const filename =
+              `${APP_NAME}-${user.name.replaceAll(/[^A-z0-9]/g, '-')}`
+            saveJSON(filename, JSON.stringify(User.toJSON(user)))
+          }}
+        />
+        <ListItemInputFile
+          iconL={Upload}
+          accept="application/JSON"
+          onChange={(ie) => {
+            const input = ie.target as HTMLInputElement
+            if (input.files) {
+              if (!input.files.length) return
+              const reader = new FileReader()
+              reader.onload = (e) => {
+                if (e.target && e.target.result) {
+                  // TODO: Show user that the action is irreversible
+                  const json = e.target.result.toString()
+                  const user = User.loadUser(User.loadJSON(json))
+                  props.onSave(user)
+                }
+              }
+              reader.readAsText(input.files[0])
+            }
+            ie.preventDefault()
+          }}
+        />
+        <ListItemButton
           text="clear history"
           iconL={Trash}
           onButton={() => {
             if (confirm('clear all history?')) {
               user.questions.clear()
-              props.onSave()
+              props.onSave(user)
             }
           }}
         />
@@ -148,7 +196,7 @@ export const Settings = forwardRef<ISettingsRef, ISettings>((props, ref) => {
   }))
 
   useEffect(() => {
-    props.onSave()
+    props.onSave(props.user)
   }, [])
 
   return (
@@ -167,7 +215,9 @@ export const Settings = forwardRef<ISettingsRef, ISettings>((props, ref) => {
         <Theme onBack={() => {
           setSection(Sections.General)
         }}
-        onSave={props.onSave}
+        onSave={() => {
+          props.onSave(props.user)
+        }}
         user={props.user} />
       }
       <div className="app-info">

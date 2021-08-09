@@ -12,6 +12,7 @@
     background-color: var(--bg1);
     overflow: hidden;
     border-radius: 5pt;
+    display: grid;
 
     button {
       cursor: pointer;
@@ -56,7 +57,10 @@
       width: 100%;
       height: 100%;
 
-      .icon {
+      animation: ListItemEntrance 250ms ease-out;
+      animation-fill-mode: backwards;
+
+      .icon-l {
         margin: auto;
         padding-left: $pad-size;
         width: $icon-size;

@@ -3,7 +3,7 @@ import React, {
   ReactElement,
   useRef,
   useEffect,
-  useCallback
+  useCallback,
 } from 'react'
 import {
   ChevronRight,
@@ -57,6 +57,10 @@ interface IListItemButton {
   onButton?: () => void
   onMouseEnter?: () => void
   isEnable?: boolean
+  title?: string
+
+  onDragOver?: (e: DragEvent) => void
+  onDrop?: (e: DragEvent) => void
 
   iconL?: ReactElement
   iconR?: ReactElement
@@ -66,6 +70,7 @@ interface IListItemButton {
 }
 
 export const ListItemButton: React.FC<IListItemButton> = (props) => {
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const hideIconL = props.hideIconL || false
   const hideIconR = props.hideIconR || false
 
@@ -73,13 +78,34 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
   const iconR = props.iconEmptyR  ? undefined : props.iconR || ChevronRight
   const isEnable = props.isEnable !== undefined ? props.isEnable : true
 
+  useEffect(() => {
+    if (buttonRef.current) {
+      const button = buttonRef.current
+      if (props.onDragOver)
+        button.addEventListener('dragover', props.onDragOver)
+      if (props.onDrop)
+        button.addEventListener('drop', props.onDrop)
+    }
+    return () => {
+      if (buttonRef.current) {
+        const button = buttonRef.current
+        if (props.onDragOver)
+          button.removeEventListener('dragover', props.onDragOver)
+        if (props.onDrop)
+          button.removeEventListener('drop', props.onDrop)
+      }
+    }
+  }, [])
+
   return (
     <button
+      ref={buttonRef}
       disabled={!isEnable}
       className="list__item"
       onMouseEnter={props.onMouseEnter}
-      onClick={props.onButton}>
-      {!hideIconL && <div className="icon">{iconL}</div>}
+      onClick={props.onButton}
+      title={props.title}>
+      {!hideIconL && <div className="icon-l">{iconL}</div>}
       <div className="container">
         <div className="display">
           <div className="text"><span>{props.text}</span></div>
@@ -137,6 +163,39 @@ export const ListItemInputText: React.FC<IListItemInputText> = (props) => {
         <button title="Confirm" className="confirm" onClick={onDone}>
           <div className="icon">{Circle}</div>
         </button>
+      </div>
+    </div>
+  )
+}
+
+interface IListItemInputFile {
+  accept: string
+  onChange: (e: Event) => void
+
+  iconL?: ReactElement
+}
+
+export const ListItemInputFile: React.FC<IListItemInputFile> = (props) => {
+  const inputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.addEventListener('change', props.onChange)
+    }
+    return () => {
+      if (inputRef.current) {
+        inputRef.current.removeEventListener('change', props.onChange)
+      }
+    }
+  }, [])
+
+  return (
+    <div className="list__item">
+      <div className="icon-l">{props.iconL}</div>
+      <div className="container">
+        <input
+          ref={inputRef}
+          type="file" accept={props.accept}
+        />
       </div>
     </div>
   )

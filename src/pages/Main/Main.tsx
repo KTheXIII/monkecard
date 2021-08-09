@@ -30,7 +30,8 @@ enum EMain {
 
 interface IMain {
   onStart: (session: ISession) => void
-  onSave: () => void
+  onSave: (user: IUser) => void
+
   isLoading: boolean
   user: IUser
   questions: TQuestionMap
@@ -182,7 +183,7 @@ export const Main: React.FC<IMain> = (props) => {
           ref={settingsRef}
           questions={questionMap}
           user={props.user}
-          onSave={() => props.onSave()}
+          onSave={props.onSave}
         />
       }
       <MToolsFloat

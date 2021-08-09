@@ -1,5 +1,6 @@
 import.meta.env
 
+export const APP_NAME       = __SNOWPACK_ENV__.APP_NAME
 export const VERSION        = __SNOWPACK_ENV__.VERSION
 export const FILES_URL      = __SNOWPACK_ENV__.FILES_URL
 export const COMMIT_HASH    = __SNOWPACK_ENV__.COMMIT_HASH

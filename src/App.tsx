@@ -74,9 +74,10 @@ export const App: React.FC = () => {
     }
   }
 
-  const save = useCallback(async ()  => {
+  const save = useCallback(async (newUser)  => {
     try {
-      const savedUser = await User.save(user)
+      const savedUser = await User.save(newUser)
+      setTheme(user.settings.theme, savedUser.settings.theme)
       setUser(savedUser)
       return Promise.resolve()
     } catch (err) {
@@ -105,7 +106,9 @@ export const App: React.FC = () => {
             console.log(session)
             setActive(EPages.Question)
           }}
-          onSave={save}
+          onSave={user => {
+            save(user)
+          }}
           isLoading={isLoading}
           user={user}
           subjects={subjects}
@@ -115,8 +118,7 @@ export const App: React.FC = () => {
       {active == EPages.Question &&
         <QuestionPage
           onSave={(user) => {
-            setUser(user)
-            save()
+            save(user)
           }}
           user={user}
           session={currentSession}
@@ -132,7 +134,9 @@ export const App: React.FC = () => {
       {active == EPages.Results &&
         <Results
           user={user}
-          onSave={save}
+          onSave={() => {
+            save(user)
+          }}
           onBack={() => setActive(EPages.Main)}
           session={currentSession}
         />
