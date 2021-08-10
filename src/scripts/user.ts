@@ -39,8 +39,9 @@ export function loadJSON(json: string): IUserJSON {
                               || user.settings.theme
     settings.maxQuestions   = data.settings.maxQuestions
                               || user.settings.maxQuestions
-    settings.showConfidence = data.settings.showConfidence
-                              || user.settings.showConfidence
+    settings.showConfidence = data.settings.showConfidence === undefined
+      ? user.settings.showConfidence
+      : data.settings.showConfidence
   } catch (e) {
     console.error(e)
   }
