@@ -34,7 +34,7 @@ export async function subjects(files: string[]): Promise<ISubject[]> {
         files
       })
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -93,7 +93,7 @@ export async function questions(subjects: ISubject[]): Promise<TQuestionMap> {
         }
       }
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
   return map

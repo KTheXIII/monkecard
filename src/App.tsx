@@ -66,7 +66,7 @@ export const App: React.FC = () => {
       setUser(user)
       setSubjects(subjects)
       setQuestions(questions)
-      console.log(user)
+      // console.log(user)
 
       return Promise.resolve()
     } catch (err) {

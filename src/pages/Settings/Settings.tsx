@@ -215,9 +215,7 @@ export const Settings = forwardRef<ISettingsRef, ISettings>((props, ref) => {
         <Theme onBack={() => {
           setSection(Sections.General)
         }}
-        onSave={() => {
-          props.onSave(props.user)
-        }}
+        onSave={() => props.onSave(props.user)}
         user={props.user} />
       }
       <div className="app-info">

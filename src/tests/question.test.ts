@@ -1,7 +1,8 @@
 import { assert, expect } from 'chai'
 import * as io from 'io-ts'
 import { PathReporter } from 'io-ts/PathReporter'
-import { isRight } from 'fp-ts/These'
+import { isRight, fold } from 'fp-ts/These'
+import { pipe } from 'fp-ts/function'
 
 import { IYAMLRawQuestion } from '@models/yaml.model'
 import * as Download from '@scripts/download'
@@ -47,6 +48,20 @@ const QuestionFile = io.type({
   }))
 })
 
+const QuestionFileOverview = io.type({
+  version: io.string,
+  datas: io.UnknownArray
+})
+
+const QuestionData = io.type({
+  content: io.string,
+  image: io.unknown,
+  options: io.array(io.string),
+  correct: io.array(io.number),
+  categories: io.array(io.string),
+  source: io.string
+})
+
 describe('Test question files', () => {
   it('Fetch root file', async () => {
     const files = await Download.files()
@@ -90,13 +105,30 @@ describe('Test question files', () => {
       for (const question of subject.files) {
         const path = subject.info.root + question
         const questionFile = await Request.questions(path)
-        const decodeValue = QuestionFile.decode(questionFile)
+        const questionValue = QuestionFileOverview.decode(questionFile)
+        // const decodeValue = QuestionFile.decode(questionFile)
 
-        expect(
-          isRight(decodeValue),
-          `Question file "${question}" is not in correct format:
-          ${PathReporter.report(decodeValue)}`
-        ).true
+        const datas = pipe(QuestionFileOverview.decode(questionFile), fold(
+          errs => {
+            expect(true,
+              `Question File ${question} is not in correct format`
+            ).false
+            return []
+          },
+          a => a.datas,
+          b => []
+        ))
+
+        expect(datas).to.not.be.empty
+
+        datas.forEach((data, index) => {
+          const question = QuestionData.decode(data)
+          expect(
+            isRight(question),
+            `Question ${index + 1} is not in correct format:
+            ${PathReporter.report(question)}`
+          ).true
+        })
       }
     }
   })

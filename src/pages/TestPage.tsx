@@ -41,13 +41,13 @@ export const TestPage: React.FC = (props) => {
           <ListItemMark
             text="Mark me"
             isMarked={false} onMark={(mark) => {
-              console.log(mark)
+              // console.log(mark)
             }} />
           <ListItemInputSwitch
             text="edit"
             preview="wow"
             onConfirm={(value) => {
-              console.log(value)
+              // console.log(value)
             }}
           />
         </ListComponent>

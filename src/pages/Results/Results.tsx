@@ -113,7 +113,7 @@ const ResultReview: React.FC<IResultReview> = (props) => {
     const tmp = (index + inc) % list.length
     const i = tmp > -1 ? tmp : 0
     setIndex(i)
-    console.log(i)
+    // console.log(i)
     setCurrent(list[i])
   }, [index])
 
