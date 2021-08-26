@@ -103,11 +103,13 @@ export const Main: React.FC<IMain> = (props) => {
             </ListItemRaw>
             {value.showCategory && value.categories
               .map((cat, index) => {
+                // FIXME: The category list generation needs to rework because
+                //        this is  repeated in the subject info.
                 const confidence = cat.questions
                   .reduce((a, c) => {
                     const uc = props.user.questions.get(c)
                     return uc ? a + uc.confidence : a
-                  }, 0)
+                  }, 0) / cat.questions.length
 
                 const preview = props.user.settings.showConfidence ?
                   `${confidence.toFixed(2)}` : `${cat.questions.length}`
