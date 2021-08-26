@@ -36,18 +36,6 @@ const SubjectFile = io.type({
 // image object is not check for type-safety
 // since I don't know how to do it with io-ts.
 // The image object is optional and the alt attribute is not required.
-const QuestionFile = io.type({
-  version: io.string,
-  datas: io.array(io.type({
-    content: io.string,
-    image: io.unknown,
-    options: io.array(io.string),
-    correct: io.array(io.number),
-    categories: io.array(io.string),
-    source: io.string
-  }))
-})
-
 const QuestionFileOverview = io.type({
   version: io.string,
   datas: io.UnknownArray
@@ -102,10 +90,14 @@ describe('Test question files', () => {
     const files = await Download.files()
     for (const file of files) {
       const subject = await Request.subject(file)
+      expect(subject.files.length,
+        `No questions found on subject: ${file}`)
+        .greaterThan(0)
+
       for (const question of subject.files) {
         const path = subject.info.root + question
         const questionFile = await Request.questions(path)
-        const questionValue = QuestionFileOverview.decode(questionFile)
+        // const questionValue = QuestionFileOverview.decode(questionFile)
         // const decodeValue = QuestionFile.decode(questionFile)
 
         const datas = pipe(QuestionFileOverview.decode(questionFile), fold(

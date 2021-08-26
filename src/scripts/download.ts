@@ -30,6 +30,8 @@ export async function subjects(files: string[]): Promise<ISubject[]> {
 
       list.push({
         title,
+        showCategory: false,
+        selected: new Set<ICategory>(),
         categories,
         files
       })

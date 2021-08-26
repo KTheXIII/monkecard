@@ -1,8 +1,31 @@
+$pad-size: 12pt;
+$icon-size: 14px;
+
+.list__container {
+  .container__header {
+    padding: $pad-size;
+  }
+
+  .container__body {
+    display: grid;
+    gap: 12pt;
+
+    .container__empty {
+      display: grid;
+      padding: $pad-size;
+      color: var(--text-dim);
+      font-size: 16pt;
+
+      > * {
+        margin: auto;
+      }
+    }
+  }
+}
+
 .list__component {
   background-color: inherit;
   font-size: 11pt;
-  $pad-size: 12pt;
-  $icon-size: 14px;
 
   .list__header {
     padding: $pad-size;
@@ -60,6 +83,11 @@
       animation: ListItemEntrance 250ms ease-out;
       animation-fill-mode: backwards;
 
+      .raw {
+        padding: $pad-size;
+        width: 100%;
+      }
+
       .icon-l {
         margin: auto;
         padding-left: $pad-size;
@@ -90,6 +118,7 @@
             margin-left: auto;
             max-height: 12pt;
             max-width: 30%;
+            min-width: 15%;
             color: var(--text-dim);
             overflow: hidden;
             word-break: break-all;
@@ -155,6 +184,7 @@
       &:not(:last-child) {
         .container,
         input[type="text"],
+        .raw,
         .options {
           border-bottom: 1px solid var(--bg0);
         }

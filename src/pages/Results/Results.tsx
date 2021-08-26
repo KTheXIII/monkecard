@@ -29,7 +29,7 @@ import { IUser } from '@models/user.model'
 interface IResults {
   session: ISession
   user: IUser
-  onSave: () => void
+  onSave: (user: IUser) => void
   onBack: () => void
 }
 
@@ -77,20 +77,20 @@ const ResultInfo: React.FC<IResultInfo> = (props) => {
         <ListComponent>
           <ListItemButton
             text="all answers"
-            onButton={onAll}
+            onClick={onAll}
           />
           <ListItemButton
             text="right answers"
             preview={`${score}`}
             isEnable={isRightOn}
-            onButton={onRight}
+            onClick={onRight}
             iconL={CheckCircle}
           />
           <ListItemButton
             text="wrong answers"
             preview={`${total - score}`}
             isEnable={isWrongOn}
-            onButton={onWrong}
+            onClick={onWrong}
             iconL={XCircle}
           />
         </ListComponent>
@@ -133,7 +133,7 @@ const ResultReview: React.FC<IResultReview> = (props) => {
         <FloatTool
           icon={FileEarmarkCodeFill}
           text="result"
-          onButtonClick={onBack}/>
+          onButtonClick={onBack} />
         <FloatTool
           icon={ChevronRight}
           isRight={true}
@@ -162,12 +162,15 @@ export const Results: React.FC<IResults> = (props) => {
     session.questions.forEach((question, index) => {
       const correct = question.options.reduce(
         (a, b) => (b.correct ? 1 : 0) + a
-        , 0)
+        , 1)
+
       const markedCorrect = question.options.reduce(
         (a, b) => (b.marked ? (b.marked === b.correct ? 1 : -1) : 0) + a
         , 0)
+
       const isCorrect = correct === markedCorrect
-      const confidence = markedCorrect > -1 ? markedCorrect / correct : 0
+      const confidence = correct === 0 && isCorrect ?
+        1 : markedCorrect > -1 ? markedCorrect / correct : 0
 
       if (isCorrect) {
         correctList.push(question)
@@ -184,6 +187,7 @@ export const Results: React.FC<IResults> = (props) => {
           correct: isCorrect,
           unix: session.end
         })
+
         stat.confidence = (confidence + stat.confidence) / 2
       } else {
         user.questions.set(question.source, {
@@ -200,7 +204,7 @@ export const Results: React.FC<IResults> = (props) => {
     setWrongList(wrongList)
     setCorrectList(correctList)
     setScore(score)
-    props.onSave()
+    props.onSave(user)
   }, [session])
 
   const onReview = useCallback((correct: boolean | undefined = undefined) => {
@@ -232,10 +236,10 @@ export const Results: React.FC<IResults> = (props) => {
         </FloatToolsContainer>
       </ResultInfo>}
       {state === EState.Review && current &&
-       <ResultReview
-         list={current}
-         onBack={() => setState(EState.Info)}
-       />}
+        <ResultReview
+          list={current}
+          onBack={() => setState(EState.Info)}
+        />}
     </div>
   )
 }

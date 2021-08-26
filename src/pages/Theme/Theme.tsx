@@ -57,7 +57,7 @@ export const Theme: React.FC<ITheme> = (props) => {
         <ListItemButton
           iconL={ChevronLeft}
           text="back"
-          onButton={props.onBack}
+          onClick={props.onBack}
           hideIconR={true}
         />
       </ListComponent>
@@ -70,7 +70,7 @@ export const Theme: React.FC<ITheme> = (props) => {
               iconR={Check2}
               iconEmptyR={false}
               onMouseEnter={() => onMouseEnter(index)}
-              onButton={() => onSelect(index)}
+              onClick={() => onSelect(index)}
               text={theme}
               key={index}
             />

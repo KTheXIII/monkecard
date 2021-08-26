@@ -3,7 +3,6 @@ import { ChevronRight } from '@assets/BootstrapIcons'
 
 import {
   ListComponent,
-  ListItemText,
   ListItemButton,
   ListItemInputText,
   ListItemMark,
@@ -17,9 +16,8 @@ export const TestPage: React.FC = (props) => {
   return (
     <div className="test__page">
       <div className="content">
-        <ListComponent header="Test list">
+        <ListComponent text="Test list">
           <ListItemInputText placeholder="hmmm" />
-          <ListItemText text="Hello World!"/>
           <ListItemButton hideIconL={false} text="Hello There" />
           <ListItemButton hideIconL={false} text="Hello There"
             preview="wowoowwo"

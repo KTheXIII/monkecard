@@ -82,13 +82,13 @@ const General: React.FC<IGeneral> = (props) => {
           onConfirm={(value) => {
             user.name = value
             props.onSave(user)
-          }}/>
+          }} />
         <ListItemButton
           isEnable={true}
           text="change theme"
           preview={user.settings.theme}
           iconL={Palette2}
-          onButton={props.onTheme}
+          onClick={props.onTheme}
         />
         <ListItemInputSwitch
           isEnable={true}
@@ -119,8 +119,8 @@ const General: React.FC<IGeneral> = (props) => {
           text="saved questions"
           preview={`${user.saved.size}`}
           iconL={Bookmarks}
-          onButton={() => {
-                // TODO: open saved questions
+          onClick={() => {
+            // TODO: open saved questions
             console.log(user.saved)
           }}
         />
@@ -129,12 +129,12 @@ const General: React.FC<IGeneral> = (props) => {
           text="history"
           preview={`${user.questions.size}`}
           iconL={ClockHistory}
-          onButton={() => {
-                // TODO: The history size needs to be calculated
-                //       and displayed in the preview text.
-                //       The data structure is a map and of each
-                //       question with its own history.
-                // TODO: open history
+          onClick={() => {
+            // TODO: The history size needs to be calculated
+            //       and displayed in the preview text.
+            //       The data structure is a map and of each
+            //       question with its own history.
+            // TODO: open history
             console.log(user.questions)
           }}
         />
@@ -144,7 +144,7 @@ const General: React.FC<IGeneral> = (props) => {
           text="download data"
           title="download user data"
           iconL={Download}
-          onButton={() => {
+          onClick={() => {
             const filename =
               `${APP_NAME}-${user.name.replaceAll(/[^A-z0-9]/g, '-')}`
             saveJSON(filename, JSON.stringify(User.toJSON(user)))
@@ -174,7 +174,7 @@ const General: React.FC<IGeneral> = (props) => {
         <ListItemButton
           text="clear history"
           iconL={Trash}
-          onButton={() => {
+          onClick={() => {
             if (confirm('clear all history?')) {
               user.questions.clear()
               props.onSave(user)
@@ -212,11 +212,11 @@ export const Settings = forwardRef<ISettingsRef, ISettings>((props, ref) => {
         />
       }
       {section === Sections.Theme &&
-        <Theme onBack={() => {
-          setSection(Sections.General)
-        }}
-        onSave={() => props.onSave(props.user)}
-        user={props.user} />
+        <Theme
+          onBack={() => setSection(Sections.General)}
+          onSave={() => props.onSave(props.user)}
+          user={props.user}
+        />
       }
       <div className="app-info">
         <a

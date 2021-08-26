@@ -16,16 +16,17 @@ export interface IHistoryModel {
   unix: number
 }
 
-interface IUserBase<DATE, SAVED, QUESTIONS> {
+interface IUserBase<DATE, SAVED, PIN, QUESTIONS> {
   _tag: 'User'
   name: string
   created: DATE
   updated: DATE
   saved: SAVED
+  pins: PIN
   questions: QUESTIONS
   settings: IUserSettings
 }
 
-export type IUserJSON = IUserBase<number, TKeyDate[], TKeyStat[]>
-export type IUser = IUserBase<Date, TMapSaved, TMapQuestions>
+export type IUserJSON = IUserBase<number, TKeyDate[], string[], TKeyStat[]>
+export type IUser = IUserBase<Date, TMapSaved, Set<string>, TMapQuestions>
 export type TUserList = { key: string, value: IUserJSON }[]

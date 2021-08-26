@@ -8,21 +8,10 @@ import {
 
 const USER_LOCAL_KEY = 'current-user'
 
+// TODO: Improve this because it gets confusing when adding attribute
+
 export function loadJSON(json: string): IUserJSON {
-  const unix = Date.now()
-  const user: IUserJSON = {
-    _tag: 'User',
-    name: 'username',
-    created: unix,
-    updated: unix,
-    saved: [],
-    questions: [],
-    settings: {
-      theme: 'auto-theme',
-      maxQuestions: 5,
-      showConfidence: true
-    }
-  }
+  const user: IUserJSON = toJSON(of())
   const { settings } = user
 
   try {
@@ -32,6 +21,7 @@ export function loadJSON(json: string): IUserJSON {
     user.created   = data.created   || user.created
     user.updated   = data.updated   || user.updated
     user.saved     = data.saved     || user.saved
+    user.pins      = data.pins     || user.pins
     user.questions = data.questions || user.questions
 
     // Settings
@@ -52,11 +42,14 @@ export function loadJSON(json: string): IUserJSON {
 export function loadUser(userJSON: IUserJSON): IUser {
   const stats = new Map<string, IQuestionStat>()
   const saved = new Map<string, number>()
+  const pins = new Set<string>()
 
   for (const { key, value } of userJSON.questions)
     stats.set(key, value)
   for (const { key, value } of userJSON.saved)
     saved.set(key, value)
+  for (const value of userJSON.pins)
+    pins.add(value)
 
   return {
     _tag: 'User',
@@ -64,6 +57,7 @@ export function loadUser(userJSON: IUserJSON): IUser {
     created: new Date(userJSON.created),
     updated: new Date(userJSON.updated),
     saved: saved,
+    pins: pins,
     questions: stats,
     settings: {
       theme: userJSON.settings.theme,
@@ -81,6 +75,7 @@ export function of(username = 'some-user'): IUser {
     created: date,
     updated: date,
     saved: new Map<string, number>(),
+    pins: new Set<string>(),
     questions: new Map<string, IQuestionStat>(),
     settings: {
       theme: 'auto-theme',
@@ -100,10 +95,14 @@ export function toJSON(user: IUser): IUserJSON {
   const { questions, saved } = user
   const keyStats: TKeyStat[] = []
   const keySaved: TKeyDate[] = []
+  const pins: string[] = []
+
   for (const [key, value] of questions)
     keyStats.push({ key, value })
   for (const [key, value] of saved)
     keySaved.push({ key, value })
+  for (const value of user.pins)
+    pins.push(value)
 
   user.updated = new Date()
 
@@ -112,6 +111,7 @@ export function toJSON(user: IUser): IUserJSON {
     created: user.created.getTime(),
     updated: user.updated.getTime(),
     questions: keyStats,
+    pins: pins,
     saved: keySaved
   }
   return saving
@@ -120,5 +120,5 @@ export function toJSON(user: IUser): IUserJSON {
 export async function save(user: IUser): Promise<IUser> {
   const userJSON = toJSON(user)
   localStorage.setItem(USER_LOCAL_KEY, JSON.stringify(userJSON))
-  return request()
+  return user
 }

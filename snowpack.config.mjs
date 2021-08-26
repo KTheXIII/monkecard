@@ -35,7 +35,7 @@ export default {
     ],
     ['@snowpack/plugin-optimize',
       {
-        'preloadCSS': true,
+        'preloadCSS': false,
         'preloadCSSFileName': (process.env.PUBLIC_URL || '/') + 'style.css'
       }
     ],

@@ -10,8 +10,6 @@ import { Results } from '@pages/Results'
 import * as Download from '@scripts/download'
 import * as User from '@scripts/user'
 
-import { TestPage } from '@pages/TestPage'
-
 import {
   ISession,
   ISubject,
@@ -22,6 +20,7 @@ import { IUser } from '@models/user.model'
 
 import './app.scss'
 import { setTheme } from '@scripts/theme'
+import * as Session from '@scripts/session'
 
 enum EPages {
   Main,
@@ -66,7 +65,6 @@ export const App: React.FC = () => {
       setUser(user)
       setSubjects(subjects)
       setQuestions(questions)
-      // console.log(user)
 
       return Promise.resolve()
     } catch (err) {
@@ -74,7 +72,7 @@ export const App: React.FC = () => {
     }
   }
 
-  const save = useCallback(async (newUser)  => {
+  const save = useCallback(async (newUser) => {
     try {
       const savedUser = await User.save(newUser)
       setTheme(user.settings.theme, savedUser.settings.theme)
@@ -85,30 +83,60 @@ export const App: React.FC = () => {
     }
   }, [user])
 
+  const start = useCallback((ids: Set<string>) => {
+    if (ids.size === 0) return
+
+    const questionToBeUse: IQuestion[] = []
+    for (const id of ids) {
+      const question = questions.get(id)
+      if (question)
+        questionToBeUse.push(question)
+    }
+
+    // FIXME: Move this out of here
+    // NOTE: This is a hack for randomising the question with confidence metric.
+    //       This will need to be re-implement later when we have a better way
+    const sortConfidence = questionToBeUse.sort((a, b) => {
+      const qa = user.questions.get(a.source)
+      const qb = user.questions.get(b.source)
+      if (qa && qb) {
+        return qa.confidence - qb.confidence
+      } else if (qa) {
+        return qa.confidence - Math.random()
+      } else if (qb) {
+        return qb.confidence - Math.random()
+      } else {
+        return Math.random() > 0.5 ? 1 : -1
+      }
+    })
+
+    // NOTE: Get the maximum number of questions according to user's
+    //       max question per session
+    const sorted: IQuestion[] = sortConfidence
+      .filter((_, index) => index < user.settings.maxQuestions)
+      .map(value => {
+        return {
+          ...value,
+          options: value.options.map(op => { return { ...op } })
+        }
+      })
+
+    setCurrentSession(Session.create(sorted))
+    setActive(EPages.Question)
+  }, [user, questions])
+
   useEffect(() => {
     load().then(() => {
       setIsLoading(false)
     }).catch(err => console.error(err))
   }, [])
 
-  // return (
-  //   <div className="app">
-  //     <TestPage/>
-  //   </div>
-  // )
-
   return (
     <div className='app'>
       {active == EPages.Main &&
         <Main
-          onStart={(session) => {
-            setCurrentSession(session)
-            console.log(session)
-            setActive(EPages.Question)
-          }}
-          onSave={user => {
-            save(user)
-          }}
+          onStart={start}
+          onSave={save}
           isLoading={isLoading}
           user={user}
           subjects={subjects}
@@ -134,9 +162,7 @@ export const App: React.FC = () => {
       {active == EPages.Results &&
         <Results
           user={user}
-          onSave={() => {
-            save(user)
-          }}
+          onSave={save}
           onBack={() => setActive(EPages.Main)}
           session={currentSession}
         />

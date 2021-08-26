@@ -1,0 +1,76 @@
+.subject__info {
+  display: grid;
+  gap: 10pt;
+
+  .subject__info__title {
+    display: flex;
+
+    h1 {
+      font-size: 1.2em;
+    }
+
+    .tools {
+      margin: auto 0 auto auto;
+
+      button {
+        cursor: pointer;
+        color: inherit;
+        background-color: inherit;
+        border: none;
+        font-size: inherit;
+        font-weight: 300;
+        padding: 0;
+        margin: 0;
+        border-radius: 5pt;
+
+        &:hover {
+          background-color: var(--bg2);
+        }
+        &:active {
+          background-color: var(--bg3);
+        }
+        &:disabled {
+          background-color: var(--bg1);
+          color: var(--text-dim);
+          cursor: default;
+        }
+
+        .icon {
+          padding: 5pt;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+
+  .subject__info__tool {
+    display: grid;
+    gap: 10pt;
+
+    .subject__info__stat {
+      display: flex;
+
+      span {
+        padding-right: 10pt;
+      }
+
+      .right {
+        margin-left: auto;
+      }
+    }
+
+    .subject__info__actions {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        margin: auto 0;
+        padding: 5pt;
+        border-radius: 5pt;
+        width: 60pt;
+        min-width: 60pt;
+      }
+    }
+  }
+}

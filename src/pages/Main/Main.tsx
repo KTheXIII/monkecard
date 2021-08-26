@@ -3,24 +3,25 @@ import React, {
   useEffect,
   useCallback,
   ReactElement,
-  useRef
+  useRef,
 } from 'react'
 
+import { PinAngle, PinAngleFill } from '@assets/BootstrapIcons'
 import { MToolsFloat } from '@components/MToolsFloat'
+import { SubjectInfo } from '@components/SubjectInfo'
 import {
+  ListContainer,
   ListComponent,
   ListItemMark,
-  ListItemButton
+  ListItemButton,
+  ListItemRaw
 } from '@components/List'
 import { Settings, ISettingsRef } from '@pages/Settings'
 
 import { IUser } from '@models/user.model'
 import {
-  ISession,
   ISubject,
   TQuestionMap,
-  ICategory,
-  IQuestion,
 } from '@models/question.model'
 
 enum EMain {
@@ -28,9 +29,14 @@ enum EMain {
   Settings
 }
 
+enum EHome {
+  Main,
+  Subject,
+}
+
 interface IMain {
-  onStart: (session: ISession) => void
   onSave: (user: IUser) => void
+  onStart: (ids: Set<string>) => void
 
   isLoading: boolean
   user: IUser
@@ -38,150 +44,156 @@ interface IMain {
   subjects: ISubject[]
 }
 
-// Global state to the main component
-const categorySet = new Set<ICategory>()
-
 export const Main: React.FC<IMain> = (props) => {
   const settingsRef = useRef<ISettingsRef>(null)
   const [active, setActive] = useState<EMain>(EMain.Home)
-  const [questionList, setQuestionList] = useState<ReactElement[]>([])
-  const [enableStart, setEnableStart] = useState<boolean>(false)
+  const [activeHome, setActiveHome] = useState<EHome>(EHome.Main)
 
+  const [pinList, setPinList] = useState<ReactElement[]>([])
+  const [subjectList, setSubjectList] = useState<ReactElement>()
+  const [subject, setSubject] = useState<ISubject | null>(null)
   const { isLoading } = props
-  const [subjects, setSubjects] = useState<ISubject[]>(props.subjects)
-  const [questionMap, setQuestionMap] = useState<TQuestionMap>(props.questions)
 
-  function renderList() {
-    // Generate card component with subject ids or name
-    const questionList = subjects.map((value, page) => {
-      const { title, categories } = value
-      const children = categories.map((value, index) => {
-        const confidence = value.questions
-          .reduce((a, c) => {
-            const uq = props.user.questions.get(c)
-            return uq ? a + uq.confidence : a
-          }, 0) / value.questions.length
-        const preview = props.user.settings.showConfidence ?
-          `${confidence.toFixed(2)}` : `${value.questions.length}`
+  function renderSubjectList() {
+    const pinList = props.subjects
+      .filter(value => props.user.pins.has(value.title))
+      .map((value, page) => {
+        const idSet = new Set<string>()
+        value.categories.forEach(category => {
+          category.questions.forEach(q => idSet.add(q))
+        })
+        const catCount = value.categories.length
+        const confidence = ([...idSet].reduce((acc, cur) => {
+          const uc = props.user.questions.get(cur)
+          return uc ? acc + uc.confidence : acc
+        }, 0) / idSet.size).toFixed(2)
+
         return (
-          <ListItemMark
-            key={value.id + '-' + index}
-            text={value.name || value.id}
-            preview={preview}
-            onMark={(mark) => onMark(page, index, mark)}
-            isMarked={categorySet.has(value)}
-            stateLorR={true}
+          <ListComponent
+            key={value.title + '-' + page}>
+            <ListItemRaw>
+              <div className="info">
+                <div className="info__header">
+                  <span>{value.title}</span>
+                  <button onClick={() => {
+                    value.showCategory = !value.showCategory
+                    renderSubjectList()
+                  }}>{value.showCategory ? 'collapse' : 'more'}</button>
+                </div>
+                <div className="info__body">
+                  <div className="stat">
+                    <span>{confidence} | {catCount} | {idSet.size}</span>
+                  </div>
+                  <div className="actions">
+                    <button
+                      onClick={() => {
+                        const ids = new Set<string>()
+                        for (const category of value.selected)
+                          category.questions.forEach(q => ids.add(q))
+
+                        if (value.selected.size == 0)
+                          value.categories
+                            .forEach(c => c.questions.forEach(q => ids.add(q)))
+                        props.onStart(ids)
+                      }}
+                    >start</button>
+                  </div>
+                </div>
+              </div>
+            </ListItemRaw>
+            {value.showCategory && value.categories
+              .map((cat, index) => {
+                const confidence = cat.questions
+                  .reduce((a, c) => {
+                    const uc = props.user.questions.get(c)
+                    return uc ? a + uc.confidence : a
+                  }, 0)
+
+                const preview = props.user.settings.showConfidence ?
+                  `${confidence.toFixed(2)}` : `${cat.questions.length}`
+                return (
+                  <ListItemMark
+                    key={cat.id + '-' + index}
+                    text={cat.name || cat.id}
+                    preview={preview}
+                    onMark={mark => {
+                      if (mark) value.selected.add(cat)
+                      else value.selected.delete(cat)
+                    }}
+                    isMarked={value.selected.has(cat)}
+                    stateLorR={true}
+                    hideIconL={true}
+                  />
+                )
+              })}
+          </ListComponent>
+        )
+      })
+    setPinList(pinList)
+
+    const subjectList = props.subjects
+      .map((value, index) => {
+        return (
+          <ListItemButton
+            key={value.title + '-' + index}
+            text={value.title}
+            onClick={() => {
+              setSubject(value)
+              setActiveHome(EHome.Subject)
+            }}
+            iconR={props.user.pins.has(value.title) ? PinAngleFill : PinAngle}
             hideIconL={true}
           />
         )
       })
-      return (
-        <ListComponent
-          key={title + '-' + page}
-          header={title}>
-          {children}
-        </ListComponent>
-      )
-    })
-
-    setQuestionList(questionList)
+    setSubjectList(
+      <ListComponent text="subjects">
+        {subjectList}
+      </ListComponent>
+    )
   }
 
   useEffect(() => {
-    setSubjects(props.subjects)
-    setQuestionMap(props.questions)
-    renderList()
+    renderSubjectList()
 
-    setEnableStart(categorySet.size > 0)
-  }, [isLoading, props.questions, props.subjects])
-
-  const onStart = useCallback(() => {
-    const { user } = props
-    const questionSet = new Set<string>()
-    for (const { questions } of categorySet) {
-      questions.forEach(value => {
-        questionSet.add(value)
-      })
-    }
-
-    const questionToBeUse: IQuestion[] = []
-    for (const id of questionSet) {
-      const question = questionMap.get(id)
-      if (question)
-        questionToBeUse.push(question)
-    }
-
-    // FIXME: Move this out of here
-    // NOTE: This is a hack for randomising the question with confidence metric.
-    //       This will need to be re-implement later when we have a better way
-    const sortConfidence = questionToBeUse.sort((a, b) => {
-      const qa = user.questions.get(a.source)
-      const qb = user.questions.get(b.source)
-      if (qa && qb) {
-        return qa.confidence - qb.confidence
-      } else if (qa) {
-        return qa.confidence - Math.random()
-      } else if (qb) {
-        return qb.confidence - Math.random()
-      } else {
-        return Math.random() > 0.5 ? 1 : -1
-      }
-    })
-
-    // NOTE: Get the maximum number of questions according to user's
-    //       max question per session
-    const questions: IQuestion[] = sortConfidence
-      .filter((_, index) => index < user.settings.maxQuestions)
-      .map(value => {
-        return {
-          ...value,
-          options: value.options.map(op => {return { ...op }})
-        }
-      })
-
-    props.onStart({
-      start: Date.now(),
-      end: 0,
-      questions
-    })
-  }, [questionMap, props.user])
-
-  function onMark(page: number, index: number, mark: boolean) {
-    const subject = subjects[page].categories[index]
-    if (mark)
-      categorySet.add(subject)
-    else
-      categorySet.delete(subject)
-
-    setEnableStart(categorySet.size > 0)
-  }
+  }, [isLoading, props.questions, props.subjects, props.user])
 
   const onHome = useCallback(() => {
     setActive(EMain.Home)
-    renderList()
-  }, [questionMap, subjects, props.user])
+    setActiveHome(EHome.Main)
+    renderSubjectList()
+  }, [props.user, props.subjects])
 
   return (
     <div className="main-page">
       {active === EMain.Home &&
-        <div className="subjects">
+        <div className="home">
           {isLoading && <p>loading...</p>}
-          {questionList}
-          <ListComponent>
-            <ListItemButton
-              text="start selected"
-              onButton={() => onStart()}
-              hideIconL={true}
-              hideIconR={true}
-              isEnable={enableStart}
-            />
-          </ListComponent>
+          {!isLoading &&
+            <div className="view">
+              {activeHome === EHome.Main && <div className="home__main">
+                <ListContainer text="pin" emptyText="(˚☐˚! )/">
+                  {pinList}
+                </ListContainer>
+                {subjectList}
+              </div>}
+              {activeHome === EHome.Subject && subject &&
+                <div className="home__subject">
+                  <SubjectInfo
+                    onStart={props.onStart}
+                    onSave={props.onSave}
+                    onBack={() => {
+                      setActiveHome(EHome.Main)
+                    }}
+                    user={props.user} subject={subject} />
+                </div>}
+            </div>}
         </div>
       }
       {active === EMain.Settings &&
         <Settings
           ref={settingsRef}
-          questions={questionMap}
+          questions={props.questions}
           user={props.user}
           onSave={props.onSave}
         />

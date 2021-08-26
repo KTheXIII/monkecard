@@ -5,7 +5,7 @@ import { ListComponent, ListItemButton } from '.'
 
 describe('List', () => {
   it('should render list component with header', () => {
-    const { getByText } = render(<ListComponent header="Test" />)
+    const { getByText } = render(<ListComponent text="Test" />)
     expect(getByText('Test')).to.be.ok
   })
 
@@ -21,7 +21,7 @@ describe('List', () => {
   it('should click the button', () => {
     const { getByText } = render(
       <ListComponent>
-        <ListItemButton text="Test Button" onButton={() => {
+        <ListItemButton text="Test Button" onClick={() => {
           expect(true).to.be.ok
         }}/>
       </ListComponent>

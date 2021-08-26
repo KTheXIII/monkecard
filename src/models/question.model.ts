@@ -9,6 +9,8 @@ export interface ICategory {
 export interface ISubject {
   title: string
   categories: ICategory[]
+  showCategory: boolean
+  selected: Set<ICategory>
   files: string[]
 }
 

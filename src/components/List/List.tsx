@@ -12,12 +12,38 @@ import {
   XCircle
 } from '@assets/BootstrapIcons'
 
+interface IListContainer {
+  text?: string
+  emptyText?: string
+}
+
+export const ListContainer: React.FC<IListContainer> = (props) => {
+  const { text, emptyText } = props
+  const isEmpty = React.Children.count(props.children) === 0
+
+  return (
+    <div className="list__container">
+      {text && <div className="container__header">
+        <span>{text}</span>
+      </div>}
+      <div className="container__body">
+        {emptyText && isEmpty &&
+        <div className="container__empty"
+          title="List is empty">
+          <span>{emptyText}</span>
+        </div>}
+        {props.children}
+      </div>
+    </div>
+  )
+}
+
 interface IListComponent {
-  header?: string
+  text?: string
 }
 
 export const ListComponent: React.FC<IListComponent> = (props) => {
-  const { header } = props
+  const { text: header } = props
   return (
     <div className="list__component">
       {header && <div className="list__header">{header}</div>}
@@ -28,24 +54,35 @@ export const ListComponent: React.FC<IListComponent> = (props) => {
   )
 }
 
-interface IListItem {
-  text: string
-  icon?: ReactElement
-  hideIcon?: boolean
-  hideRightIcon?: boolean
-}
-
-export const ListItemText: React.FC<IListItem> = (props) => {
-  const hideIcon = props.hideIcon || false
+export const ListItemRaw: React.FC = (props) => {
   return (
     <div className="list__item">
-      {!hideIcon && <div className="icon">
-        {props.icon}
-      </div>}
-      <div className="container">
-        <div className="display">
-          <span className="text">{props.text}</span>
-        </div>
+      <div className="raw">
+        {props.children}
+      </div>
+    </div>
+  )
+}
+
+interface IListItemAction {
+  text: string
+
+  onClick?: () => void
+  onClickL?: () => void
+  onClickR?: () => void
+  iconL?: ReactElement
+  iconR?: ReactElement
+  hideL?: boolean
+  hideR?: boolean
+}
+
+export const ListItemAction: React.FC<IListItemAction> = (props) => {
+  return (
+    <div className="list__item">
+      <div className="list__item__action">
+        <div className="left"></div>
+        <div className="middle"></div>
+        <div className="right"></div>
       </div>
     </div>
   )
@@ -54,7 +91,7 @@ export const ListItemText: React.FC<IListItem> = (props) => {
 interface IListItemButton {
   text: string
   preview?: string
-  onButton?: () => void
+  onClick?: () => void
   onMouseEnter?: () => void
   isEnable?: boolean
   title?: string
@@ -103,7 +140,7 @@ export const ListItemButton: React.FC<IListItemButton> = (props) => {
       disabled={!isEnable}
       className="list__item"
       onMouseEnter={props.onMouseEnter}
-      onClick={props.onButton}
+      onClick={props.onClick}
       title={props.title}>
       {!hideIconL && <div className="icon-l">{iconL}</div>}
       <div className="container">
@@ -205,7 +242,7 @@ interface IListItemMark {
   text: string
   preview?: string
   isMarked: boolean
-  onMark: (mark: boolean) => void
+  onMark?: (mark: boolean) => void
 
   stateLorR?: boolean                   // false: left, true: right
   icons?: [ReactElement, ReactElement]  // [ON, OFF]
@@ -226,10 +263,10 @@ export const ListItemMark: React.FC<IListItemMark> = (props) => {
       hideIconL={props.hideIconL}
       iconR={lor ? isMarked ? ON : OFF : props.icon}
       hideIconR={props.hideIconR}
-      onButton={() => {
+      onClick={() => {
         const mark = !isMarked
         setIsMarked(mark)
-        props.onMark(mark)
+        if (props.onMark) props.onMark(mark)
       }}
     />
   )
@@ -263,6 +300,6 @@ export const ListItemInputSwitch: React.FC<IListItemInputSwitch> = (props) => {
       iconL={props.icon}
       text={props.text}
       preview={props.preview}
-      onButton={() => setIsInput(true)}
+      onClick={() => setIsInput(true)}
     />
 }

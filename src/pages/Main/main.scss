@@ -1,11 +1,55 @@
 .main-page {
   min-height: 100%;
 
-  .subjects {
+  .home {
     padding: 12pt;
+    padding-bottom: 8rem;
+  }
+
+  .home__main {
     display: grid;
     gap: 12pt;
-    padding-bottom: 8rem;
+
+    .info {
+      display: grid;
+      gap: 10pt;
+      .info__header {
+        display: flex;
+        span {
+          margin-right: auto;
+        }
+        button {
+          margin: auto 0;
+          padding: 5pt;
+          border-radius: 5pt;
+          width: 60pt;
+          min-width: 60pt;
+        }
+      }
+
+      .info__body {
+        display: flex;
+        .stat {
+          margin: auto 0;
+          margin-right: auto;
+          display: flex;
+
+          span {
+            padding-right: 5pt;
+          }
+        }
+
+        .actions {
+          display: flex;
+
+          button {
+            padding: 5pt;
+            width: 60pt;
+            border-radius: 5pt;
+          }
+        }
+      }
+    }
   }
 }
 
