@@ -31,8 +31,7 @@
     {
       "src": "logo@5x.png",
       "type": "image/png",
-      "sizes": "320x320",
-      "purpose": "maskable"
+      "sizes": "320x320"
     },
     {
       "src": "logo@6x.png",
@@ -47,7 +46,8 @@
     {
       "src": "logo@8x.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # quiz
 
-Build with Snowpack, ReactJS and TypeScript.
+Build with Snowpack, PreactJS and TypeScript.
 
 ## Requirements
 

@@ -56,9 +56,6 @@ declare module '*.png' {
   export default ref
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TAny = any
-
 // snowpack environment variables type definition
 declare const __SNOWPACK_ENV__ : {
   APP_NAME: string
@@ -68,8 +65,6 @@ declare const __SNOWPACK_ENV__ : {
   HOMEPAGE: string
   REPOSITORY_URL: string
   COMMIT_HASH: string
-
-  FILES_URL: string
 
   PUBLIC_URL: string
   MODE: string,

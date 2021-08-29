@@ -8,7 +8,7 @@ export default {
     HOMEPAGE: process.env.npm_package_homepage,
     REPOSITORY_URL: process.env.npm_package_repository_url,
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
-    FILES_URL: (process.env.PUBLIC_URL || '') + 'files.yml',
+    FILES_URL: `${process.env.PUBLIC_URL || ''}files.yml`,
     PUBLIC_URL: process.env.PUBLIC_URL || '/'
   },
   alias: {
@@ -23,7 +23,7 @@ export default {
     src: { url: '/static' },
   },
   plugins: [
-    '@snowpack/plugin-react-refresh',
+    '@prefresh/snowpack',
     '@snowpack/plugin-dotenv',
     ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],
     ['@snowpack/plugin-typescript'],
@@ -35,8 +35,8 @@ export default {
     ],
     ['@snowpack/plugin-optimize',
       {
-        'preloadCSS': false,
-        'preloadCSSFileName': (process.env.PUBLIC_URL || '/') + 'style.css'
+        preloadCSS: false,
+        preloadCSSFileName: `${process.env.PUBLIC_URL || '/'}style.css`
       }
     ],
   ],
