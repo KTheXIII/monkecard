@@ -8,9 +8,20 @@ interface IUserBase<DATE> {
 export type UserJSON = IUserBase<number>
 export type User     = IUserBase<Date>
 
-const DEFAULT_NAMES = ['penguin', 'dog', 'cat', 'whale', 'fox', 'turtle']
-const randomName =
-  () => DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)]
+const DEFAULT_NAMES = [
+  'penguin',
+  'dog',
+  'cat',
+  'whale',
+  'fox',
+  'turtle',
+  'kangaroo',
+  'parrot',
+  'echidna',
+  'giraffe'
+]
+const randomName = () =>
+  DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)]
 
 export function createUser(username?: string): User {
   const name = username || randomName()

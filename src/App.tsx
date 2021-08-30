@@ -1,4 +1,7 @@
-import { h, FunctionComponent as Func } from 'preact'
+import {
+  h,
+  FunctionComponent as Func
+} from 'preact'
 import { useEffect } from 'preact/hooks'
 
 import { extractSource } from '@scripts/source'
@@ -9,10 +12,14 @@ export const App: Func = () => {
       console.log('/ pressed')
       e.preventDefault()
     }
+    if (e.key === 'p' && e.metaKey && e.shiftKey) {
+      console.log('meta+shift+p pressed')
+      e.preventDefault()
+    }
   }
 
   useEffect(() => {
-    console.log(window.location.search)
+    console.log(`seach: ${window.location.search}`)
     console.log(extractSource(window.location.search))
 
     window.addEventListener('keypress', onKeyPress)
@@ -24,7 +31,7 @@ export const App: Func = () => {
   return (
     <div class='app'>
       <div className='test'>
-        <h1>Hello, World!</h1>
+        <span>Hello, World!</span>
       </div>
     </div>
   )

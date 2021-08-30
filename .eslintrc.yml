@@ -51,6 +51,10 @@ rules:
   max-len:
     - error
     - code: 80
+      ignoreComments: true
+      ignoreStrings: true
+      ignoreUrls: true
+      ignoreRegExpLiterals: true
   eol-last:
     - error
     - always
