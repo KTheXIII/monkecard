@@ -1,24 +1,24 @@
 import * as yaml from 'js-yaml'
 
 import {
-  EQuestionType,
-  CollectionBase,
   OptionBase,
   QuestionBase
-} from './question'
+} from './collection'
 
-export type QuizTypeSource = keyof typeof EQuestionType;
-export type OptionSource   = OptionBase;
+export type OptionSource = OptionBase;
 
 export interface QuestionSource extends QuestionBase {
   options: OptionSource[]
-  type: number | string
 }
 
-export interface CollectionSource extends CollectionBase<number> {
+export interface CollectionSource {
+  title?: string
+  description?: string
+  lang?: string
+
   quizes: QuestionSource[]
-  created: number
-  updated: number
+  created: string  // ISO 8601
+  updated: string  // ISO 8601
 }
 
 export type CollectionSources = QuestionSource[];
@@ -126,6 +126,7 @@ export async function GetJSON<T>(url: string): Promise<T> {
  */
 export async function GetCollection(url: string): Promise<CollectionSource> {
   try {
+    // NOTE: Should consider using endsWith() instead of regex.
     if (JSON_EXT_REGX.test(url))
       return GetJSON<CollectionSource>(url)
     else if (YAML_EXT_REGX.test(url))

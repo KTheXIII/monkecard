@@ -1,18 +1,3 @@
-export enum EQuestionType {
-  Unknown = -1,
-  Multi   =  0,
-  Single  =  1,
-}
-
-export interface CollectionBase<DATE> {
-  title: string
-  description?: string
-
-  created: DATE
-  updated: DATE
-  lang?: string
-}
-
 export interface OptionBase {
   text: string
   correct: boolean
@@ -32,12 +17,18 @@ export interface IOption extends OptionBase {
 
 export interface Question extends QuestionBase {
   options: IOption[]
-  type: EQuestionType
 }
 
-export interface Collection extends CollectionBase<Date> {
+export interface Collection {
+  title: string
+  description: string
   source: string
   keywords: string[]
+  created: Date
+  updated: Date
+
+  questions: Map<string, Question>
+  lang?: string
 }
 
 export interface IKeywords {
