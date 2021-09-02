@@ -24,10 +24,10 @@ export interface CollectionSource {
 export type CollectionSources = QuestionSource[];
 
 // REGEX for source and collection query keys
-const SOURCE_REGX     = /source=([^&]+)&?/gi
-const COLLECTION_REGX = /collection=([^&]+)&?/gi
-const JSON_EXT_REGX   = /\.json$/g
-const YAML_EXT_REGX   = /\.ya?ml$/g
+const SOURCE_REGX      = /source=([^&]+)&?/gi
+const COLLECTIONS_REGX = /collection=([^&]+)&?/gi
+const JSON_EXT_REGX    = /\.json$/g
+const YAML_EXT_REGX    = /\.ya?ml$/g
 
 /**
  * Extract query value from query string.
@@ -67,17 +67,29 @@ export const extractSource = (query: string)
   : string[] => extractQueryValues(query, SOURCE_REGX)
 
 /**
- * Extract collection urls from query string
+ * Extract collection urls from query string.
+ *
+ * @todo There's no definitive way to use this at the moment.
+ *
+ * @description
+ * A collection url points to json or yaml file that has array
+ * of urls to collection source file.
+ *
+ * Sample yaml collection url file
+ * ```yml
+ * - 'collection_01.yml'
+ * - 'collection_02.json'
+ * - 'collection_03.yaml'
+ * ```
  *
  * @example
  * const query       = '?collection=url+url2&collection=url3'
  * const collections = extractCollection(query)
- *
  * @param query Query string to parse
  * @returns Array of collection urls, might be an empty array
  */
-export const extractCollection = (query: string)
-  : string[] => extractQueryValues(query, COLLECTION_REGX)
+export const extractCollections = (query: string)
+  : string[] => extractQueryValues(query, COLLECTIONS_REGX)
 
 /**
  * Fetch yaml file and parse it to JavaScript object using js-yaml.

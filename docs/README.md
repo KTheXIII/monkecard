@@ -1,5 +1,15 @@
 # docs
 
+## Adding sources
+
+Sources can be add with `query` parameter in the URL.
+
+```
+?sources=url1+url2
+```
+
+multiple urls can be separate with `+`
+
 ## Collection Source
 
 Check the [collection-sample.yml](./collection-sample.yml) for a sample file.
