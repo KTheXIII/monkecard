@@ -25,6 +25,7 @@ export default {
   plugins: [
     '@prefresh/snowpack',
     '@snowpack/plugin-dotenv',
+    '@snowpack/plugin-postcss',
     ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],
     ['@snowpack/plugin-typescript'],
     ['@snowpack/plugin-run-script',
