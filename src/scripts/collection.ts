@@ -23,15 +23,9 @@ export interface Collection {
   title: string
   description: string
   source: string
-  keywords: string[]
   created: Date
   updated: Date
 
   questions: Map<string, Question>
   lang?: string
-}
-
-export interface IKeywords {
-  name: string
-  quizIDs: string[]
 }

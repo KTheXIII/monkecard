@@ -16,9 +16,9 @@ export interface CollectionSource {
   description?: string
   lang?: string
 
-  quizes: QuestionSource[]
-  created: string  // ISO 8601
-  updated: string  // ISO 8601
+  datas: QuestionSource[]
+  created: string | number  // ISO 8601 or unix time ms
+  updated: string | number  // ISO 8601 or unix time ms
 }
 
 export type CollectionSources = QuestionSource[];
