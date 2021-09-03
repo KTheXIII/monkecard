@@ -68,6 +68,15 @@ keywords: string[]
 lang: string (optional)
 ```
 
+Option type
+
+```ts
+interface Option {
+  text: string
+  correct: boolean
+}
+```
+
 #### Memo Item
 
 ```yml
