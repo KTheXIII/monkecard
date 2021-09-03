@@ -12,7 +12,7 @@ multiple urls can be separate with `+`
 
 ## Collection Source
 
-Check the [collection-sample.yml](./collection-sample.yml) for a sample file.
+Check the [collection-sample.yml](./collection-sample.yml) for a sample file. The app also supports JSON, with the same key name as yaml file.
 
 ```yml
 title: string (optional)
@@ -22,51 +22,60 @@ lang: string (optional)
 created: string or number
 updated: string or number
 
-datas: array of questions
+items: Item[]
 ```
 
 `title`: Title of the collection file. If this is not defined then the question will show in unknown collection. If there are multiple collection files with the same title, then the `datas` will be merge together.
 
 `description`: Description for the collection (optional), this will be ignored if the `title` is not defined. Markdown is supported with Latex Math.
 
-`lang`: Language of the collection (optional), ignored if `title` is not defined.
+`lang`: Language of the collection (optional), ignored if `title` is not defined, uses [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
 
 `created`: ISO-8601 format or unix time in milliseconds.
 
 `updated`: ISO-8601 format or unix time in millisedconds.
 
-`datas`: Question datas. Check [Question Source](#question-source) for template.
+`items`: An item can be either a question or a memo.
 
-### Question Source
+### Item
+
+`item` object is the base to other type of items. For now we only supports `Memo` and `Question` type of items.
+
+`Item object`
+
+```yml
+type: ItemType
+id: string
+keywords: string[]
+lang: string (optional)
+```
+
+ - `type`: `ItemType:` `[ Unknwon, Question, Memo ]`
+ - `id`: Unqiue ID, if it's not unique in the collection then it'll be generated to avoid conflict.
+ - `keywords`: string of keywords, if it's empty then the default will be `unknown`.
+ - `lang`: Item language uses [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+
+#### Question Item
 
 ```yml
 text: string
 description: string (optional)
-options: array of option
-keywords: array of string (optional)
+options: Option[]
+
+type: ItemType
 id: string
+keywords: string[]
 lang: string (optional)
 ```
 
-`text`: Question main text, supports Latex Math.
-
-`description`: More text for the question (optional), supports Markdown and Latex Math.
-
-`options`: Array of options, check [Option Source](#option-source).
-
-`keywords`: Question keywords (optional), if there are no keyword the question will be in the unknown keywords.
-
-`id`: Question id, this must unique, if it's not then another id will be generated when the questions are merged.
-
-`lang`: Question language.
-
-#### Option Source
+#### Memo Item
 
 ```yml
-text: string
-correct: boolean
+front: string
+back: string
+
+type: ItemType
+id: string
+keywords: string[]
+lang: string (optional)
 ```
-
-`text`: Option text, supports Markdown and Latex Math
-
-`correct`: Determine if the question is correct or not, bool value `true` or `false`.

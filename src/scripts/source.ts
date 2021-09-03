@@ -1,14 +1,28 @@
 import * as yaml from 'js-yaml'
 
 import {
-  OptionBase,
-  QuestionBase
+  EItemType,
+  OptionBase
 } from './collection'
 
-export type OptionSource = OptionBase;
+export type TItemType = keyof typeof EItemType
+export interface ItemSource {
+  type: TItemType | EItemType
+  id: string
+  keywords: string[]
+  lang?: string
+}
 
-export interface QuestionSource extends QuestionBase {
+export type OptionSource = OptionBase;
+export interface QuestionSource {
+  text: string
+  description?: string
   options: OptionSource[]
+}
+
+export interface MemoSource extends ItemSource {
+  front: string
+  back: string
 }
 
 export interface CollectionSource {
@@ -16,16 +30,14 @@ export interface CollectionSource {
   description?: string
   lang?: string
 
-  datas: QuestionSource[]
-  created: string | number  // ISO 8601 or unix time ms
-  updated: string | number  // ISO 8601 or unix time ms
+  items: ItemSource[]
+  created: string | number  // ISO-8601 or unix time ms
+  updated: string | number  // ISO-8601 or unix time ms
 }
-
-export type CollectionSources = QuestionSource[];
 
 // REGEX for source and collection query keys
 const SOURCE_REGX      = /source=([^&]+)&?/gi
-const COLLECTIONS_REGX = /collection=([^&]+)&?/gi
+// const COLLECTIONS_REGX = /collection=([^&]+)&?/gi
 const JSON_EXT_REGX    = /\.json$/g
 const YAML_EXT_REGX    = /\.ya?ml$/g
 
@@ -65,31 +77,6 @@ export function extractQueryValues(query: string, regex: RegExp): string[] {
  */
 export const extractSource = (query: string)
   : string[] => extractQueryValues(query, SOURCE_REGX)
-
-/**
- * Extract collection urls from query string.
- *
- * @todo There's no definitive way to use this at the moment.
- *
- * @description
- * A collection url points to json or yaml file that has array
- * of urls to collection source file.
- *
- * Sample yaml collection url file
- * ```yml
- * - 'collection_01.yml'
- * - 'collection_02.json'
- * - 'collection_03.yaml'
- * ```
- *
- * @example
- * const query       = '?collection=url+url2&collection=url3'
- * const collections = extractCollection(query)
- * @param query Query string to parse
- * @returns Array of collection urls, might be an empty array
- */
-export const extractCollections = (query: string)
-  : string[] => extractQueryValues(query, COLLECTIONS_REGX)
 
 /**
  * Fetch yaml file and parse it to JavaScript object using js-yaml.
@@ -143,6 +130,19 @@ export async function GetCollection(url: string): Promise<CollectionSource> {
       return GetJSON<CollectionSource>(url)
     else if (YAML_EXT_REGX.test(url))
       return GetYAML<CollectionSource>(url)
+    else
+      return Promise.reject('Unknown file extension')
+  } catch (err) {
+    return Promise.reject(err)
+  }
+}
+
+export async function GetItemsSource(url: string): Promise<ItemSource[]> {
+  try {
+    if (JSON_EXT_REGX.test(url))
+      return GetJSON<ItemSource[]>(url)
+    else if (YAML_EXT_REGX.test(url))
+      return GetYAML<ItemSource[]>(url)
     else
       return Promise.reject('Unknown file extension')
   } catch (err) {

@@ -4,7 +4,7 @@ lang: en
 created: 2021-09-02
 updated: 2021-09-02
 
-datas:
+items:
   - text: Sample Question 01
     description: Sample 01 description
     options:
@@ -17,6 +17,8 @@ datas:
     keywords:
       - sample-key
     id: sample-question-01
+    type: Question
+    lang: en
 
   - text: Sample Question 02
     options:
@@ -29,16 +31,21 @@ datas:
     keywords:
       - sample-key2
     id: sample-question-02
+    type: Question
+    lang: en
 
-  - text: Sample Question 03
-    description: Sample 03 description
-    options:
-      - text: Sample 03 Option A
-        correct: false
-      - text: Sample 03 Option B
-        correct: true
-      - text: Sample 03 Option C
-        correct: false
+  - front: Sample Memo 01
+    back: Sample Memo 01 Back
     keywords:
       - sample-key
-    id: sample-question-03
+    id: sample-memo-01
+    type: Memo
+    lang: en
+
+  - front: Sample Memo 02
+    back: Sample Memo 02 Back
+    keywords:
+      - sample-key-m
+    id: sample-memo-02
+    type: Memo
+    lang: en

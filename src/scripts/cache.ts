@@ -15,4 +15,9 @@ export async function SaveSourceList(list: string[]): Promise<void> {
   return Promise.resolve()
 }
 
+export async function ClearStorage(): Promise<void> {
+  localStorage.clear()
+  return Promise.resolve()
+}
+
 // TODO: Offline list

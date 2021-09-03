@@ -6,6 +6,8 @@ import { useEffect } from 'preact/hooks'
 
 import { extractSource } from '@scripts/source'
 
+import './app.scss'
+
 export const App: Func = () => {
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key === '/') {

@@ -11,11 +11,4 @@ describe('Test Source Parser', () => {
     expect(sources).to.deep.equal(returnSources)
   })
 
-  it('should return collection urls', () => {
-    const returnSources = ['url1', 'url2']
-    const query = '?collection=url1+url2'
-    const sources = Source.extractCollections(query)
-    expect(sources).to.deep.equal(returnSources)
-  })
-
 })

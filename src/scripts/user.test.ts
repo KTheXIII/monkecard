@@ -23,6 +23,7 @@ describe('User', () => {
     const user = createUser('Penguin')
     const userJSON: UserJSON = {
       name: user.name,
+      theme: 'auto-theme',
       created: user.created.getTime(),
       updated: user.updated.getTime()
     }

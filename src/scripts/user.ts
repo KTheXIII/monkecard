@@ -1,5 +1,6 @@
 interface IUserBase<DATE> {
   name: string
+  theme: string
 
   created: DATE
   updated: DATE
@@ -20,14 +21,15 @@ const DEFAULT_NAMES = [
   'echidna',
   'giraffe'
 ]
-const randomName = () =>
-  DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)]
+const randomName =
+  () => DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)]
 
 export function createUser(username?: string): User {
   const name = username || randomName()
   const currentDate = new Date()
   return {
     name: name,
+    theme: 'auto-theme',
     created: currentDate,
     updated: currentDate
   }
@@ -36,6 +38,7 @@ export function createUser(username?: string): User {
 export function toJSON(user: User): UserJSON {
   return {
     name: user.name,
+    theme: user.theme,
     created: user.created.getTime(),
     updated: user.updated.getTime()
   }
@@ -44,6 +47,7 @@ export function toJSON(user: User): UserJSON {
 export function toUser(userJSON: UserJSON): User {
   return {
     name: userJSON.name,
+    theme: userJSON.theme,
     created: new Date(userJSON.created),
     updated: new Date(userJSON.updated)
   }
