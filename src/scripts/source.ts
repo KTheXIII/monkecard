@@ -7,14 +7,14 @@ import {
 
 export type TItemType = keyof typeof EItemType
 export interface ItemSource {
-  type: TItemType | EItemType
+  type: TItemType
   id: string
   keywords: string[]
   lang?: string
 }
 
 export type OptionSource = OptionBase;
-export interface QuestionSource {
+export interface QuestionSource extends ItemSource {
   text: string
   description?: string
   options: OptionSource[]
@@ -29,17 +29,19 @@ export interface CollectionSource {
   title?: string
   description?: string
   lang?: string
+  created: string | number  // ISO 8601 or unix time ms
+  updated: string | number  // ISO 8601 or unix time ms
 
-  items: ItemSource[]
-  created: string | number  // ISO-8601 or unix time ms
-  updated: string | number  // ISO-8601 or unix time ms
+  items?: ItemSource[]
 }
 
 // REGEX for source and collection query keys
-const SOURCE_REGX      = /source=([^&]+)&?/gi
-// const COLLECTIONS_REGX = /collection=([^&]+)&?/gi
-const JSON_EXT_REGX    = /\.json$/g
-const YAML_EXT_REGX    = /\.ya?ml$/g
+const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
+const SOURCES_REGEX  = /sources=([^&]+)&?/gi  // For data with a list of source
+const ITEMS_REGEX    = /items=([^&]+)&?/gi    // For data with a list of items
+// const NODE_REGEX     = /node=([^&]+)&?/gi
+const JSON_EXT_REGEX = /\.json$/g
+const YAML_EXT_REGEX = /\.ya?ml$/g
 
 /**
  * Extract query value from query string.
@@ -75,8 +77,14 @@ export function extractQueryValues(query: string, regex: RegExp): string[] {
  * @param query Query parameter
  * @returns Array of source urls, might be an empty array
  */
-export const extractSource = (query: string)
-  : string[] => extractQueryValues(query, SOURCE_REGX)
+export const extractSource  = (query: string)
+  : string[] => extractQueryValues(query, SOURCE_REGEX)
+
+export const extractSources = (query: string)
+  : string[] => extractQueryValues(query, SOURCES_REGEX)
+
+export const extractItems   = (query: string)
+  : string[] => extractQueryValues(query, ITEMS_REGEX)
 
 /**
  * Fetch yaml file and parse it to JavaScript object using js-yaml.
@@ -125,10 +133,12 @@ export async function GetJSON<T>(url: string): Promise<T> {
  */
 export async function GetCollection(url: string): Promise<CollectionSource> {
   try {
-    // NOTE: Should consider using endsWith() instead of regex.
-    if (JSON_EXT_REGX.test(url))
+    // NOTE: Should consider using endsWith() instead of regex,
+    //       if performance is considered to be an issue.
+    //       From my test the endsWith() is slightly faster.
+    if (JSON_EXT_REGEX.test(url))
       return GetJSON<CollectionSource>(url)
-    else if (YAML_EXT_REGX.test(url))
+    else if (YAML_EXT_REGEX.test(url))
       return GetYAML<CollectionSource>(url)
     else
       return Promise.reject('Unknown file extension')
@@ -137,11 +147,11 @@ export async function GetCollection(url: string): Promise<CollectionSource> {
   }
 }
 
-export async function GetItemsSource(url: string): Promise<ItemSource[]> {
+export async function GetItems(url: string): Promise<ItemSource[]> {
   try {
-    if (JSON_EXT_REGX.test(url))
+    if (JSON_EXT_REGEX.test(url))
       return GetJSON<ItemSource[]>(url)
-    else if (YAML_EXT_REGX.test(url))
+    else if (YAML_EXT_REGEX.test(url))
       return GetYAML<ItemSource[]>(url)
     else
       return Promise.reject('Unknown file extension')

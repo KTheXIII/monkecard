@@ -15,7 +15,7 @@ describe('Question', () => {
       description: 'Question Description',
       options: [],
       keywords: [],
-      type: EItemType.Memo
+      type: EItemType.Question
     } as IQuestion
 
     expect(item.type,

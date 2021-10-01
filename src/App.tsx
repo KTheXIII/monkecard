@@ -2,28 +2,46 @@ import {
   h,
   FunctionComponent as Func
 } from 'preact'
-import { useEffect } from 'preact/hooks'
+import {
+  useState,
+  useEffect,
+  useRef
+} from 'preact/hooks'
+import katex from 'katex'
 
-import { extractSource } from '@scripts/source'
+import { CommandPalette } from '@components/CommandPalette'
+import { extractSource, GetCollection } from '@scripts/source'
+import { localSourceList } from '@scripts/cache'
 
 import './app.scss'
 
 export const App: Func = () => {
+  const [isComHidden, setIsComHidden] = useState(true)
+  const [isLoading, setIsLoading]     = useState(true)
+
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key === '/') {
       console.log('/ pressed')
       e.preventDefault()
     }
+    // Toggle Command Palette
     if (e.key === 'p' && e.metaKey && e.shiftKey) {
-      console.log('meta+shift+p pressed')
+      setIsComHidden(prev => !prev)
+      e.preventDefault()
+    }
+    // Hide Command Palette
+    if (e.key === 'Escape') {
+      setIsComHidden(true)
       e.preventDefault()
     }
   }
 
-  useEffect(() => {
-    console.log(`seach: ${window.location.search}`)
-    console.log(extractSource(window.location.search))
+  async function init() {
+    const localSourceList = await localSourceList()
+  }
 
+  useEffect(() => {
+    init()
     window.addEventListener('keypress', onKeyPress)
     return () => {
       window.removeEventListener('keypress', onKeyPress)
@@ -32,9 +50,7 @@ export const App: Func = () => {
 
   return (
     <div class='app'>
-      <div className='test'>
-        <span>Hello, World!</span>
-      </div>
+      <CommandPalette isHidden={isComHidden} />
     </div>
   )
 }
