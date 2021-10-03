@@ -5,15 +5,26 @@ import {
 import {
   useState,
   useEffect,
-  useRef
 } from 'preact/hooks'
-import katex from 'katex'
 
 import { CommandPalette } from '@components/CommandPalette'
-import { extractSource, GetCollection } from '@scripts/source'
-import { localSourceList } from '@scripts/cache'
-
+import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
+import { extractQuerySource, } from '@scripts/source'
+import {} from '@scripts/user'
 import './app.scss'
+
+let sourceList: string[] = []
+
+async function initSourceList(): Promise<string[]> {
+  const sourceSet = extractQuerySource(window.location.search)
+    .reduce((acc, cur) => acc.add(cur), new Set<string>())
+  await getLocalSourceList().then(list =>
+    list.forEach(value => sourceSet.add(value))
+  )
+  const list = Array.from(sourceSet)
+  await saveLocalSourceList(list)
+  return list
+}
 
 export const App: Func = () => {
   const [isComHidden, setIsComHidden] = useState(true)
@@ -24,9 +35,9 @@ export const App: Func = () => {
       console.log('/ pressed')
       e.preventDefault()
     }
-    // Toggle Command Palette
+    // Show Command Palette
     if (e.key === 'p' && e.metaKey && e.shiftKey) {
-      setIsComHidden(prev => !prev)
+      setIsComHidden(false)
       e.preventDefault()
     }
     // Hide Command Palette
@@ -37,7 +48,15 @@ export const App: Func = () => {
   }
 
   async function init() {
-    const localSourceList = await localSourceList()
+    try {
+      sourceList = await initSourceList()
+      console.log(sourceList)
+
+      // collectionList = []
+    } catch (err) {
+      console.error(err)
+    }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -50,7 +69,7 @@ export const App: Func = () => {
 
   return (
     <div class='app'>
-      <CommandPalette isHidden={isComHidden} />
+      <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )
 }

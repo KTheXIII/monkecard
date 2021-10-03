@@ -1,9 +1,6 @@
 import * as yaml from 'js-yaml'
 
-import {
-  EItemType,
-  OptionBase
-} from './collection'
+import { EItemType } from './collection'
 
 export type TItemType = keyof typeof EItemType
 export interface ItemSource {
@@ -13,7 +10,10 @@ export interface ItemSource {
   lang?: string
 }
 
-export type OptionSource = OptionBase;
+export interface OptionSource {
+  text: string
+  correct?: boolean
+}
 export interface QuestionSource extends ItemSource {
   text: string
   description?: string
@@ -37,7 +37,7 @@ export interface CollectionSource {
 
 // REGEX for source and collection query keys
 const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
-const SOURCES_REGEX  = /sources=([^&]+)&?/gi  // For data with a list of source
+const LIST_REGEX     = /list=([^&]+)&?/gi     // For data with a list of source
 const ITEMS_REGEX    = /items=([^&]+)&?/gi    // For data with a list of items
 // const NODE_REGEX     = /node=([^&]+)&?/gi
 const JSON_EXT_REGEX = /\.json$/g
@@ -77,13 +77,13 @@ export function extractQueryValues(query: string, regex: RegExp): string[] {
  * @param query Query parameter
  * @returns Array of source urls, might be an empty array
  */
-export const extractSource  = (query: string)
+export const extractQuerySource     = (query: string)
   : string[] => extractQueryValues(query, SOURCE_REGEX)
 
-export const extractSources = (query: string)
-  : string[] => extractQueryValues(query, SOURCES_REGEX)
+export const extractQuerySourceList = (query: string)
+  : string[] => extractQueryValues(query, LIST_REGEX)
 
-export const extractItems   = (query: string)
+export const extractQueryItems      = (query: string)
   : string[] => extractQueryValues(query, ITEMS_REGEX)
 
 /**
@@ -92,7 +92,7 @@ export const extractItems   = (query: string)
  * @param url YAML file path
  * @returns Promise that resolves to the parsed YAML object
  */
-export async function GetYAML<T>(url: string): Promise<T> {
+export async function fetchYAML<T>(url: string): Promise<T> {
   try {
     const res = await fetch(url)
     if (!res.ok) return Promise.reject(res.statusText)
@@ -113,7 +113,7 @@ export async function GetYAML<T>(url: string): Promise<T> {
  * @param url JSON file path
  * @returns Promise that resolves to the parsed JSON object.
  */
-export async function GetJSON<T>(url: string): Promise<T> {
+export async function fetchJSON<T>(url: string): Promise<T> {
   try {
     const res = await fetch(url)
     if (!res.ok) return Promise.reject(res.statusText)
@@ -131,15 +131,16 @@ export async function GetJSON<T>(url: string): Promise<T> {
  * @param url Collection file url.
  * @returns Promise that resolves to the parsed collection data.
  */
-export async function GetCollection(url: string): Promise<CollectionSource> {
+export async function fetchCollectionSource(url: string):
+  Promise<CollectionSource> {
   try {
     // NOTE: Should consider using endsWith() instead of regex,
     //       if performance is considered to be an issue.
     //       From my test the endsWith() is slightly faster.
     if (JSON_EXT_REGEX.test(url))
-      return GetJSON<CollectionSource>(url)
+      return fetchJSON<CollectionSource>(url)
     else if (YAML_EXT_REGEX.test(url))
-      return GetYAML<CollectionSource>(url)
+      return fetchYAML<CollectionSource>(url)
     else
       return Promise.reject('Unknown file extension')
   } catch (err) {
@@ -147,12 +148,19 @@ export async function GetCollection(url: string): Promise<CollectionSource> {
   }
 }
 
-export async function GetItems(url: string): Promise<ItemSource[]> {
+/**
+ * Fetch item list from a url.
+ * Supports JSON and YAML files depeding on the file extension.
+ *
+ * @param url Item url to fetch
+ * @returns Promise that resolves to the parsed item data.
+ */
+export async function getItemSource(url: string): Promise<ItemSource[]> {
   try {
     if (JSON_EXT_REGEX.test(url))
-      return GetJSON<ItemSource[]>(url)
+      return fetchJSON<ItemSource[]>(url)
     else if (YAML_EXT_REGEX.test(url))
-      return GetYAML<ItemSource[]>(url)
+      return fetchYAML<ItemSource[]>(url)
     else
       return Promise.reject('Unknown file extension')
   } catch (err) {

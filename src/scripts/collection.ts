@@ -3,7 +3,7 @@ import {
   ItemSource,
   MemoSource,
   OptionSource,
-  GetCollection
+  fetchCollectionSource
 } from './source'
 
 export enum EItemType {
@@ -61,7 +61,7 @@ export interface ICollection {
  * @returns Created ICollection object
  */
 export async function loadCollection(url: string): Promise<ICollection> {
-  const collection  = await GetCollection(url)
+  const collection  = await fetchCollectionSource(url)
   const title       = collection.title || 'Unknown'
   const description = collection.description || 'n/a'
   const lang    = collection.lang
@@ -69,10 +69,9 @@ export async function loadCollection(url: string): Promise<ICollection> {
   const updated = new Date(collection.updated)
   const items   = new Map<string, Item>()
   const source  = url
-  if (collection.items)
-    collection.items.forEach(item => {
-      items.set(item.id, createItemFromSource(item))
-    })
+  if (collection.items) collection.items.forEach(item => {
+    items.set(item.id, createItemFromSource(item))
+  })
 
   return {
     title,
@@ -133,7 +132,7 @@ export function createQuestionFromSource(source: QuestionSource): IQuestion {
 
 export function createOptionFromSource(source: OptionSource): IOption {
   const text    = source.text
-  const correct = source.correct
+  const correct = source.correct || false
   return {
     text,
     correct,
