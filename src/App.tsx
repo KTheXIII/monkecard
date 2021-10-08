@@ -8,6 +8,8 @@ import {
 } from 'preact/hooks'
 
 import { CommandPalette } from '@components/CommandPalette'
+import { CollectionList } from '@components/CollectionList'
+
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
 import { extractQuerySource, } from '@scripts/source'
 import {} from '@scripts/user'
@@ -51,8 +53,6 @@ export const App: Func = () => {
     try {
       sourceList = await initSourceList()
       console.log(sourceList)
-
-      // collectionList = []
     } catch (err) {
       console.error(err)
     }
@@ -69,6 +69,9 @@ export const App: Func = () => {
 
   return (
     <div class='app'>
+      <div className="main">
+        <CollectionList linkList={sourceList} />
+      </div>
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )

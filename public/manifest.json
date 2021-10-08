@@ -1,9 +1,9 @@
 {
-  "name": "Quiz App",
-  "short_name": "./quiz",
+  "name": "./memo",
+  "short_name": "./memo",
   "start_url": "./",
   "display": "standalone",
-  "description": "A quiz app.",
+  "description": "Memo app with quizes and card memos.",
   "theme_color": "#0f0f0f",
   "background_color": "#0f0f0f",
   "orientation": "portrait-primary",

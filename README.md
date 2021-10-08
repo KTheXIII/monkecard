@@ -6,24 +6,25 @@ Build with Snowpack, PreactJS and TypeScript.
 
 ## Requirements
 
-- [nodejs](https://nodejs.dev)
+  - [nodejs](https://nodejs.dev)
+  - [pnpm 6.16.1+](https://pnpm.io)
 
 ## Development
 
 Installs the packages
 
 ```
-yarn
+pnpm i
 ```
 
 Run development server
 
 ```
-yarn dev
+pnpm dev
 ```
 
 Build production
 
 ```
-yarn build
+pnpm build
 ```

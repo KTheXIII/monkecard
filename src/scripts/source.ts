@@ -60,7 +60,7 @@ export function extractQueryValues(query: string, regex: RegExp): string[] {
     matches.forEach(match => {
       const matchSplit = match
         .replace(regex, '$1')
-        .split('+')
+        .split(/\+/)
         .map(s => s.trim())
       sources.push(...matchSplit)
     })

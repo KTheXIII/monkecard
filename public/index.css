@@ -26,6 +26,10 @@
   --text-dim: var(--grey_dim);
 }
 
+:root {
+  font-size: 11pt;
+}
+
 html,
 body,
 #root {
