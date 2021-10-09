@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml'
 
-import { EItemType } from './collection'
+import { EItemType, ICollection } from './collection'
 
 export type TItemType = keyof typeof EItemType
 export interface ItemSource {
@@ -35,13 +35,23 @@ export interface CollectionSource {
   items?: ItemSource[]
 }
 
+export interface ISourceSet {
+  source: string
+  data: CollectionSource
+}
+
+export interface ICollectionSet {
+  sources: ISourceSet[]
+  collection: ICollection
+}
+
 // REGEX for source and collection query keys
 const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
 const LIST_REGEX     = /list=([^&]+)&?/gi     // For data with a list of source
 const ITEMS_REGEX    = /items=([^&]+)&?/gi    // For data with a list of items
 // const NODE_REGEX     = /node=([^&]+)&?/gi
-const JSON_EXT_REGEX = /\.json$/g
-const YAML_EXT_REGEX = /\.ya?ml$/g
+const JSON_EXT_REGEX = /\.json$/i
+const YAML_EXT_REGEX = /\.ya?ml$/i
 
 /**
  * Extract query value from query string.
@@ -124,6 +134,7 @@ export async function fetchJSON<T>(url: string): Promise<T> {
   }
 }
 
+// TODO: Add data validation for source
 /**
  * Fetch collection data from a url.
  * Supports JSON and YAML files depeding on the file extension.
@@ -134,15 +145,12 @@ export async function fetchJSON<T>(url: string): Promise<T> {
 export async function fetchCollectionSource(url: string):
   Promise<CollectionSource> {
   try {
-    // NOTE: Should consider using endsWith() instead of regex,
-    //       if performance is considered to be an issue.
-    //       From my test the endsWith() is slightly faster.
     if (JSON_EXT_REGEX.test(url))
       return fetchJSON<CollectionSource>(url)
     else if (YAML_EXT_REGEX.test(url))
       return fetchYAML<CollectionSource>(url)
     else
-      return Promise.reject('Unknown file extension')
+      return Promise.reject(`Unknown file extension: ${url}`)
   } catch (err) {
     return Promise.reject(err)
   }

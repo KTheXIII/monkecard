@@ -1,32 +1,48 @@
-import { h, FunctionalComponent as Func } from 'preact'
+import {
+  h, FunctionalComponent as Func, VNode
+} from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 
 import {
   MemoList,
   MemoListButtonItem
 } from './MemoList'
+import {
+  CheckCircleFill,
+  CircleSlash,
+  DashCircleDotted,
+  XCircleFill
+} from '@assets/BootstrapIcons'
 
-import { ChevronRight } from '@assets/BootstrapIcons'
+import { CollectionSource } from '@scripts/source'
+
+export interface CollectionListItem {
+  text: string
+  preview: string
+}
 
 interface CollectionListProps {
-  linkList: string[]
+  list: CollectionListItem[]
+  onClick?: (index: number) => void
 }
 
 export const CollectionList: Func<CollectionListProps> = (props) => {
-  const [show, setShow] = useState(false)
+  const [count, setCount] = useState(0)
   return (
-    <div class="memo-collection-list">
-      <div className="content">
-        <MemoList text="collections">
-          <MemoListButtonItem text="Hello, World!" onClick={() => {
-            setShow(!show)
-          }} preview={`${show}`} />
-          <MemoListButtonItem text="Hatsune Miku!" />
+    <MemoList text="collections">
+      {props.list.map((item, index) => {
+        return (
           <MemoListButtonItem
-            text="System Development and Project" preview="Sonokai Andremeda Dark"
-            iconR={ChevronRight} hideIconR={false} />
-        </MemoList>
-      </div>
-    </div>
+            key={index}
+            text={item.text}
+            preview={item.preview}
+            onClick={() => props.onClick && props.onClick(index)}
+          />
+        )})}
+      <MemoListButtonItem text="count" onClick={() => {
+        setCount(count + 1)
+      }} preview={`${count}`} />
+      <MemoListButtonItem text="much wow" isDisabled={true} preview={`${count}`} />
+    </MemoList>
   )
 }

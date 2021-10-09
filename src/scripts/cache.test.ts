@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { getLocalSourceList, saveLocalSourceList } from './cache'
 
-describe('Cache', () => {
+describe('cache using localstorage', () => {
 
   it('should get source list', async () => {
     const sources = await getLocalSourceList()

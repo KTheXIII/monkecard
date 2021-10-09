@@ -4,7 +4,6 @@ import {
   toChildArray,
   VNode,
 } from 'preact'
-import { useRef, useEffect } from 'preact/hooks'
 
 interface MemoListProps {
   text?: string
@@ -40,6 +39,10 @@ interface ButtonItemProps {
   preview?: string
   onClick?: () => void
   onMouseEnter?: () => void
+  onMouseLeave?: () => void
+  onDrop?: (e: DragEvent) => void
+  onDragOver?: (e: DragEvent) => void
+
   isDisabled?: boolean
   title?: string
 
@@ -54,7 +57,6 @@ interface ButtonItemProps {
 
 export const MemoListButtonItem: Func<ButtonItemProps> = (props) => {
   const { text, preview } = props
-  const btnRef = useRef<HTMLButtonElement>(null)
 
   const prevent    = props.preDefault === undefined ? true  : props.preDefault
   const hideIconL  = props.hideIconL  === undefined ? true  : props.hideIconL
@@ -64,19 +66,23 @@ export const MemoListButtonItem: Func<ButtonItemProps> = (props) => {
   return (
     <button
       class="memo-list-item"
-      ref={btnRef}
       disabled={isDisabled}
       title={props.title}
       onClick={e => {
-        // if (prevent) e.preventDefault()
+        if (prevent) e.preventDefault()
         if (props.onClick) props.onClick()
       }}
-      onMouseEnter={props.onMouseEnter}>
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
+      onDragOver={props.onDragOver}
+      onDrop={props.onDrop}>
       {!hideIconL && <div class="icon-left" style={props.iconStyleL}>{props.iconL}</div>}
       <div class="memo-list-item-content">
         <div class="memo-list-display">
-          <div class="text"><span>{text}</span></div>
-          <div class="preview"><span>{preview}</span></div>
+          <div class="text">
+            <span>{text}</span>
+          </div>
+          {preview && <div class="preview"><span>{preview}</span></div>}
           {!hideIconR && <div class="icon-right" style={props.iconStyleR}>{props.iconR}</div>}
         </div>
       </div>

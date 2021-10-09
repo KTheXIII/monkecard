@@ -9,12 +9,18 @@ import {
 
 import { CommandPalette } from '@components/CommandPalette'
 import { CollectionList } from '@components/CollectionList'
+import { HomePage } from '@pages/Home'
+import { SettingsPage } from '@pages/Settings'
 
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
-import { extractQuerySource, } from '@scripts/source'
-import {} from '@scripts/user'
+import {
+  extractQuerySource,
+  ICollectionSet
+} from '@scripts/source'
 import './app.scss'
+import { ICollection } from '@scripts/collection'
 
+const collectionSet = new Set<ICollectionSet>()
 let sourceList: string[] = []
 
 async function initSourceList(): Promise<string[]> {
@@ -28,9 +34,14 @@ async function initSourceList(): Promise<string[]> {
   return list
 }
 
+async function initCollectionSet(sources: string[],
+  set: Set<ICollectionSet>): Promise<void> {
+  return Promise.resolve()
+}
+
 export const App: Func = () => {
   const [isComHidden, setIsComHidden] = useState(true)
-  const [isLoading, setIsLoading]     = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key === '/') {
@@ -52,7 +63,6 @@ export const App: Func = () => {
   async function init() {
     try {
       sourceList = await initSourceList()
-      console.log(sourceList)
     } catch (err) {
       console.error(err)
     }
@@ -68,10 +78,9 @@ export const App: Func = () => {
   }, [])
 
   return (
-    <div class='app'>
-      <div className="main">
-        <CollectionList linkList={sourceList} />
-      </div>
+    <div class="app">
+      <HomePage isLoading={isLoading} />
+      {/* <SettingsPage /> */}
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )

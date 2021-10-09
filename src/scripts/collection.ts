@@ -15,6 +15,7 @@ export enum EItemType {
 export interface Item {
   type: EItemType
   id: string
+  hash: string
   keywords: string[]
   lang?: string
 }
@@ -102,9 +103,11 @@ export function createMemoFromSource(source: MemoSource): Memo {
   const lang  = source.lang
   const front = source.front
   const back  = source.back
+  const hash  = ''
   return {
     type: EItemType.Memo,
     id,
+    hash,
     keywords,
     lang,
     front,
@@ -119,9 +122,11 @@ export function createQuestionFromSource(source: QuestionSource): IQuestion {
   const text = source.text
   const description = source.description
   const options = source.options.map(createOptionFromSource)
+  const hash    = ''
   return {
     type: EItemType.Question,
     id,
+    hash,
     keywords,
     lang,
     text,

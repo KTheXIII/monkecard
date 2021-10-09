@@ -11,6 +11,7 @@ describe('Question', () => {
   it('should create question', () => {
     const item: Item = {
       id: '1',
+      hash: 'hash',
       text: 'Question text',
       description: 'Question Description',
       options: [],

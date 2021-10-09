@@ -9,7 +9,7 @@ export const CommandPalette: Func<Props> = (props) => {
   const { isHidden } = props
   return (
     <div class="command-palette">
-      {!isHidden && <div className="container"></div>}
+      {!isHidden && <div class="container"></div>}
     </div>
   )
 }
