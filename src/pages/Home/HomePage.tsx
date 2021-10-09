@@ -8,7 +8,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = (props) => {
   const [collectionList, setCollectionList] = useState<CollectionListItem[]>([
-    { text: 'Loading...', preview: 'n/a' },
+    { text: 'Loading...', preview: 'error' },
   ])
 
   return (

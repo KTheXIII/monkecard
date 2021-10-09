@@ -4,15 +4,16 @@ import { HomePage } from '@pages/Home'
 import { SettingsPage } from '@pages/Settings'
 
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
-import { extractQuerySource } from '@scripts/source'
-import { ICollectionSet } from '@models/dataset'
+import { extractQuerySource, fetchCollectionSource } from '@scripts/source'
+import { ISourceSet, ICollectionSet } from '@models/dataset'
 
 import './app.scss'
+import { mergeCollection } from '@scripts/collection'
 
-const collectionSet = new Set<ICollectionSet>()
-let sourceList: string[] = []
+let sourceSetList: ISourceSet[] = []
+let collectionSetList: ICollectionSet[] = []
 
-async function initSourceList(): Promise<string[]> {
+async function initURLSourceList(): Promise<string[]> {
   const sourceSet = extractQuerySource(window.location.search)
     .reduce((acc, cur) => acc.add(cur), new Set<string>())
   await getLocalSourceList().then(list =>
@@ -23,9 +24,16 @@ async function initSourceList(): Promise<string[]> {
   return list
 }
 
-async function initCollectionSet(sources: string[],
-  set: Set<ICollectionSet>): Promise<void> {
-  return Promise.resolve()
+async function fetchSourceSets(urls: string[]): Promise<ISourceSet[]> {
+  return Promise.all(urls.map(async (url) => {
+    const set: ISourceSet = { source: url, data: null }
+    try {
+      set.data = await fetchCollectionSource(url)
+    } catch (err) {
+      console.error(err)
+    }
+    return set
+  }))
 }
 
 export const App: React.FC = () => {
@@ -52,7 +60,11 @@ export const App: React.FC = () => {
   async function init() {
     setIsLoading(true)
     try {
-      sourceList = await initSourceList()
+      const urls = await initURLSourceList()
+      sourceSetList = await fetchSourceSets(urls)
+      collectionSetList = mergeCollection(sourceSetList)
+      console.dir(sourceSetList)
+      console.dir(collectionSetList)
     } catch (err) {
       console.error(err)
     }

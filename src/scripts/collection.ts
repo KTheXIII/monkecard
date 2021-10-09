@@ -1,3 +1,4 @@
+import { ISourceSet, ICollectionSet } from '@models/dataset'
 import {
   ICollection,
   Item,
@@ -13,37 +14,45 @@ import {
   OptionSource,
 } from '@models/source'
 
-import { fetchCollectionSource } from './source'
-
 /**
- * Load collection from URL. This function uses GetCollection() to fetch
- * the collection source.
+ * Load collection from source set.
  *
- * @param url Collection URL
+ * @param set Source set.
  * @returns Created ICollection object
  */
-export async function loadCollection(url: string): Promise<ICollection> {
-  const collection  = await fetchCollectionSource(url)
-  const title       = collection.title || 'Unknown'
-  const description = collection.description || 'n/a'
-  const lang    = collection.lang
-  const created = new Date(collection.created)
-  const updated = new Date(collection.updated)
-  const items   = new Map<string, Item>()
-  const source  = url
-  if (collection.items) collection.items.forEach(item => {
-    items.set(item.id, createItemFromSource(item))
-  })
-
-  return {
-    title,
-    description,
-    source,
-    created,
-    updated,
-    items,
-    lang
+export function loadCollection(set: ISourceSet): ICollection | null {
+  if (set.data) {
+    const title       = set.data.title || 'Unknown'
+    const description = set.data.description || 'n/a'
+    const lang    = set.data.lang
+    const created = new Date(set.data.created)
+    const updated = new Date(set.data.updated)
+    const items   = new Map<string, Item>()
+    const source  = set.source
+    return {
+      title,
+      description,
+      source,
+      created,
+      updated,
+      items,
+      lang
+    }
   }
+  return null
+}
+
+export function mergeCollection(sourceSet: ISourceSet[]): ICollectionSet[] {
+  return sourceSet.reduce((acc, cur) => {
+    const found = acc.find(c => c.collection && cur.data
+      && c.collection.title === cur.data.title)
+    if (found) found.sources.push(cur)
+    else acc.push({
+      sources: [cur],
+      collection: loadCollection(cur)
+    })
+    return acc
+  }, [] as ICollectionSet[])
 }
 
 export function createItemFromSource(source: ItemSource): Item {
