@@ -1,12 +1,4 @@
-import {
-  h,
-  FunctionComponent as Func
-} from 'preact'
-import {
-  useState,
-  useEffect,
-} from 'preact/hooks'
-
+import React, { useState, useEffect } from 'react'
 import { CommandPalette } from '@components/CommandPalette'
 import { CollectionList } from '@components/CollectionList'
 import { HomePage } from '@pages/Home'
@@ -39,7 +31,7 @@ async function initCollectionSet(sources: string[],
   return Promise.resolve()
 }
 
-export const App: Func = () => {
+export const App: React.FC = () => {
   const [isComHidden, setIsComHidden] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -78,7 +70,7 @@ export const App: Func = () => {
   }, [])
 
   return (
-    <div class="app">
+    <div className="app">
       <HomePage isLoading={isLoading} />
       {/* <SettingsPage /> */}
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />

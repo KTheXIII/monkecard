@@ -1,15 +1,14 @@
-import { h, FunctionalComponent as Func } from 'preact'
-
+import React, {} from 'react'
 interface Props {
   isHidden: boolean
   isLoading: boolean
 }
 
-export const CommandPalette: Func<Props> = (props) => {
+export const CommandPalette: React.FC<Props> = (props) => {
   const { isHidden } = props
   return (
-    <div class="command-palette">
-      {!isHidden && <div class="container"></div>}
+    <div className="command-palette">
+      {!isHidden && <div className="container"></div>}
     </div>
   )
 }

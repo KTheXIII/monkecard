@@ -1,34 +1,29 @@
-import {
-  h,
-  FunctionalComponent as Func,
-  toChildArray,
-  VNode,
-} from 'preact'
+import React, { ReactElement } from 'react'
 
 interface MemoListProps {
   text?: string
   emptyMessage?: string
 }
 
-export const MemoList: Func<MemoListProps> = (props) => {
+export const MemoList: React.FC<MemoListProps> = (props) => {
   const { text, emptyMessage } = props
-  const isEmpty = toChildArray(props.children).length === 0
+  const isEmpty = React.Children.count(props.children) === 0
   return (
-    <div class="memo-list">
-      {text && <div class="memo-list-info">
+    <div className="memo-list">
+      {text && <div className="memo-list-info">
         <span>{text}</span>
       </div>}
-      <div class="memo-list-content">
-        {isEmpty && <div class="memo-list-empty">{emptyMessage}</div>}
+      <div className="memo-list-content">
+        {isEmpty && <div className="memo-list-empty">{emptyMessage}</div>}
         {props.children}
       </div>
     </div>
   )
 }
 
-export const MemoListItem: Func = (props) => {
+export const MemoListItem: React.FC = (props) => {
   return (
-    <div class="memo-list-item">
+    <div className="memo-list-item">
       {props.children}
     </div>
   )
@@ -46,44 +41,37 @@ interface ButtonItemProps {
   isDisabled?: boolean
   title?: string
 
-  iconL?: VNode         // left icon
-  iconR?: VNode         // right icon
+  iconL?: ReactElement  // left icon
+  iconR?: ReactElement  // right icon
   hideIconL?: boolean   // Default: true
   hideIconR?: boolean   // Default: true
   iconStyleL?: string
   iconStyleR?: string
-  preDefault?: boolean  // Prevent default on click, default: true
 }
 
-export const MemoListButtonItem: Func<ButtonItemProps> = (props) => {
+export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
   const { text, preview } = props
 
-  const prevent    = props.preDefault === undefined ? true  : props.preDefault
   const hideIconL  = props.hideIconL  === undefined ? true  : props.hideIconL
   const hideIconR  = props.hideIconR  === undefined ? true  : props.hideIconR
   const isDisabled = props.isDisabled === undefined ? false : props.isDisabled
 
   return (
     <button
-      class="memo-list-item"
+      className="memo-list-item"
       disabled={isDisabled}
       title={props.title}
-      onClick={e => {
-        if (prevent) e.preventDefault()
-        if (props.onClick) props.onClick()
-      }}
+      onClick={e => props.onClick && props.onClick()}
       onMouseEnter={props.onMouseEnter}
-      onMouseLeave={props.onMouseLeave}
-      onDragOver={props.onDragOver}
-      onDrop={props.onDrop}>
-      {!hideIconL && <div class="icon-left" style={props.iconStyleL}>{props.iconL}</div>}
-      <div class="memo-list-item-content">
-        <div class="memo-list-display">
-          <div class="text">
+      onMouseLeave={props.onMouseLeave}>
+      {!hideIconL && <div className="icon-left" >{props.iconL}</div>}
+      <div className="memo-list-item-content">
+        <div className="memo-list-display">
+          <div className="text">
             <span>{text}</span>
           </div>
-          {preview && <div class="preview"><span>{preview}</span></div>}
-          {!hideIconR && <div class="icon-right" style={props.iconStyleR}>{props.iconR}</div>}
+          {preview && <div className="preview"><span>{preview}</span></div>}
+          {!hideIconR && <div className="icon-right" >{props.iconR}</div>}
         </div>
       </div>
     </button>

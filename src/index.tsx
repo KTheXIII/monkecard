@@ -1,5 +1,7 @@
-import 'preact/devtools'
-import { render, h } from 'preact'
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import { App } from './App'
 import {
   MODE,
   PUBLIC_URL,
@@ -7,7 +9,6 @@ import {
   COMMIT_HASH,
   REPOSITORY_URL
 } from '@scripts/env'
-import { App } from './App'
 
 if ('serviceWorker' in navigator && MODE === 'production') {
   window.addEventListener('load', () => {
@@ -21,11 +22,16 @@ async function main() {
   console.log(`v${VERSION}-${COMMIT_HASH.slice(0, 7)}`)
   console.log(`bug report: ${REPOSITORY_URL}/issues`)
 
-  const root = document.querySelector('#root')
-  if (root) render(<App />, root)
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
+  )
 }
 
 window.onload = main
 
+// Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
 // Learn more: https://snowpack.dev/concepts/hot-module-replacement
 if (import.meta.hot) import.meta.hot.accept()

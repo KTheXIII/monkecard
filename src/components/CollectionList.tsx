@@ -1,8 +1,4 @@
-import {
-  h, FunctionalComponent as Func, VNode
-} from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-
+import React, { useState } from 'react'
 import {
   MemoList,
   MemoListButtonItem
@@ -26,7 +22,7 @@ interface CollectionListProps {
   onClick?: (index: number) => void
 }
 
-export const CollectionList: Func<CollectionListProps> = (props) => {
+export const CollectionList: React.FC<CollectionListProps> = (props) => {
   const [count, setCount] = useState(0)
   return (
     <MemoList text="collections">

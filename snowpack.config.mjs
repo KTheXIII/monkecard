@@ -23,7 +23,7 @@ export default {
     src: { url: '/static' },
   },
   plugins: [
-    '@prefresh/snowpack',
+    '@snowpack/plugin-react-refresh',
     '@snowpack/plugin-dotenv',
     '@snowpack/plugin-postcss',
     ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],

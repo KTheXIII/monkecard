@@ -1,8 +1,7 @@
-import { h, FunctionalComponent as Func } from 'preact'
-
-export const SettingsPage: Func = () => {
+import React, {} from 'react'
+export const SettingsPage: React.FC = () => {
   return (
-    <div class="settings">
+    <div className="settings">
     </div>
   )
 }
