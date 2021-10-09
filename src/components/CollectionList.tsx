@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React, {
+  useState,
+  useEffect,
+  ReactElement
+} from 'react'
 import {
   MemoList,
   MemoListButtonItem
@@ -18,27 +22,29 @@ export interface CollectionListItem {
 }
 
 interface CollectionListProps {
-  list: CollectionListItem[]
+  list?: CollectionListItem[]
   onClick?: (index: number) => void
 }
 
 export const CollectionList: React.FC<CollectionListProps> = (props) => {
-  const [count, setCount] = useState(0)
+  const [items, setItems] = useState<ReactElement[]>([])
+
+  useEffect(() => {
+    if (props.list) {
+      setItems(props.list.map((item, index) => (
+        <MemoListButtonItem
+          key={index}
+          text={item.text}
+          preview={item.preview}
+          onClick={() => props.onClick && props.onClick(index)}
+        />
+      )))
+    }
+  }, [props])
+
   return (
     <MemoList text="collections">
-      {props.list.map((item, index) => {
-        return (
-          <MemoListButtonItem
-            key={index}
-            text={item.text}
-            preview={item.preview}
-            onClick={() => props.onClick && props.onClick(index)}
-          />
-        )})}
-      <MemoListButtonItem text="count" onClick={() => {
-        setCount(count + 1)
-      }} preview={`${count}`} />
-      <MemoListButtonItem text="much wow" isDisabled={true} preview={`${count}`} />
+      {items}
     </MemoList>
   )
 }

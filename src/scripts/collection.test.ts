@@ -4,7 +4,7 @@ import {
   IQuestion,
   EItemType,
   Item
-} from './collection'
+} from '@models/collection'
 
 describe('Question', () => {
 

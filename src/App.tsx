@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { CommandPalette } from '@components/CommandPalette'
-import { CollectionList } from '@components/CollectionList'
 import { HomePage } from '@pages/Home'
 import { SettingsPage } from '@pages/Settings'
 
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
-import {
-  extractQuerySource,
-  ICollectionSet
-} from '@scripts/source'
+import { extractQuerySource } from '@scripts/source'
+import { ICollectionSet } from '@models/dataset'
+
 import './app.scss'
-import { ICollection } from '@scripts/collection'
 
 const collectionSet = new Set<ICollectionSet>()
 let sourceList: string[] = []
@@ -53,6 +50,7 @@ export const App: React.FC = () => {
   }
 
   async function init() {
+    setIsLoading(true)
     try {
       sourceList = await initSourceList()
     } catch (err) {
@@ -64,9 +62,8 @@ export const App: React.FC = () => {
   useEffect(() => {
     init()
     window.addEventListener('keypress', onKeyPress)
-    return () => {
+    return () =>
       window.removeEventListener('keypress', onKeyPress)
-    }
   }, [])
 
   return (

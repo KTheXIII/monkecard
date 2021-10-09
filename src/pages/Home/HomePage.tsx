@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import { CollectionList, CollectionListItem } from '@components/CollectionList'
-import { CollectionSource } from '@scripts/source'
 
 interface HomePageProps {
   isLoading: boolean

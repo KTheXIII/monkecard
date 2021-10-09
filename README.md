@@ -1,6 +1,6 @@
 # memo
 
-`memo` is a card memo, quiz game and an article renderer build with in mind that the data sources can be supplied from other external servers.
+`memo` is a card memo, quiz game and an article renderer. Build in mind that the data source can be supplied from other external servers.
 
 Build with Snowpack, ReactJS and TypeScript.
 
