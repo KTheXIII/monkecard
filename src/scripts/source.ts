@@ -139,7 +139,7 @@ export async function getItemSource(url: string): Promise<ItemSource[]> {
 
 export async function loadSourceSet(urls: string[]): Promise<ISourceSet[]> {
   return Promise.all(urls.map(async (url) => {
-    const set: ISourceSet = { source: url, data: null }
+    const set: ISourceSet = { url: url, data: null }
     try {
       set.data = await fetchCollectionSource(url)
     } catch (err) {

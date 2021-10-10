@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+  useState,
+  useEffect
+} from 'react'
+
 import { CommandPalette } from '@components/CommandPalette'
 import { HomePage } from '@pages/Home'
 import { SettingsPage } from '@pages/Settings'
 
+import { ISourceSet, ICollectionSet } from '@models/dataset'
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
 import { extractQuerySource, loadSourceSet } from '@scripts/source'
 import { mergeCollection } from '@scripts/collection'
-import { ISourceSet, ICollectionSet } from '@models/dataset'
+import { hash, hashToString } from '@scripts/hash'
 
 import './app.scss'
-import { hash, hashToString } from '@scripts/hash'
 
 let sourceSetList: ISourceSet[] = []
 let collectionSetList: ICollectionSet[] = []
@@ -28,6 +32,7 @@ async function initURLSourceList(): Promise<string[]> {
 export const App: React.FC = () => {
   const [isComHidden, setIsComHidden] = useState(true)
   const [isLoading, setIsLoading]     = useState(true)
+  const [collectionList, setCollectionList] = useState(collectionSetList)
 
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key === '/') {
@@ -53,10 +58,10 @@ export const App: React.FC = () => {
       sourceSetList     = await loadSourceSet(urls)
       collectionSetList = mergeCollection(sourceSetList)
 
-      console.dir(sourceSetList)
       console.dir(collectionSetList)
-      console.log(hashToString(await hash('Hello, World')))
+      console.log('?source=' + urls.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
 
+      setCollectionList(collectionSetList)
     } catch (err) {
       console.error(err)
     }
@@ -72,7 +77,11 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      <HomePage isLoading={isLoading} />
+      <HomePage
+        isActive={false}
+        isLoading={isLoading}
+        collections={collectionList}
+      />
       {/* <SettingsPage /> */}
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>

@@ -28,11 +28,9 @@ export function loadCollection(set: ISourceSet): ICollection | null {
     const created = new Date(set.data.created)
     const updated = new Date(set.data.updated)
     const items   = new Map<string, Item>()
-    const source  = set.source
     return {
       title,
       description,
-      source,
       created,
       updated,
       items,

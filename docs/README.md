@@ -5,7 +5,7 @@
 Sources can be add with `query` parameter in the URL.
 
 ```
-?sources=url1+url2
+?source=url1+url2
 ```
 
 multiple urls can be separate with `+`

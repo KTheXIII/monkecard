@@ -14,8 +14,6 @@ import {
   XCircleFill
 } from '@assets/BootstrapIcons'
 
-import { CollectionSource } from '@scripts/source'
-
 export interface CollectionListItem {
   text: string
   preview: string

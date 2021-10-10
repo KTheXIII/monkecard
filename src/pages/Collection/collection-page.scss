@@ -1,0 +1,21 @@
+.collection-page {
+  .collection-info {
+    .header {
+      h1 {
+        font-size: 15pt;
+        margin-top: 0;
+      }
+      padding-bottom: 15pt;
+    }
+    .description {
+      display: grid;
+      gap: 10pt;
+      span {
+        color: var(--bg4);
+      }
+      .content {
+        font-size: 12pt;
+      }
+    }
+  }
+}

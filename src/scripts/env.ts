@@ -6,3 +6,4 @@ export const COMMIT_HASH    = __SNOWPACK_ENV__.COMMIT_HASH
 export const REPOSITORY_URL = __SNOWPACK_ENV__.REPOSITORY_URL
 export const MODE           = __SNOWPACK_ENV__.MODE
 export const PUBLIC_URL     = __SNOWPACK_ENV__.PUBLIC_URL
+export const HOMEPAGE       = __SNOWPACK_ENV__.HOMEPAGE

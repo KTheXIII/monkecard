@@ -2,7 +2,7 @@ import { CollectionSource } from './source'
 import { ICollection } from './collection'
 
 export interface ISourceSet {
-  source: string
+  url: string
   data: CollectionSource | null
 }
 

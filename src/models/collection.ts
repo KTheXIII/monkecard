@@ -38,7 +38,6 @@ export interface IQuestion extends QuestionBase {
 export interface ICollection {
   title: string
   description: string
-  source: string
   created: Date
   updated: Date
 
