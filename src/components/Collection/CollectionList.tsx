@@ -6,7 +6,7 @@ import React, {
 import {
   MemoList,
   MemoListButtonItem
-} from './MemoList'
+} from '../MemoList'
 import {
   CheckCircleFill,
   CircleSlash,
@@ -19,12 +19,12 @@ export interface CollectionListItem {
   preview: string
 }
 
-interface CollectionListProps {
+interface IProps {
   list?: CollectionListItem[]
   onClick?: (index: number) => void
 }
 
-export const CollectionList: React.FC<CollectionListProps> = (props) => {
+export const CollectionList: React.FC<IProps> = (props) => {
   const [items, setItems] = useState<ReactElement[]>([])
 
   useEffect(() => {

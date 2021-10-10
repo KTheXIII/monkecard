@@ -3,7 +3,7 @@ import React, {
   useEffect
 } from 'react'
 
-import { CollectionList, CollectionListItem } from '@components/CollectionList'
+import { CollectionList, CollectionListItem } from '@components/Collection/CollectionList'
 import { ICollectionSet } from '@models/dataset'
 import { CollectionPage } from '@pages/Collection'
 

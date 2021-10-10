@@ -8,7 +8,6 @@ export default {
     HOMEPAGE: process.env.npm_package_homepage,
     REPOSITORY_URL: process.env.npm_package_repository,
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
-    FILES_URL: `${process.env.PUBLIC_URL || ''}files.yml`,
     PUBLIC_URL: process.env.PUBLIC_URL || '/'
   },
   alias: {
