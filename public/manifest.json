@@ -1,6 +1,6 @@
 {
-  "name": "./memo",
-  "short_name": "./memo",
+  "name": "monkecard",
+  "short_name": "monkecard",
   "start_url": "./",
   "display": "standalone",
   "description": "Memo app with quizes and card memos.",

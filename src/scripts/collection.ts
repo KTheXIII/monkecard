@@ -42,17 +42,38 @@ export function loadCollection(set: ISourceSet): ICollection | null {
   return null
 }
 
+/**
+ * Merge the source set into the collection.
+ *
+ * @note The merge is done by the source title.
+ *
+ * @param sourceSet Source set list of collection
+ * @returns Collection set list
+ */
 export function mergeCollection(sourceSet: ISourceSet[]): ICollectionSet[] {
-  return sourceSet.reduce((acc, cur) => {
-    const found = acc.find(c => c.collection && cur.data
-      && c.collection.title === cur.data.title)
-    if (found) found.sources.push(cur)
-    else acc.push({
-      sources: [cur],
-      collection: loadCollection(cur)
+  return sourceSet
+    .reduce((acc, cur) => {       // merge collections
+      const found = acc.find(c => c.collection && cur.data &&
+                                  c.collection.title === cur.data.title)
+      if (found) found.sources.push(cur)
+      else acc.push({
+        sources: [cur],
+        collection: loadCollection(cur)
+      })
+      return acc
+    }, [] as ICollectionSet[])
+    .map(set => {                 // merge items
+      const { sources, collection } = set
+      sources.reduce((acc, cur) => {  // reduce to array of items
+        if (cur.data && cur.data.items) return acc
+          .concat(cur.data.items
+            .map(i => createItemFromSource(i))
+          )
+        else return acc
+      }, [] as Item[])
+        .forEach(i => collection && collection.items.set(i.id, i))  // put items into a map
+      return set
     })
-    return acc
-  }, [] as ICollectionSet[])
 }
 
 export function createItemFromSource(source: ItemSource): Item {

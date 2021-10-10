@@ -4,11 +4,12 @@ import { HomePage } from '@pages/Home'
 import { SettingsPage } from '@pages/Settings'
 
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
-import { extractQuerySource, fetchCollectionSource } from '@scripts/source'
+import { extractQuerySource, loadSourceSet } from '@scripts/source'
+import { mergeCollection } from '@scripts/collection'
 import { ISourceSet, ICollectionSet } from '@models/dataset'
 
 import './app.scss'
-import { mergeCollection } from '@scripts/collection'
+import { hash, hashToString } from '@scripts/hash'
 
 let sourceSetList: ISourceSet[] = []
 let collectionSetList: ICollectionSet[] = []
@@ -24,21 +25,9 @@ async function initURLSourceList(): Promise<string[]> {
   return list
 }
 
-async function fetchSourceSets(urls: string[]): Promise<ISourceSet[]> {
-  return Promise.all(urls.map(async (url) => {
-    const set: ISourceSet = { source: url, data: null }
-    try {
-      set.data = await fetchCollectionSource(url)
-    } catch (err) {
-      console.error(err)
-    }
-    return set
-  }))
-}
-
 export const App: React.FC = () => {
   const [isComHidden, setIsComHidden] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading]     = useState(true)
 
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key === '/') {
@@ -60,11 +49,14 @@ export const App: React.FC = () => {
   async function init() {
     setIsLoading(true)
     try {
-      const urls = await initURLSourceList()
-      sourceSetList = await fetchSourceSets(urls)
+      const urls        = await initURLSourceList()
+      sourceSetList     = await loadSourceSet(urls)
       collectionSetList = mergeCollection(sourceSetList)
+
       console.dir(sourceSetList)
       console.dir(collectionSetList)
+      console.log(hashToString(await hash('Hello, World')))
+
     } catch (err) {
       console.error(err)
     }

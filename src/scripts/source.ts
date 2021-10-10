@@ -4,6 +4,7 @@ import {
   ItemSource,
   CollectionSource
 } from '@models/source'
+import { ISourceSet } from '@models/dataset'
 
 // REGEX for source and collection query keys
 const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
@@ -135,3 +136,16 @@ export async function getItemSource(url: string): Promise<ItemSource[]> {
     return Promise.reject(err)
   }
 }
+
+export async function loadSourceSet(urls: string[]): Promise<ISourceSet[]> {
+  return Promise.all(urls.map(async (url) => {
+    const set: ISourceSet = { source: url, data: null }
+    try {
+      set.data = await fetchCollectionSource(url)
+    } catch (err) {
+      console.error(err)
+    }
+    return set
+  }))
+}
+

@@ -1,13 +1,13 @@
-# memo
+# monkecard
 
-`memo` is a card memo, quiz game and an article renderer. Build in mind that the data source can be supplied from other external servers.
+`monkecard` is a card memo, quiz game and an article renderer. Build in mind that the data source can be supplied from other external servers.
 
 Build with Snowpack, ReactJS and TypeScript.
 
 ## Requirements
 
   - [nodejs](https://nodejs.dev)
-  - [pnpm 6.16.1+](https://pnpm.io)
+  - [pnpm](https://pnpm.io)
 
 ## Development
 
@@ -21,6 +21,12 @@ Run development server
 
 ```
 pnpm dev
+```
+
+Run tests
+
+```
+pnpm test
 ```
 
 Build production

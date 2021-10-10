@@ -1,11 +1,14 @@
 {
-  "name": "memo",
+  "name": "monkecard",
   "version": "0.0.8",
   "author": "KTheXIII",
   "license": "MIT",
-  "homepage": "https://quiz.kthexiii.xyz",
-  "description": "Decentralised memo webapp build with TypeScript, ReactJS and SnowPack.",
-  "repository": "https://github.com/KTheXIII/q-react",
+  "homepage": "https://monkecard.xyz",
+  "description": "Decentralised memo webapp with external sources",
+  "repository": "https://github.com/KTheXIII/monkecard",
+  "bugs": {
+    "url": "https://github.com/KTheXIII/monkecard/issues"
+  },
   "private": true,
   "scripts": {
     "dev": "snowpack dev",
