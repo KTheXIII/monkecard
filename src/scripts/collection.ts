@@ -20,24 +20,23 @@ import {
  * @param set Source set.
  * @returns Created ICollection object
  */
-export function loadCollection(set: ISourceSet): ICollection | null {
-  if (set.data) {
-    const title       = set.data.title || 'Unknown'
-    const description = set.data.description || 'n/a'
-    const lang    = set.data.lang
-    const created = new Date(set.data.created)
-    const updated = new Date(set.data.updated)
-    const items   = new Map<string, Item>()
-    return {
-      title,
-      description,
-      created,
-      updated,
-      items,
-      lang
-    }
+export function loadCollection(set: ISourceSet): ICollection {
+  // NOTE: Might reconsider how ICollection looks like,
+  //       should the data inside be optional instead and check for null?
+  const title       = (set.data && set.data.title)       || 'Unknown'
+  const description = (set.data && set.data.description) || 'n/a'
+  const lang    = set.data && set.data.lang || undefined
+  const created = new Date(set.data && set.data.created || Date.now())
+  const updated = new Date(set.data && set.data.updated || Date.now())
+  const items   = new Map<string, Item>()
+  return {
+    title,
+    description,
+    created,
+    updated,
+    items,
+    lang
   }
-  return null
 }
 
 /**

@@ -8,5 +8,5 @@ export interface ISourceSet {
 
 export interface ICollectionSet {
   sources: ISourceSet[]
-  collection: ICollection | null
+  collection: ICollection
 }

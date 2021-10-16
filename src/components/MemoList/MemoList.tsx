@@ -3,14 +3,18 @@ import React, { ReactElement } from 'react'
 interface MemoListProps {
   text?: string
   emptyMessage?: string
+  color?: string
 }
 
 export const MemoList: React.FC<MemoListProps> = (props) => {
   const { text, emptyMessage } = props
   const isEmpty = React.Children.count(props.children) === 0
+  const style = {
+    color: props.color,
+  }
   return (
     <div className="memo-list">
-      {text && <div className="memo-list-info">
+      {text && <div className="memo-list-info" style={style}>
         <span>{text}</span>
       </div>}
       <div className="memo-list-content">

@@ -5,11 +5,6 @@
   --bg2: #212121;
   --bg3: #363636;
   --bg4: hsl(0, 0%, 21%);
-  --bg5: hsl(0, 0%, 41%);
-  --bg6: hsl(0, 0%, 51%);
-  --bg7: hsl(0, 0%, 61%);
-  --bg8: hsl(0, 0%, 71%);
-  --bg9: hsl(0, 0%, 81%);
   --bg_red: #ff6188;
   --diff_red: #55393d;
   --bg_green: #a9dc76;
@@ -28,7 +23,8 @@
   --grey_dim: #5a5a5a;
 
   --text-color: var(--fg);
-  --text-dim: var(--grey_dim);
+  --text-dim: hsl(0, 0%, 51%);
+  --text-dim1: hsl(0, 0%, 41%);
 }
 
 :root {

@@ -17,12 +17,12 @@
     "clean": "rimraf build .cache"
   },
   "dependencies": {
+    "async-lz-string": "^1.0.3",
     "dompurify": "^2.3.3",
-    "fp-ts": "^2.11.4",
+    "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "js-yaml": "^4.1.0",
     "katex": "^0.13.18",
-    "lzutf8": "^0.6.0",
     "marked": "^3.0.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -45,12 +45,12 @@
     "@types/katex": "^0.11.1",
     "@types/marked": "^3.0.1",
     "@types/mocha": "^9.0.0",
-    "@types/react": "^17.0.27",
+    "@types/react": "^17.0.30",
     "@types/react-dom": "^17.0.9",
     "@types/snowpack-env": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
-    "@web/test-runner": "^0.13.18",
+    "@web/test-runner": "^0.13.20",
     "autoprefixer": "^10.3.7",
     "chai": "^4.3.4",
     "eslint": "^7.32.0",
@@ -58,9 +58,9 @@
     "eslint-watch": "^7.0.0",
     "postcss": "^8.3.9",
     "rimraf": "^3.0.2",
-    "sass": "^1.42.1",
+    "sass": "^1.43.2",
     "snowpack": "^3.8.8",
-    "typescript": "^4.4.3",
+    "typescript": "^4.4.4",
     "workbox-cli": "^6.3.0"
   }
 }

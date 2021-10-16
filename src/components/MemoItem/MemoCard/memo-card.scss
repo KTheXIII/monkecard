@@ -1,3 +1,21 @@
 .memo-card {
-  background-color: inherit;
+  display: grid;
+
+  .memo-card-content {
+    cursor: pointer;
+    margin: auto;
+    display: grid;
+    grid-template-rows: 10pt 1fr;
+    padding: 10pt;
+    padding-top: 0;
+    background-color: var(--bg2);
+    border-radius: 5pt;
+    min-height: 280pt;
+    min-width: 200pt;
+
+    .memo-card-render {
+      font-size: 12pt;
+      margin: auto;
+    }
+  }
 }

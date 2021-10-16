@@ -6,12 +6,25 @@ import React, {
 import { CollectionList, CollectionListItem } from '@components/Collection/CollectionList'
 import { ICollectionSet } from '@models/dataset'
 import { CollectionPage } from '@pages/Collection'
+import { MemoCard } from '@components/MemoItem/MemoCard'
 
 interface HomePageProps {
   isLoading: boolean
   collections: ICollectionSet[]
   isActive: boolean
 }
+
+const testText = `
+What is this?
+
+$$
+a^2 + b^2 = c^2
+$$
+`
+
+const wowText = `
+much wow
+`
 
 export const HomePage: React.FC<HomePageProps> = (props) => {
   const { collections } = props
@@ -31,7 +44,8 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
         preview: 'error fetching',
       }
     }))
-    setSelectedCollection(collections[0])
+    if (collections.length > 0)
+      setSelectedCollection(collections[0])
   }, [collections])
 
   return (
@@ -39,7 +53,10 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
       {/* <CollectionList list={collectionList} onClick={index => {
         setSelectedCollection(collections[index])
       }} /> */}
-      <CollectionPage collectionSet={selectedCollection} />
+      <div className="test">
+        <MemoCard front={testText} back={wowText} />
+      </div>
+      {/* {selectedCollection && <CollectionPage set={selectedCollection} />} */}
     </div>
   )
 }
