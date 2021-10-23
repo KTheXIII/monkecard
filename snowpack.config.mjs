@@ -18,7 +18,7 @@ export default {
     '@scripts': './src/scripts',
   },
   mount: {
-    public: { url: '/', static: true },
+    public: { url: '/', static: true, resolve: true },
     src: { url: '/static' },
   },
   plugins: [

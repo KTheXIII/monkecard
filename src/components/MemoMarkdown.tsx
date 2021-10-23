@@ -5,13 +5,12 @@ interface MemoMarkedownProps {
   markdown: string
   className?: string
 }
-export const MemoMarkedown: React.FC<MemoMarkedownProps> = (props) => {
+export const MemoMarkdown: React.FC<MemoMarkedownProps> = (props) => {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const element = ref.current
-    if (element && props.markdown) {
+    if (element && props.markdown)
       element.innerHTML = renderMarkdown(props.markdown)
-    }
     return () => {
       if (element) element.innerHTML = ''
     }

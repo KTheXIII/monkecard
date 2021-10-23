@@ -24,6 +24,7 @@ jobs:
       - run: pnpm build
         env:
           PUBLIC_URL: './'
+      - run: touch build/.nojekyll
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.1

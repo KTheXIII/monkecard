@@ -1,4 +1,4 @@
-import { MemoMarkedown } from '@components/MemoMarkedown'
+import { MemoMarkdown } from '@components/MemoMarkdown'
 import React, {
   useState,
   useRef,
@@ -31,7 +31,7 @@ export const MemoCard: React.FC<MemoCardProps> = (props) => {
     <div className="memo-card" onClick={() => onFlip()}>
       <div className="memo-card-content">
         <div className="memo-card-render">
-          <MemoMarkedown markdown={active} />
+          <MemoMarkdown markdown={active} />
         </div>
       </div>
     </div>

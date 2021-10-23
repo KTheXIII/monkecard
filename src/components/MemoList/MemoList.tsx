@@ -1,4 +1,5 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState } from 'react'
+import { Circle, CircleFill } from '@assets/BootstrapIcons'
 
 interface MemoListProps {
   text?: string
@@ -81,5 +82,33 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
         </div>
       </div>
     </button>
+  )
+}
+
+interface MemoListMarkProps {
+  text: string
+  preview?: string
+  isMarked: boolean
+  onMark?: (mark: boolean) => void
+
+  icons?: [ReactElement, ReactElement]
+}
+
+export const MemoListMarkItem: React.FC<MemoListMarkProps> = (props) => {
+  const [isMarked, setIsMarked] = useState(props.isMarked || false)
+  const [ON, OFF] = props.icons || [CircleFill, Circle]
+
+  return (
+    <MemoListButtonItem
+      text={props.text}
+      preview={props.preview}
+      hideIconR={false}
+      iconR={isMarked ? ON : OFF}
+      onClick={() => {
+        const mark = !isMarked
+        setIsMarked(mark)
+        if (props.onMark) props.onMark(mark)
+      }}
+    />
   )
 }

@@ -2,7 +2,9 @@ import React, {
   ReactElement, useEffect, useState
 } from 'react'
 
-import { MemoList, MemoListButtonItem } from '@components/MemoList'
+import {
+  MemoList, MemoListButtonItem, MemoListMarkItem
+} from '@components/MemoList'
 import { Item, EItemType } from '@models/collection'
 
 interface Props {
@@ -67,8 +69,9 @@ export const CollectionItemList: React.FC<Props> = (props) => {
     <div className="collection-item-list">
       {memoList && <MemoList text="memo" color="var(--text-dim)">
         {memoList.map((set, index) => (
-          <MemoListButtonItem
+          <MemoListMarkItem
             key={`${index + set.id}`}
+            isMarked={selectedSet.has(set.id)}
             text={set.id}
             preview={`${set.items.length}`} />
         ))}
