@@ -48,15 +48,15 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
   }, [collections])
 
   return (
-    <div className="home">
-      {active === EActive.List &&
+    <div className="home p-4">
+      {/* {active === EActive.List &&
       <CollectionList list={collectionList} onClick={index => {
         setSelectedCollection(collections[index])
         setActive(EActive.Collection)
-      }} />}
-      {/* {item && <MemoCard memo={item as Memo} />} */}
-      {active === EActive.Collection &&
-       selectedCollection && <CollectionPage set={selectedCollection} />}
+      }} />} */}
+      {item && <MemoCard memo={item as Memo} />}
+      {/* {active === EActive.Collection &&
+       selectedCollection && <CollectionPage set={selectedCollection} />} */}
     </div>
   )
 }

@@ -4,7 +4,7 @@ import React, {
 } from 'react'
 
 import { CommandPalette } from '@components/CommandPalette'
-import { HomePage } from '@pages/Home'
+import { HomePage } from '@pages/HomePage'
 import { SettingsPage } from '@pages/Settings'
 
 import { ISourceSet, ICollectionSet } from '@models/dataset'
@@ -82,9 +82,6 @@ export const App: React.FC = () => {
         collections={collectionList}
       />
       {/* <SettingsPage /> */}
-      <div className="info m-auto text-gray-400 text-xl font-light">
-        <p>Currently under heavy development</p>
-      </div>
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )

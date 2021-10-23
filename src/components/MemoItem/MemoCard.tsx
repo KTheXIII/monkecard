@@ -1,7 +1,6 @@
 import { MemoMarkdown } from '@components/MemoMarkdown'
 import React, {
   useState,
-  useRef,
   useCallback
 } from 'react'
 
@@ -13,24 +12,24 @@ interface MemoCardProps {
 }
 
 export const MemoCard: React.FC<MemoCardProps> = (props) => {
-  const memo = props.memo
+  const { memo, onFlip } = props
   const [show, setShow] = useState(false)
   const [active, setActive] = useState(memo.front)
 
-  const onFlip = useCallback(() => {
+  const onClick = useCallback(() => {
     setShow(!show)
-    if (show) {
+    if (show)
       setActive(memo.back)
-    } else {
+    else
       setActive(memo.front)
-    }
-    if (props.onFlip) props.onFlip()
-  }, [show, props])
+    if (onFlip) onFlip()
+  }, [show, onFlip, memo])
 
   return (
-    <div className="memo-card" onClick={() => onFlip()}>
-      <div className="memo-card-content">
-        <div className="memo-card-render">
+    <div className="memo-card grid cursor-pointer"
+      onClick={onClick}>
+      <div className="memo-card-content flex rounded overflow-x-scroll bg-mbg-1">
+        <div className="memo-card-render m-auto px-8 py-4">
           <MemoMarkdown markdown={active} />
         </div>
       </div>
