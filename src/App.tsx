@@ -11,9 +11,8 @@ import { ISourceSet, ICollectionSet } from '@models/dataset'
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
 import { extractQuerySource, loadSourceSet } from '@scripts/source'
 import { mergeCollection } from '@scripts/collection'
-import { hash, hashToString } from '@scripts/hash'
 
-import './app.scss'
+import './app.css'
 
 let sourceSetList: ISourceSet[] = []
 let collectionSetList: ICollectionSet[] = []
@@ -83,6 +82,9 @@ export const App: React.FC = () => {
         collections={collectionList}
       />
       {/* <SettingsPage /> */}
+      <div className="info m-auto text-gray-400 text-xl font-light">
+        <p>Currently under heavy development</p>
+      </div>
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )

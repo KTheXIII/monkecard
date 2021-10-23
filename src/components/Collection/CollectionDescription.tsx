@@ -2,7 +2,6 @@ import React, {
   useRef,
   useEffect
 } from 'react'
-import './collection-description.scss'
 import { MemoMarkedown } from '@components/MemoMarkedown'
 interface IProps {
   text: string
@@ -10,13 +9,11 @@ interface IProps {
 
 export const CollectionDescription: React.FC<IProps> = (props) => {
   return (
-    <div className="collection-description">
-      <div className="description-info">
+    <div className="memo-description pb-16">
+      <div className="pb-4">
         <span>description</span>
       </div>
-      <div className="description-text">
-        <MemoMarkedown markdown={props.text} />
-      </div>
+      <MemoMarkedown markdown={props.text} className='flex flex-col space-y-3' />
     </div>
   )
 }

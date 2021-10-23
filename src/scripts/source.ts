@@ -10,7 +10,8 @@ import { ISourceSet } from '@models/dataset'
 const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
 const LIST_REGEX     = /list=([^&]+)&?/gi     // For data with a list of source
 const ITEMS_REGEX    = /items=([^&]+)&?/gi    // For data with a list of items
-// const NODE_REGEX     = /node=([^&]+)&?/gi
+const SRCLZ_REGEX    = /src_lz=([^&]+)&?/gi   // Compressed source links
+const NODE_REGEX     = /node=([^&]+)&?/gi
 const JSON_EXT_REGEX = /\.json$/i
 const YAML_EXT_REGEX = /\.ya?ml$/i
 
@@ -56,6 +57,12 @@ export const extractQuerySourceList = (query: string)
 
 export const extractQueryItems      = (query: string)
   : string[] => extractQueryValues(query, ITEMS_REGEX)
+
+export const extractQuerySRCLZ      = (query: string)
+  : string[] => extractQueryValues(query, SRCLZ_REGEX)
+
+export const extractQueryNode       = (query: string)
+  : string[] => extractQueryValues(query, NODE_REGEX)
 
 /**
  * Fetch yaml file and parse it to JavaScript object using js-yaml.

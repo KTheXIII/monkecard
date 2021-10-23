@@ -6,7 +6,7 @@ import React, {
 import {
   MemoList,
   MemoListButtonItem
-} from '../MemoList'
+} from '@components/MemoList'
 import {
   CheckCircleFill,
   CircleSlash,

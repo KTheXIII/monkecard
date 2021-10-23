@@ -7,6 +7,12 @@ import { CollectionList, CollectionListItem } from '@components/Collection/Colle
 import { ICollectionSet } from '@models/dataset'
 import { CollectionPage } from '@pages/Collection'
 import { MemoCard } from '@components/MemoItem/MemoCard'
+import { Item, Memo } from '@models/collection'
+
+enum EActive {
+  List,
+  Collection
+}
 
 interface HomePageProps {
   isLoading: boolean
@@ -14,24 +20,15 @@ interface HomePageProps {
   isActive: boolean
 }
 
-const testText = `
-What is this?
-
-$$
-a^2 + b^2 = c^2
-$$
-`
-
-const wowText = `
-much wow
-`
-
 export const HomePage: React.FC<HomePageProps> = (props) => {
   const { collections } = props
   const [collectionList, setCollectionList] = useState<CollectionListItem[]>([
     { text: 'Loading...', preview: 'error' },
   ])
   const [selectedCollection, setSelectedCollection] = useState<ICollectionSet>()
+  const [active, setActive] = useState(EActive.List)
+
+  const [item, setItem] = useState<Item>()
 
   useEffect(() => {
     setCollectionList(collections.map(s => {
@@ -44,19 +41,22 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
         preview: 'error fetching',
       }
     }))
-    if (collections.length > 0)
+    if (collections.length > 0) {
       setSelectedCollection(collections[0])
+      setItem(collections[0].collection.items.get('MA209A-P281M05'))
+    }
   }, [collections])
 
   return (
     <div className="home">
-      {/* <CollectionList list={collectionList} onClick={index => {
+      {active === EActive.List &&
+      <CollectionList list={collectionList} onClick={index => {
         setSelectedCollection(collections[index])
-      }} /> */}
-      <div className="test">
-        <MemoCard front={testText} back={wowText} />
-      </div>
-      {/* {selectedCollection && <CollectionPage set={selectedCollection} />} */}
+        setActive(EActive.Collection)
+      }} />}
+      {/* {item && <MemoCard memo={item as Memo} />} */}
+      {active === EActive.Collection &&
+       selectedCollection && <CollectionPage set={selectedCollection} />}
     </div>
   )
 }

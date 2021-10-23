@@ -2,7 +2,7 @@
 
 `monkecard` is a card memo, quiz game and an article renderer. Build in mind that the data source can be supplied from other external servers.
 
-Build with Snowpack, ReactJS and TypeScript.
+Build with Snowpack, ReactJS, tailwindcss and TypeScript.
 
 ## Requirements
 

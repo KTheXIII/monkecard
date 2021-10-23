@@ -5,32 +5,31 @@ import React, {
   useCallback
 } from 'react'
 
+import { Memo } from '@models/collection'
+
 interface MemoCardProps {
-  front: string
-  back: string
+  memo: Memo
   onFlip?: () => void
 }
 
 export const MemoCard: React.FC<MemoCardProps> = (props) => {
+  const memo = props.memo
   const [show, setShow] = useState(false)
-  const [active, setActive] = useState(props.front)
+  const [active, setActive] = useState(memo.front)
 
   const onFlip = useCallback(() => {
     setShow(!show)
     if (show) {
-      setActive(props.back)
+      setActive(memo.back)
     } else {
-      setActive(props.front)
+      setActive(memo.front)
     }
-
     if (props.onFlip) props.onFlip()
   }, [show, props])
 
   return (
     <div className="memo-card" onClick={() => onFlip()}>
       <div className="memo-card-content">
-        <div className="memo-card-info">
-        </div>
         <div className="memo-card-render">
           <MemoMarkedown markdown={active} />
         </div>

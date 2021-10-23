@@ -17,7 +17,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = (props) => {
   return (
     <div className="collection-page">
       <div className="collection-header">
-        <h1>{title}</h1>
+        <h1 className="text-2xl">{title}</h1>
       </div>
       <CollectionDescription text={description} />
       <CollectionItemList items={items} />

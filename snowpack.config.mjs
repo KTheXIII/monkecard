@@ -24,7 +24,6 @@ export default {
   plugins: [
     '@snowpack/plugin-react-refresh',
     '@snowpack/plugin-dotenv',
-    '@snowpack/plugin-postcss',
     ['@snowpack/plugin-sass', { compilerOptions: { style: 'compressed' } }],
     ['@snowpack/plugin-typescript'],
     ['@snowpack/plugin-run-script',
@@ -36,9 +35,9 @@ export default {
     ['@snowpack/plugin-optimize',
       {
         preloadCSS: false,
-        preloadCSSFileName: `${process.env.PUBLIC_URL || '/'}style.css`
       }
     ],
+    '@snowpack/plugin-postcss',
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
@@ -51,7 +50,8 @@ export default {
   packageOptions: {
   },
   devOptions: {
-    open: 'none'
+    open: 'none',
+    tailwindConfig: './tailwind.config.js',
   },
   buildOptions: {
     cacheDirPath: './.cache/snowpack',
