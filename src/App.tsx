@@ -5,7 +5,7 @@ import React, {
 
 import { CommandPalette } from '@components/CommandPalette'
 import { HomePage } from '@pages/HomePage'
-import { SettingsPage } from '@pages/Settings'
+import { SettingsPage } from '@pages/SettingsPage'
 
 import { ISourceSet, ICollectionSet } from '@models/dataset'
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'

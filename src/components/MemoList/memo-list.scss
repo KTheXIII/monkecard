@@ -10,7 +10,7 @@ $icon-size: 14px;
 
   .memo-list-content {
     display: grid;
-    background-color: var(--bg1);
+    background-color: var(--bg-1);
     border-radius: 5pt;
     overflow: hidden;
     // touch-action: manipulation; /* disable pinch-to-zoom and double tab to zoom */
@@ -26,14 +26,14 @@ $icon-size: 14px;
       margin: 0;
 
       &:hover {
-        background-color: var(--bg2);
+        background-color: var(--bg-2);
       }
       &:active {
-        background-color: var(--bg3);
+        background-color: var(--bg-3);
       }
       &:disabled {
-        background-color: var(--bg1);
-        color: var(--text-dim);
+        background-color: var(--bg-1);
+        color: var(--text-2);
         cursor: default;
       }
     }
@@ -93,7 +93,7 @@ $icon-size: 14px;
             margin: auto 0;
             margin-left: auto;
             overflow: hidden;
-            color: var(--text-dim);
+            color: var(--text-1);
             line-height: normal;
           }
 
@@ -118,7 +118,7 @@ $icon-size: 14px;
 
       &:not(:last-child) {
         .memo-list-item-content {
-          border-bottom: 1px solid var(--bg0);
+          border-bottom: 1px solid var(--bg-0);
         }
       }
 

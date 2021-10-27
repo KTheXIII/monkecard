@@ -1,9 +1,11 @@
 import React, {
-  ReactElement, useEffect, useState
+  useEffect,
+  useState
 } from 'react'
 
 import {
-  MemoList, MemoListButtonItem, MemoListMarkItem
+  MemoList,
+  MemoListMarkItem
 } from '@components/MemoList'
 import { Item, EItemType } from '@models/collection'
 
@@ -67,7 +69,7 @@ export const CollectionItemList: React.FC<Props> = (props) => {
 
   return (
     <div className="collection-item-list">
-      {memoList && <MemoList text="memo" color="var(--text-dim)">
+      {memoList && <MemoList text="memo" className="text-mt-1">
         {memoList.map((set, index) => (
           <MemoListMarkItem
             key={`${index + set.id}`}
@@ -76,10 +78,11 @@ export const CollectionItemList: React.FC<Props> = (props) => {
             preview={`${set.items.length}`} />
         ))}
       </MemoList>}
-      {quizList && <MemoList text="quiz" color="var(--text-dim)">
+      {quizList && <MemoList text="quiz" className="text-mt-1">
         {quizList.map((set, index) => (
-          <MemoListButtonItem
+          <MemoListMarkItem
             key={`${index + set.id}`}
+            isMarked={selectedSet.has(set.id)}
             text={set.id}
             preview={`${set.items.length}`} />
         ))}

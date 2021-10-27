@@ -15,9 +15,13 @@ module.exports = {
         'mbg-0': 'var(--bg-0)',
         'mbg-1': 'var(--bg-1)',
         'mbg-2': 'var(--bg-2)',
+        'mbg-3': 'var(--bg-3)',
         'mt-0': 'var(--text-0)',
         'mt-1': 'var(--text-1)',
         'mt-2': 'var(--text-2)',
+      },
+      borderRadius: {
+        'me': '5pt'
       }
     },
   },

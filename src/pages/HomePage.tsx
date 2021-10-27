@@ -5,7 +5,7 @@ import React, {
 
 import { CollectionList, CollectionListItem } from '@components/Collection/CollectionList'
 import { ICollectionSet } from '@models/dataset'
-import { CollectionPage } from '@pages/Collection'
+import { CollectionPage } from '@pages/CollectionPage'
 import { MemoCard } from '@components/MemoItem/MemoCard'
 import { Item, Memo } from '@models/collection'
 
@@ -49,14 +49,14 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
 
   return (
     <div className="home p-4">
-      {/* {active === EActive.List &&
+      {active === EActive.List &&
       <CollectionList list={collectionList} onClick={index => {
         setSelectedCollection(collections[index])
         setActive(EActive.Collection)
-      }} />} */}
-      {item && <MemoCard memo={item as Memo} />}
-      {/* {active === EActive.Collection &&
-       selectedCollection && <CollectionPage set={selectedCollection} />} */}
+      }} />}
+      {/* {item && <MemoCard memo={item as Memo} />} */}
+      {active === EActive.Collection &&
+       selectedCollection && <CollectionPage set={selectedCollection} />}
     </div>
   )
 }
