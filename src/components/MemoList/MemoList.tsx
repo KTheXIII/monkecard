@@ -3,12 +3,11 @@ import { Circle, CircleFill } from '@assets/BootstrapIcons'
 
 interface MemoListProps {
   text?: string
-  emptyMessage?: string
   className?: string
 }
 
 export const MemoList: React.FC<MemoListProps> = (props) => {
-  const { text, emptyMessage } = props
+  const { text } = props
   const isEmpty = React.Children.count(props.children) === 0
 
   return (
@@ -17,7 +16,6 @@ export const MemoList: React.FC<MemoListProps> = (props) => {
         <span>{text}</span>
       </div>}
       <div className="memo-list-content">
-        {isEmpty && <div className="memo-list-empty">{emptyMessage}</div>}
         {props.children}
       </div>
     </div>

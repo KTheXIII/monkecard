@@ -20,14 +20,14 @@ export const CollectionPage: React.FC<CollectionPageProps> = (props) => {
         <h1 className="text-2xl">{title}</h1>
       </div>
       <CollectionDescription text={description} />
-      <div className="flex">
+      {/* <div className="flex">
         <button
           onClick={() => {
             console.log('play')
           }}
           className="m-auto bg-mbg-1 px-5 rounded-me py-1 hover:bg-mbg-2 active:bg-mbg-3"
         >Memo</button>
-      </div>
+      </div> */}
       <CollectionItemList items={items} />
     </div>
   )
