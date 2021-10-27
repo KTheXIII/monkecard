@@ -11,11 +11,12 @@ import { Item, EItemType } from '@models/collection'
 
 interface Props {
   items: Map<string, Item>
+  onSelect: (keywords: string[]) => void
 }
 
 interface KeywordSet {
   id: string
-  items: string[]
+  items: string[],
 }
 
 const FilterButton: React.FC<{
@@ -26,7 +27,8 @@ const FilterButton: React.FC<{
   return (
     <button className={`text-mt-1 w-16 h-7 rounded-me
     ${props.active && 'text-mt-0'}
-    transition-colors duration-150 ease-out hover:text-mt-0`}
+    transition-colors duration-150 ease-out hover:text-mt-0
+    active:text-mt-2`}
     onClick={() => props.onClick && props.onClick()}>
       {props.text}
     </button>
@@ -39,10 +41,11 @@ enum EFilter {
   Quiz
 }
 
+const selectedSet = new Set<string>()
 export const CollectionItemList: React.FC<Props> = (props) => {
   const [itemList, setItemList] = useState<KeywordSet[]>([])
   const [filter, setFilter] = useState<EFilter>(EFilter.All)
-  const selectedSet = new Set<string>()
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const { items } = props
@@ -86,6 +89,12 @@ export const CollectionItemList: React.FC<Props> = (props) => {
           <MemoListMarkItem
             key={`${index + set.id}`}
             isMarked={selectedSet.has(set.id)}
+            onMark={(mark) => {
+              if (mark) selected.add(set.id)
+              else selected.delete(set.id)
+              setSelected(selected)
+              props.onSelect(Array.from(selected.values()))
+            }}
             text={set.id}
             preview={`${set.items.length}`} />
         ))}

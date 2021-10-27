@@ -54,9 +54,11 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
         setSelectedCollection(collections[index])
         setActive(EActive.Collection)
       }} />}
-      {/* {item && <MemoCard memo={item as Memo} />} */}
       {active === EActive.Collection &&
-       selectedCollection && <CollectionPage set={selectedCollection} />}
+       selectedCollection && <CollectionPage
+        set={selectedCollection} onStart={(items) => {
+          console.log(items)
+        }} />}
     </div>
   )
 }
