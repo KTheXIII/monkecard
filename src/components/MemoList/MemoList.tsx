@@ -1,4 +1,6 @@
-import React, { ReactElement, useState } from 'react'
+import React, {
+  ReactElement, useEffect, useState
+} from 'react'
 import { Circle, CircleFill } from '@assets/BootstrapIcons'
 
 interface MemoListProps {
@@ -93,6 +95,10 @@ interface MemoListMarkProps {
 export const MemoListMarkItem: React.FC<MemoListMarkProps> = (props) => {
   const [isMarked, setIsMarked] = useState(props.isMarked || false)
   const [ON, OFF] = props.icons || [CircleFill, Circle]
+
+  useEffect(() => {
+    setIsMarked(props.isMarked)
+  }, [props])
 
   return (
     <MemoListButtonItem
