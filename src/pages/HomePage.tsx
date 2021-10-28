@@ -8,6 +8,8 @@ import { ICollectionSet } from '@models/dataset'
 import { CollectionPage } from '@pages/CollectionPage'
 import { MemoCard } from '@components/MemoItem/MemoCard'
 import { Item, Memo } from '@models/collection'
+import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
+import { FileEarmarkCodeFill, Bookmark } from '@assets/BootstrapIcons'
 
 enum EActive {
   List,
@@ -59,6 +61,13 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
         set={selectedCollection} onStart={(items) => {
           console.log(items)
         }} />}
+      <ToolsFloat>
+        <ToolsFloatButton
+          text="home"
+          icon={FileEarmarkCodeFill} onClick={() => {
+            setActive(EActive.List)
+          }} />
+      </ToolsFloat>
     </div>
   )
 }

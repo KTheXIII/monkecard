@@ -21,7 +21,10 @@ module.exports = {
         'mt-2': 'var(--text-2)',
       },
       borderRadius: {
-        'me': '5pt'
+        'memo': '5pt'
+      },
+      boxShadow: {
+        'memo': '0 0 15pt 2pt rgba(0, 0, 0, 0.25)'
       }
     },
   },
