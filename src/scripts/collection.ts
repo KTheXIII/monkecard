@@ -64,15 +64,21 @@ export function mergeCollection(sourceSet: ISourceSet[]): ICollectionSet[] {
       sources.reduce((acc, cur) => {  // reduce to array of items
         if (cur.data && cur.data.items) return acc
           .concat(cur.data.items
-            .map(i => createItemFromSource(i))
+            .map(i => createItemFromSource(i)) // FIXME: This function throws an error, when item is not formatted correctly
           )
-        else return acc
+        return acc
       }, [] as Item[])
         .forEach(i => collection && collection.items.set(i.id, i))  // put items into a map
       return set
     })
 }
 
+/**
+ * Create item from source.
+ * @param source Item source object
+ * @returns Memo or Question object
+ * @throws Error when item source is not formatted correctly
+ */
 export function createItemFromSource(source: ItemSource): Item {
   switch (source.type) {
   case 'Memo':
@@ -81,7 +87,9 @@ export function createItemFromSource(source: ItemSource): Item {
     return createQuestionFromSource(source as QuestionSource)
   case 'Unknown':
   default:
-    throw new Error(`Unknown item type with ID: ${source.id}`)
+    throw new Error(
+      `Unknown item ${JSON.stringify(source)} type with ID: ${source.id}`
+    )
   }
 }
 

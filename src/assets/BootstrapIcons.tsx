@@ -169,7 +169,7 @@ export const MenuApp = <svg xmlns="http://www.w3.org/2000/svg" fill="currentColo
 </svg>
 
 // https://icons.getbootstrap.com/icons/menu-button-wide-fill/
-export const MenuButtonWideFill = <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-menu-button-wide-fill" viewBox="0 0 16 16">
+export const MenuButtonWideFill = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-menu-button-wide-fill" viewBox="0 0 16 16">
   <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v2A1.5 1.5 0 0 0 1.5 5h13A1.5 1.5 0 0 0 16 3.5v-2A1.5 1.5 0 0 0 14.5 0h-13zm1 2h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1zm9.927.427A.25.25 0 0 1 12.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0l-.396-.396zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H1zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2h14zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
 </svg>
 
@@ -209,4 +209,14 @@ export const FileX = <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 // https://icons.getbootstrap.com/icons/file-x-fill/
 export const FileXFill = <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-file-x-fill" viewBox="0 0 16 16">
   <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM6.854 6.146 8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708z" />
+</svg>
+
+// https://icons.getbootstrap.com/icons/exclamation-lg/
+export const ExclamationLG = <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-exclamation-lg" viewBox="0 0 16 16">
+  <path d="M7.005 3.1a1 1 0 1 1 1.99 0l-.388 6.35a.61.61 0 0 1-1.214 0L7.005 3.1ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+</svg>
+
+// https://icons.getbootstrap.com/icons/activity/
+export const Activity = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-activity" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2Z" />
 </svg>

@@ -42,12 +42,14 @@ export const CollectionItemList: React.FC<Props> = (props) => {
     if (!items) return
     const keywords = Array.from(items.values())
       .filter((item) => {
-        if (filter === EFilter.All) return true
-        if (filter === EFilter.Memo
-          && item.type === EItemType.Memo) return true
-        else if (filter === EFilter.Quiz
-           && item.type === EItemType.Question) return true
-        else return false
+        if (filter === EFilter.All)
+          return true
+        else if (filter === EFilter.Memo)
+          return item.type === EItemType.Memo
+        else if (filter === EFilter.Quiz)
+          return item.type === EItemType.Question
+        else
+          return false
       })
       .reduce((acc, item) => {
         item.keywords.forEach((keyword) => acc.add(keyword))

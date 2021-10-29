@@ -1,6 +1,7 @@
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useCallback
 } from 'react'
 
 import { CommandPalette } from '@components/CommandPalette'
@@ -16,7 +17,6 @@ import './app.css'
 
 let sourceSetList: ISourceSet[] = []
 let collectionSetList: ICollectionSet[] = []
-
 async function initURLSourceList(): Promise<string[]> {
   const sourceSet = extractQuerySource(window.location.search)
     .reduce((acc, cur) => acc.add(cur), new Set<string>())
@@ -74,14 +74,16 @@ export const App: React.FC = () => {
       window.removeEventListener('keypress', onKeyPress)
   }, [])
 
+  const onReload = useCallback(() => {
+    init()
+  }, [])
+
   return (
     <div className="app">
       <HomePage
-        isActive={false}
         isLoading={isLoading}
         collections={collectionList}
-      />
-      {/* <SettingsPage /> */}
+        onReload={onReload} />
       <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
     </div>
   )

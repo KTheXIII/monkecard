@@ -6,20 +6,20 @@ import React, {
 import { CollectionList, CollectionListItem } from '@components/Collection/CollectionList'
 import { ICollectionSet } from '@models/dataset'
 import { CollectionPage } from '@pages/CollectionPage'
-import { MemoCard } from '@components/MemoItem/MemoCard'
-import { Item, Memo } from '@models/collection'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
-import { FileEarmarkCodeFill, Bookmark } from '@assets/BootstrapIcons'
+import { FileEarmarkCodeFill, MenuButtonWideFill } from '@assets/BootstrapIcons'
+import { SettingsPage } from './SettingsPage'
 
 enum EActive {
-  List,
-  Collection
+  Main,
+  Collection,
+  Settings
 }
 
 interface HomePageProps {
   isLoading: boolean
   collections: ICollectionSet[]
-  isActive: boolean
+  onReload: () => void
 }
 
 export const HomePage: React.FC<HomePageProps> = (props) => {
@@ -27,10 +27,8 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
   const [collectionList, setCollectionList] = useState<CollectionListItem[]>([
     { text: 'Loading...', preview: 'error' },
   ])
-  const [selectedCollection, setSelectedCollection] = useState<ICollectionSet>()
-  const [active, setActive] = useState(EActive.List)
-
-  const [item, setItem] = useState<Item>()
+  const [selectedSet, setSelectedSet] = useState<ICollectionSet | null>(null)
+  const [active, setActive] = useState(EActive.Main)
 
   useEffect(() => {
     setCollectionList(collections.map(s => {
@@ -39,33 +37,39 @@ export const HomePage: React.FC<HomePageProps> = (props) => {
         preview: `${s.collection.items.size}`,
       }
       else return {
-        text: s.sources.length > 0 ? s.sources[0].url : 'unknown',
+        text: s.sources.length != 0 ? s.sources[0].url : 'unknown',
         preview: 'error fetching',
       }
     }))
-    if (collections.length > 0) {
-      setSelectedCollection(collections[0])
-      setItem(collections[0].collection.items.get('MA209A-P281M05'))
-    }
   }, [collections])
 
   return (
     <div className="home p-4">
-      {active === EActive.List &&
-      <CollectionList list={collectionList} onClick={index => {
-        setSelectedCollection(collections[index])
-        setActive(EActive.Collection)
-      }} />}
-      {active === EActive.Collection &&
-       selectedCollection && <CollectionPage
-        set={selectedCollection} onStart={(items) => {
+      {active === EActive.Main &&
+       <CollectionList list={collectionList} onClick={index => {
+         setSelectedSet(collections[index])
+         setActive(EActive.Collection)
+       }} />}
+      {active === EActive.Collection && selectedSet && <CollectionPage
+        set={selectedSet} onStart={(items) => {
           console.log(items)
         }} />}
+      {active === EActive.Settings && <SettingsPage
+        collections={collections}
+        onReload={props.onReload}
+      />}
       <ToolsFloat>
         <ToolsFloatButton
           text="home"
+          title="go to home page"
           icon={FileEarmarkCodeFill} onClick={() => {
-            setActive(EActive.List)
+            setActive(EActive.Main)
+          }} />
+        <ToolsFloatButton
+          text="settings"
+          title="go to settings page"
+          icon={MenuButtonWideFill} onClick={() => {
+            setActive(EActive.Settings)
           }} />
       </ToolsFloat>
     </div>
