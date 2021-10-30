@@ -31,12 +31,13 @@ export default {
         watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
       },
     ],
+    '@snowpack/plugin-postcss',
     ['@snowpack/plugin-optimize',
       {
-        preloadCSS: false,
+        preloadCSS: true,
+        preloadCSSFileName: (process.env.PUBLIC_URL || '/') + 'style.css'
       }
     ],
-    '@snowpack/plugin-postcss',
   ],
   routes: [
     /* Enable an SPA Fallback in development: */

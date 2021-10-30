@@ -1,6 +1,13 @@
 import React, {} from 'react'
+import { Clock } from '@assets/BootstrapIcons'
 
-import { MemoList, MemoListItem } from '@components/MemoList'
+import {
+  MemoList,
+  MemoListItem,
+  MemoListInputText,
+  MemoListButtonItem,
+  MemoListSwitchITP
+} from '@components/MemoList'
 import { ICollectionSet } from '@models/dataset'
 
 interface Props {
@@ -12,28 +19,7 @@ export const SettingsPage: React.FC<Props> = (props) => {
   return (
     <div className="settings">
       <MemoList>
-        {props.collections.reduce((acc, collection) => {
-          collection.sources.forEach((source) => {
-            if (source.data && source.data.title)
-              acc.push(source.data.title)
-            else acc.push(source.url)
-          })
-          return acc
-        }, [] as string[])
-          .map((name, index) => (
-            <div key={name + index}
-              className="group">
-              <div className="ml-4 py-4 pr-4 text-left font-light flex flex-row
-                              border-solid border-b border-mbg-0 group-last:border-b-0" >
-                <div className="flex-grow min-w-0 w-0 overflow-scroll whitespace-nowrap">
-                  {name}
-                </div>
-                <button className="rounded-memo font-light">
-                  <span className="px-4">edit</span>
-                </button>
-              </div>
-            </div>
-          ))}
+        <MemoListButtonItem text="Hello, World!" preview="wow" />
       </MemoList>
     </div>
   )

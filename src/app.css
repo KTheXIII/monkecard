@@ -12,6 +12,12 @@
   h3 {
     @apply text-lg;
   }
+
+  .icon-child-size {
+    > {
+      @apply w-6 h-6;
+    }
+  }
 }
 
 .app {

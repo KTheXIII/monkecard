@@ -21,11 +21,15 @@ module.exports = {
         'mt-2': 'var(--text-2)',
       },
       borderRadius: {
-        'memo': '5pt'
+        'memo': '5pt',
+        'mfull': '50%',
       },
       boxShadow: {
         'memo': '0 0 15pt 2pt rgba(0, 0, 0, 0.25)'
       },
+      fontSize: {
+        'mbase': '12pt'
+      }
     },
   },
   variants: {
