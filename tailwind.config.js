@@ -25,7 +25,7 @@ module.exports = {
       },
       boxShadow: {
         'memo': '0 0 15pt 2pt rgba(0, 0, 0, 0.25)'
-      }
+      },
     },
   },
   variants: {

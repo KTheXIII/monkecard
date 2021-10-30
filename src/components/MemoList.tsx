@@ -13,11 +13,12 @@ export const MemoList: React.FC<MemoListProps> = (props) => {
   const isEmpty = React.Children.count(props.children) === 0
 
   return (
-    <div className="memo-list">
-      {text && <div className={`memo-list-info ${props.className}`}>
+    <div className="memo-list text-base">
+      {text && <div className="memo-list-info p-4">
         <span>{text}</span>
       </div>}
-      <div className="memo-list-content">
+      <div className="memo-list-content grid bg-mbg-1 rounded-memo
+                      overflow-hidden">
         {props.children}
       </div>
     </div>
@@ -63,20 +64,26 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
 
   return (
     <button
-      className="memo-list-item"
+      className="memo-list-item flex font-light hover:bg-mbg-2 active:bg-mbg-3
+                 disabled:bg-mbg-1 disabled:text-mt-2 disabled:cursor-default group"
       disabled={isDisabled}
       title={props.title}
       onClick={e => props.onClick && props.onClick()}
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}>
-      {!hideIconL && <div className="icon-left" style={iconLStyle}>{props.iconL}</div>}
-      <div className="memo-list-item-content">
-        <div className="memo-list-display">
-          <div className="text">
+      {!hideIconL && <div className="m-auto pl-4 w-4 h-4"
+        style={iconLStyle}>{props.iconL}</div>}
+      <div className="flex-grow ml-4 py-4 pr-4
+                      border-solid border-b border-mbg-0 group-last:border-b-0">
+        <div className="flex m-auto w-full">
+          <div className="text-left flex-grow break-words w-0 select-text">
             <span>{text}</span>
           </div>
-          {preview && <div className="preview"><span>{preview}</span></div>}
-          {!hideIconR && <div className="icon-right" style={iconRStyle}>{props.iconR}</div>}
+          {preview && <div
+            className="text-right w-1/4 overflow-hidden text-mt-1 pl-4">
+            <span>{preview}</span></div>}
+          {!hideIconR && <div className="m-auto ml-5 w-4 h-4"
+            style={iconRStyle}>{props.iconR}</div>}
         </div>
       </div>
     </button>

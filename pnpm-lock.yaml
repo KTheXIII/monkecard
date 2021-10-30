@@ -6,7 +6,6 @@ specifiers:
   '@snowpack/plugin-postcss': ^1.4.3
   '@snowpack/plugin-react-refresh': ^2.5.0
   '@snowpack/plugin-run-script': ^2.3.0
-  '@snowpack/plugin-sass': ^1.4.0
   '@snowpack/plugin-typescript': ^1.2.1
   '@snowpack/web-test-runner-plugin': ^0.2.2
   '@testing-library/react': ^11.2.7
@@ -41,7 +40,6 @@ specifiers:
   react-dom: ^17.0.2
   rimraf: ^3.0.2
   rxjs: ^7.4.0
-  sass: ^1.43.3
   snowpack: ^3.8.8
   tailwindcss: ^2.2.17
   typescript: ^4.4.4
@@ -65,7 +63,6 @@ devDependencies:
   '@snowpack/plugin-postcss': 1.4.3_postcss@8.3.11
   '@snowpack/plugin-react-refresh': 2.5.0_react-dom@17.0.2+react@17.0.2
   '@snowpack/plugin-run-script': 2.3.0
-  '@snowpack/plugin-sass': 1.4.0
   '@snowpack/plugin-typescript': 1.2.1_typescript@4.4.4
   '@snowpack/web-test-runner-plugin': 0.2.2_6384073b33195eae5ae5373b0f3a3bc1
   '@testing-library/react': 11.2.7_react-dom@17.0.2+react@17.0.2
@@ -90,7 +87,6 @@ devDependencies:
   postcss: 8.3.11
   postcss-scss: 4.0.1_postcss@8.3.11
   rimraf: 3.0.2
-  sass: 1.43.3
   snowpack: 3.8.8
   tailwindcss: 2.2.17_fa866e6aa6eb85ed70431566fb699b34
   typescript: 4.4.4
@@ -1682,15 +1678,6 @@ packages:
     dependencies:
       execa: 5.1.1
       npm-run-path: 4.0.1
-    dev: true
-
-  /@snowpack/plugin-sass/1.4.0:
-    resolution: {integrity: sha512-Hzz/TYt4IKcjrInv+FyujLohtJHadZCUdz5nnfh1N7MwplHFmxgLuKiT8tsiafHFAGsuR+4ZpFTqLeSyQTHAhQ==}
-    dependencies:
-      execa: 5.1.1
-      find-up: 5.0.0
-      npm-run-path: 4.0.1
-      sass: 1.43.3
     dev: true
 
   /@snowpack/plugin-typescript/1.2.1_typescript@4.4.4:
@@ -7174,14 +7161,6 @@ packages:
 
   /safer-buffer/2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
-    dev: true
-
-  /sass/1.43.3:
-    resolution: {integrity: sha512-BJnLngqWpMeS65UvlYYEuCb3/fLxDxhHtOB/gWPxs6NKrslTxGt3ZxwIvOe/0Jm4tWwM/+tIpE3wj4dLEhPDeQ==}
-    engines: {node: '>=8.9.0'}
-    hasBin: true
-    dependencies:
-      chokidar: 3.5.2
     dev: true
 
   /scheduler/0.20.2:

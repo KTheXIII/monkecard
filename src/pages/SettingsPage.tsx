@@ -28,7 +28,7 @@ export const SettingsPage: React.FC<Props> = (props) => {
                 <div className="flex-grow min-w-0 w-0 overflow-scroll whitespace-nowrap">
                   {name}
                 </div>
-                <button className="rounded-memo">
+                <button className="rounded-memo font-light">
                   <span className="px-4">edit</span>
                 </button>
               </div>
