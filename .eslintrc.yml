@@ -14,10 +14,6 @@ plugins:
   - 'compat'
   - 'react'
   - 'react-hooks'
-settings:
-  react:
-    pragma: 'h'
-    version: '16.0'
 rules:
   indent:
     - error

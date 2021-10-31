@@ -28,7 +28,7 @@ export function loadCollection(set: ISourceSet): ICollection {
   const lang    = set.data && set.data.lang || undefined
   const created = new Date(set.data && set.data.created || Date.now())
   const updated = new Date(set.data && set.data.updated || Date.now())
-  const items   = new Map<string, Item>()
+  const items   = new Map<string, ItemSource>()
   return {
     title,
     description,
@@ -63,29 +63,51 @@ export function mergeCollection(sourceSet: ISourceSet[]): ICollectionSet[] {
       const { sources, collection } = set
       sources.reduce((acc, cur) => {  // reduce to array of items
         if (cur.data && cur.data.items) return acc
-          .concat(cur.data.items
-            .map(i => createItemFromSource(i)) // FIXME: This function throws an error, when item is not formatted correctly
-          )
+          .concat(cur.data.items.map(src => cleanItemSource(src)))
         return acc
-      }, [] as Item[])
+      }, [] as ItemSource[])
         .forEach(i => collection && collection.items.set(i.id, i))  // put items into a map
       return set
     })
 }
 
 /**
+ * Change the type to its enum value
+ *
+ * @param item Item source to clean
+ * @return Item source with cleaned type
+ */
+function cleanItemSource(item: ItemSource): ItemSource {
+  switch (item.type) {
+  case 'Memo':
+  case EItemType.Memo:
+    item.type = EItemType.Memo
+    break
+  case 'Question':
+  case EItemType.Question:
+    item.type = EItemType.Question
+    break
+  case 'Unknown':
+  default:
+    item.type = EItemType.Unknown
+    break
+  }
+  return item
+}
+
+/**
  * Create item from source.
+ *
  * @param source Item source object
  * @returns Memo or Question object
  * @throws Error when item source is not formatted correctly
  */
 export function createItemFromSource(source: ItemSource): Item {
   switch (source.type) {
-  case 'Memo':
+  case EItemType.Memo:
     return createMemoFromSource(source as MemoSource)
-  case 'Question':
+  case EItemType.Question:
     return createQuestionFromSource(source as QuestionSource)
-  case 'Unknown':
   default:
     throw new Error(
       `Unknown item ${JSON.stringify(source)} type with ID: ${source.id}`

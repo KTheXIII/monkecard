@@ -1,3 +1,5 @@
+import { ItemSource } from '@models/source'
+
 export enum EItemType {
   Unknown  = -1,
   Memo     =  0,
@@ -41,6 +43,6 @@ export interface ICollection {
   created: Date
   updated: Date
 
-  items: Map<string, Item>
+  items: Map<string, ItemSource>
   lang?: string
 }

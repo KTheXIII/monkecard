@@ -2,7 +2,7 @@ import { EItemType } from './collection'
 
 export type TItemType = keyof typeof EItemType
 export interface ItemSource {
-  type: TItemType
+  type: TItemType | EItemType
   id: string
   keywords: string[]
   lang?: string

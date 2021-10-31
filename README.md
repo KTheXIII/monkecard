@@ -1,6 +1,6 @@
 # monkecard
 
-`monkecard` is a card memo, quiz game and an article renderer. Build in mind that the data source can be supplied from other external servers.
+`monkecard` is a card memo and a quiz game. Build in mind that the data source can be supplied from other external servers.
 
 Build with Snowpack, ReactJS, tailwindcss and TypeScript.
 

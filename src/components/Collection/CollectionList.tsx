@@ -7,42 +7,27 @@ import {
   MemoList,
   MemoListButtonItem
 } from '@components/MemoList'
-import {
-  CheckCircleFill,
-  CircleSlash,
-  DashCircleDotted,
-  XCircleFill
-} from '@assets/BootstrapIcons'
 
-export interface CollectionListItem {
-  text: string
-  preview: string
-}
+import { ICollectionSet } from '@models/dataset'
 
 interface IProps {
-  list?: CollectionListItem[]
+  set: ICollectionSet[]
   onClick?: (index: number) => void
 }
 
 export const CollectionList: React.FC<IProps> = (props) => {
-  const [items, setItems] = useState<ReactElement[]>([])
-
-  useEffect(() => {
-    if (props.list) {
-      setItems(props.list.map((item, index) => (
-        <MemoListButtonItem
-          key={index}
-          text={item.text}
-          preview={item.preview}
-          onClick={() => props.onClick && props.onClick(index)}
-        />
-      )))
-    }
-  }, [props])
-
   return (
     <MemoList text="collections">
-      {items}
+      {props.set.map((set, index) => {
+        return (
+          <MemoListButtonItem
+            key={index}
+            text={set.collection.title}
+            preview={`${set.collection.items.size}`}
+            onClick={() => props.onClick && props.onClick(index)}
+          />
+        )
+      })}
     </MemoList>
   )
 }

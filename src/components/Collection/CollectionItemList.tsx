@@ -9,53 +9,45 @@ import {
   MemoListMarkItem
 } from '@components/MemoList'
 import { ActionButton, FilterButton } from '@components/ButtonUtilities'
-import { Item, EItemType } from '@models/collection'
+import { EItemType } from '@models/collection'
+import { ItemSource } from '@models/source'
+
+const START_TEXTS = {
+  Start: 'start',
+  Selected: 'start selected'
+}
+const DEFAULT_FILTER = EItemType.Memo
 
 interface Props {
-  items: Map<string, Item>
-  onStart: (item: string[]) => void
+  items: Map<string, ItemSource>
+  onStart: (type: EItemType, item: string[]) => void
 }
 
 interface KeywordSet {
   id: string
   items: string[],
 }
-enum EFilter {
-  All,
-  Memo,
-  Quiz
-}
-
-const StartTexts = {
-  Start: 'start',
-  Selected: 'start selected'
-}
 
 export const CollectionItemList: React.FC<Props> = (props) => {
-  const [itemList, setItemList]   = useState<KeywordSet[]>([])
-  const [filter, setFilter]       = useState<EFilter>(EFilter.All)
-  const [startText, setStartText] = useState<string>(StartTexts.Start)
-  const [selected, setSelected]   = useState<Set<string>>(new Set())
+  const [itemList,  setItemList]  = useState<KeywordSet[]>([])
+  const [filter,    setFilter]    = useState<EItemType>(DEFAULT_FILTER)
+  const [startText, setStartText] = useState<string>(START_TEXTS.Start)
+  const [selected,  setSelected]  = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const { items } = props
     if (!items) return
-    const keywords = Array.from(items.values())
+    // Filter out the keywords
+    const filteredKeywords = Array.from(items.values())
       .filter((item) => {
-        if (filter === EFilter.All)
-          return true
-        else if (filter === EFilter.Memo)
-          return item.type === EItemType.Memo
-        else if (filter === EFilter.Quiz)
-          return item.type === EItemType.Question
-        else
-          return false
+        return item.type === filter
       })
       .reduce((acc, item) => {
         item.keywords.forEach((keyword) => acc.add(keyword))
         return acc
       }, new Set<string>())
-    const keywordSetList: KeywordSet[] = Array.from(keywords.values())
+    // Create Keyword set list for displaying
+    const keywordList: KeywordSet[] = Array.from(filteredKeywords.values())
       .map((keyword) => {
         return {
           id: keyword,
@@ -65,10 +57,19 @@ export const CollectionItemList: React.FC<Props> = (props) => {
             .map((item) => item.id)
         }
       })
-    setItemList(keywordSetList)
+    setItemList(keywordList)
   }, [props, filter, selected])
 
-  const onFilterClick = useCallback((f: EFilter) => {
+  // Auto switch to Question filter if Memo item list is empty
+  useEffect(() => {
+    const { items } = props
+    if (!items) return
+    const count = Array.from(items.values())
+      .reduce((acc, item) => acc + (item.type === EItemType.Memo ? 1 : 0), 0)
+    if (count === 0) setFilter(EItemType.Question)
+  }, [props])
+
+  const onFilterClick = useCallback((f: EItemType) => {
     if (f !== filter) {
       selected.clear()
       setSelected(selected)
@@ -84,8 +85,8 @@ export const CollectionItemList: React.FC<Props> = (props) => {
       if (selected.has(set.id)) set.items.forEach((id) => acc.add(id))
       return acc
     }, new Set<string>())
-    props.onStart(Array.from(itemIDSet.values()))
-  }, [itemList, selected, props])
+    props.onStart(filter, Array.from(itemIDSet.values()))
+  }, [selected, itemList, props, filter])
 
   return (
     <div className="collection-item-list">
@@ -93,18 +94,16 @@ export const CollectionItemList: React.FC<Props> = (props) => {
         <ActionButton text={startText} onClick={() => onStartClick()} />
         {selected.size > 0 && <ActionButton text='clear' onClick={() => {
           selected.clear()
-          if (selected.size > 0) setStartText(StartTexts.Selected)
-          else setStartText(StartTexts.Start)
+          if (selected.size > 0) setStartText(START_TEXTS.Selected)
+          else setStartText(START_TEXTS.Start)
           setSelected(selected)
         }} />}
       </div>
       <div className="flex gap-1 overflow-x-scroll mb-3">
-        <FilterButton text="all" active={filter === EFilter.All}
-          onClick={() => onFilterClick(EFilter.All)} />
-        <FilterButton text="memo" active={filter === EFilter.Memo}
-          onClick={() => onFilterClick(EFilter.Memo)} />
-        <FilterButton text="quiz" active={filter === EFilter.Quiz}
-          onClick={() => onFilterClick(EFilter.Quiz)} />
+        <FilterButton text="memo" active={filter === EItemType.Memo}
+          onClick={() => onFilterClick(EItemType.Memo)} />
+        <FilterButton text="quiz" active={filter === EItemType.Question}
+          onClick={() => onFilterClick(EItemType.Question)} />
       </div>
       <MemoList>
         {itemList.map((set, index) => (
@@ -114,8 +113,8 @@ export const CollectionItemList: React.FC<Props> = (props) => {
             onMark={(mark) => {
               if (mark) selected.add(set.id)
               else selected.delete(set.id)
-              if (selected.size > 0) setStartText(StartTexts.Selected)
-              else setStartText(StartTexts.Start)
+              if (selected.size > 0) setStartText(START_TEXTS.Selected)
+              else setStartText(START_TEXTS.Start)
               setSelected(selected)
             }}
             text={set.id}

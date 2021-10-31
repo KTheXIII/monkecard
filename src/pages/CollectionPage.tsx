@@ -4,14 +4,14 @@ import React, {
 import { CollectionDescription } from '@components/Collection/CollectionDescription'
 import { ICollectionSet } from '@models/dataset'
 import { CollectionItemList } from '@components/Collection/CollectionItemList'
-import { Item } from '@models/collection'
+import { EItemType } from '@models/collection'
 
-interface CollectionPageProps {
+interface Props {
   set: ICollectionSet
-  onStart: (item: Item[]) => void
+  onStart: (type: EItemType, itemIDs: string[]) => void
 }
 
-export const CollectionPage: React.FC<CollectionPageProps> = (props) => {
+export const CollectionPage: React.FC<Props> = (props) => {
   const { collection } = props.set
   const { title, description, items } = collection
 
@@ -21,9 +21,9 @@ export const CollectionPage: React.FC<CollectionPageProps> = (props) => {
         <h1 className="text-2xl">{title}</h1>
       </div>
       <CollectionDescription text={description} />
-      <CollectionItemList items={items} onStart={(ids: string[]) => {
-        console.log('start', ids)
-      }} />
+      <CollectionItemList items={items}
+        onStart={props.onStart}
+      />
     </div>
   )
 }

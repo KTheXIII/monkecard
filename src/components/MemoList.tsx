@@ -92,10 +92,10 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
             {text}
           </div>
           {preview && <div
-            className="text-right w-1/4 text-mt-1 pl-4 m-auto
+            className="text-right w-1/4 text-mt-1 m-auto
                        whitespace-nowrap overflow-hidden">
             <span>{preview}</span></div>}
-          {!hideIconR && <div className="m-auto ml-5 w-4 h-4"
+          {!hideIconR && <div className="m-auto ml-4 w-4 h-4"
             style={iconRStyle}>{props.iconR}</div>}
         </div>
       </div>
