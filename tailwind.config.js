@@ -27,9 +27,12 @@ module.exports = {
       boxShadow: {
         'memo': '0 0 15pt 2pt rgba(0, 0, 0, 0.25)'
       },
+      fontFamily: {
+        'mono': ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+      },
       fontSize: {
         'mbase': '12pt'
-      }
+      },
     },
   },
   variants: {
