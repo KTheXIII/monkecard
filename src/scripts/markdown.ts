@@ -7,8 +7,7 @@ export const EQUATION_INLINE_REGEX = /\$([^$\n\r]+)\$/gm
 
 export function renderInlineMatch(text: string): string {
   const match = text.match(EQUATION_INLINE_REGEX)
-  console.log(match)
-
+  // TODO: handle errors and don't crash
   if (match) return match.reduce((acc, cur) => {
     const eq = katex.renderToString(cur.replace(EQUATION_INLINE_REGEX, '$1'),
       { displayMode: false })
@@ -19,6 +18,7 @@ export function renderInlineMatch(text: string): string {
 
 export function renderBlockMatch(text: string): string {
   const match = text.match(EQUATION_BLOCK_REGEX)
+  // TODO: handle errors and don't crash
   if (match) return match.reduce((acc, cur) => {
     const eq = katex.renderToString(cur.replace(EQUATION_BLOCK_REGEX, '$1'),
       { displayMode: true })

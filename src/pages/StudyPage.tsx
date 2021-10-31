@@ -24,6 +24,13 @@ export const StudyPage: React.FC<Props> = (props) => {
        <MemoCard onBack={() => {
          props.onHome()
        }} memos={session.items as Memo[]} />}
+
+      {session.type === EItemType.Question &&
+      // TODO: Implement Question
+      <div className="flex flex-col h-full">
+        <h1 className="flex-grow h-80">feature not implemented</h1>
+        <button onClick={() => props.onHome()}>go back</button>
+      </div>}
     </div>
   )
 }
