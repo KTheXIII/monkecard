@@ -27,6 +27,10 @@ export const MemoFlipCard = forwardRef<MemoFlipCardRef, Props>((props, ref) => {
   }))
 
   useEffect(() => {
+    setShow(false)
+  }, [props])
+
+  useEffect(() => {
     const { memo } = props
     if (show)
       setActive(memo.back)
