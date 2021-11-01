@@ -24,6 +24,12 @@ module.exports = {
         'memo': '5pt',
         'mfull': '50%',
       },
+      minHeight: {
+        'mcard': '20em'
+      },
+      minWidth: {
+        'mcard': '14em'
+      },
       boxShadow: {
         'memo': '0 0 15pt 2pt rgba(0, 0, 0, 0.25)'
       },
