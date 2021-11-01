@@ -28,6 +28,7 @@ export function renderBlockMatch(text: string): string {
 }
 
 export function renderMarkdown(text: string): string {
+  // TODO: Set base URL for the relative links
   return marked(renderBlockMatch(renderInlineMatch(text)), {
     sanitizer: DOMPurify.sanitize
   })

@@ -11,7 +11,7 @@ import { CommandPalette } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage, HomePageRef } from '@pages/HomePage'
 import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
-import { StudyPage } from '@pages/StudyPage'
+import { StudyPage, StudyPageRef } from '@pages/StudyPage'
 
 import { ISourceSet, ICollectionSet } from '@models/dataset'
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
@@ -19,7 +19,9 @@ import { mergeCollection } from '@scripts/collection'
 import { extractQuerySource, loadSourceSet } from '@scripts/source'
 import { EItemType, Item } from '@models/collection'
 import {
-  StudySession, emptySession, createSession
+  StudySession,
+  emptySession,
+  createSession
 } from '@models/study'
 
 enum Page {
@@ -49,9 +51,10 @@ export const App: React.FC = () => {
   const [setList, setSetList]         = useState(collectionSetList)
   const homeRef                       = useRef<HomePageRef>(null)
   const settingsRef                   = useRef<SettingsPageRef>(null)
+  const studyRef                      = useRef<StudyPageRef>(null)
   const [session, setSession] = useState(emptySession())
 
-  const onKeyPress = (e: KeyboardEvent) => {
+  const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === '/') {
       console.log('/ pressed')
       e.preventDefault()
@@ -66,7 +69,10 @@ export const App: React.FC = () => {
       setIsComHidden(true)
       e.preventDefault()
     }
-  }
+
+    if (!isComHidden) return
+    studyRef.current?.onKeyDown(e)
+  }, [isComHidden, studyRef])
 
   async function init() {
     setIsLoading(true)
@@ -91,10 +97,10 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     init()
-    window.addEventListener('keypress', onKeyPress)
+    window.addEventListener('keydown', onKeyDown)
     return () =>
-      window.removeEventListener('keypress', onKeyPress)
-  }, [])
+      window.removeEventListener('keydown', onKeyDown)
+  }, [onKeyDown])
 
   useEffect(() => {
     setIsNavHidden(page === Page.Study)
@@ -119,9 +125,12 @@ export const App: React.FC = () => {
         onReload={onReload}
       />}
       {page === Page.Study    &&
-      <StudyPage onHome={() => {
-        setPage(Page.Home)
-      }} session={session} />}
+      <StudyPage
+        ref={studyRef}
+        onHome={() => {
+          setPage(Page.Home)
+        }} session={session}
+      />}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton

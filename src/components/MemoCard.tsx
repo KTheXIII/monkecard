@@ -1,6 +1,7 @@
 import React, {
+  forwardRef,
   useCallback,
-  useEffect, useRef, useState
+  useEffect, useImperativeHandle, useRef, useState
 } from 'react'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import {
@@ -15,31 +16,41 @@ interface Props {
   onBack: () => void
 }
 
-export const MemoCard: React.FC<Props> = (props) => {
+export interface MemoCardRef {
+  onKeyDown: (e: KeyboardEvent) => void
+}
+
+export const MemoCard = forwardRef<MemoCardRef, Props>((props, ref) => {
   const { memos } = props
   const memoRef = useRef<MemoFlipCardRef>(null)
   const [activeCard, setActiveCard] = useState(0)
   const [memo, setMemo] = useState<Memo>()
 
+  useImperativeHandle(ref, () => ({
+    onKeyDown: (e) => {
+      if (e.code === 'Space') memoRef.current?.flip()
+      if (e.code === 'ArrowLeft') onPrev()
+      if (e.code === 'ArrowRight') onNext()
+      if (e.key === 'f') memoRef.current?.flip()
+      if (e.key === 'n') onNext()
+      if (e.key === 'N') onPrev()
+    },
+  }))
+
   useEffect(() => {
-    if (!memos) return
-    if (memos.length > 0) {
+    if (memos && memos.length > 0)
       setMemo(memos[activeCard])
-    }
   }, [memos, activeCard])
 
   const onPrev = useCallback(() => {
     setActiveCard(prev => (prev + memos.length - 1) % memos.length)
   }, [memos])
   const onNext = useCallback(() => {
-    const next = (activeCard + 1) % memos.length
-    setActiveCard(next)
-    console.log(next)
-
-  }, [memos, activeCard])
+    setActiveCard(prev => (prev + 1) % memos.length)
+  }, [memos])
 
   return (
-    <div>
+    <div className="memo-card h-full grid p-4">
       {memo && <MemoFlipCard ref={memoRef} memo={memo} />}
       <ToolsFloat>
         <ToolsFloatButton
@@ -48,10 +59,7 @@ export const MemoCard: React.FC<Props> = (props) => {
           onClick={onPrev}
         />
         <ToolsFloatButton
-          text="home"
-          onClick={() => {
-            props.onBack()
-          }}
+          text={`${activeCard + 1}/${memos.length}`}
         />
         <ToolsFloatButton
           icon={ChevronRight}
@@ -61,4 +69,4 @@ export const MemoCard: React.FC<Props> = (props) => {
       </ToolsFloat>
     </div>
   )
-}
+})
