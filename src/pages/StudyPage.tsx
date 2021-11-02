@@ -33,7 +33,7 @@ export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
 
   return (
     <div className="h-full">
-      <div className="fixed w-full text-black bg-mbg-0 h-12 px-4">
+      <div className="fixed w-full bg-mbg-0 h-12 px-4">
         <div className="flex w-full h-full text-mt-1">
           <button className="hover:text-mt-0 active:text-mt-1"
             onClick={() => props.onHome()}>

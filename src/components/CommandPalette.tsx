@@ -1,14 +1,35 @@
-import React, {} from 'react'
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef
+} from 'react'
+
 interface Props {
   isHidden: boolean
   isLoading: boolean
 }
 
-export const CommandPalette: React.FC<Props> = (props) => {
+export interface CommandPaletteRef {
+  target: HTMLDivElement | null
+}
+
+export const CommandPalette = forwardRef<
+  CommandPaletteRef,
+  Props
+>((props, ref) => {
+  const commandRef = useRef<HTMLDivElement>(null)
   const { isHidden } = props
+
+  useImperativeHandle(ref, () => ({
+    target: commandRef.current
+  }))
+
   return (
     <div className="command-palette fixed top-0 left-1/2 -translate-x-1/2">
-      {!isHidden && <div className="bg-mblue p-1 w-28 rounded-memo"></div>}
+      {!isHidden &&
+      <div ref={commandRef}
+        className="bg-mblue p-[5pt] w-64 rounded-memo">
+      </div>}
     </div>
   )
-}
+})

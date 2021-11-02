@@ -1,4 +1,3 @@
-import { MemoMarkdown } from '@components/MemoMarkdown'
 import React, {
   useState,
   useCallback,
@@ -7,6 +6,7 @@ import React, {
   useEffect
 } from 'react'
 
+import { MemoMarkdown } from '@components/MemoMarkdown'
 import { Memo } from '@models/collection'
 
 interface Props {

@@ -7,7 +7,7 @@ import React, {
 import './app.css'
 
 import { FileEarmarkCodeFill, MenuButtonWideFill } from '@assets/BootstrapIcons'
-import { CommandPalette } from '@components/CommandPalette'
+import { CommandPalette, CommandPaletteRef } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage, HomePageRef } from '@pages/HomePage'
 import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
@@ -17,9 +17,8 @@ import { ISourceSet, ICollectionSet } from '@models/dataset'
 import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
 import { mergeCollection } from '@scripts/collection'
 import { extractQuerySource, loadSourceSet } from '@scripts/source'
-import { EItemType, Item } from '@models/collection'
+import { GetPlatform } from '@scripts/env'
 import {
-  StudySession,
   emptySession,
   createSession
 } from '@models/study'
@@ -52,6 +51,7 @@ export const App: React.FC = () => {
   const homeRef                       = useRef<HomePageRef>(null)
   const settingsRef                   = useRef<SettingsPageRef>(null)
   const studyRef                      = useRef<StudyPageRef>(null)
+  const commandRef                    = useRef<CommandPaletteRef>(null)
   const [session, setSession] = useState(emptySession())
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
@@ -60,19 +60,37 @@ export const App: React.FC = () => {
       e.preventDefault()
     }
     // Show Command Palette
-    if (e.key === 'p' && e.metaKey && e.shiftKey) {
+    if (e.code === 'KeyP' && e.metaKey && e.shiftKey &&
+        GetPlatform() === 'macOS') {
       setIsComHidden(false)
       e.preventDefault()
+      return
+    }
+    if (e.code === 'KeyP' && e.ctrlKey && e.shiftKey &&
+        GetPlatform() === 'Windows') {
+      setIsComHidden(false)
+      e.preventDefault()
+      return
     }
     // Hide Command Palette
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && !isComHidden) {
       setIsComHidden(true)
       e.preventDefault()
+      return
     }
 
     if (!isComHidden) return
     studyRef.current?.onKeyDown(e)
   }, [isComHidden, studyRef])
+
+  const onClick = useCallback((e: MouseEvent) => {
+    if (!isComHidden && e.target !== commandRef.current?.target) {
+      setIsComHidden(true)
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      return
+    }
+  }, [isComHidden, commandRef])
 
   async function init() {
     setIsLoading(true)
@@ -85,6 +103,10 @@ export const App: React.FC = () => {
       console.log('?source=' + urls.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
 
       setSetList(collectionSetList)
+
+      // TODO: Might save the data in the indexeddb instead
+      // const dbs = await indexedDB.databases()
+      // dbs.forEach(db =>  db.name && indexedDB.deleteDatabase(db.name))
     } catch (err) {
       console.error(err)
     }
@@ -98,9 +120,12 @@ export const App: React.FC = () => {
   useEffect(() => {
     init()
     window.addEventListener('keydown', onKeyDown)
-    return () =>
+    window.addEventListener('click', onClick)
+    return () => {
       window.removeEventListener('keydown', onKeyDown)
-  }, [onKeyDown])
+      window.removeEventListener('click', onClick)
+    }
+  }, [onKeyDown, onClick])
 
   useEffect(() => {
     setIsNavHidden(page === Page.Study)
@@ -148,7 +173,10 @@ export const App: React.FC = () => {
             settingsRef.current?.onActive()
           }} />
       </ToolsFloat>
-      <CommandPalette isHidden={isComHidden} isLoading={isLoading} />
+      <CommandPalette
+        ref={commandRef}
+        isHidden={isComHidden}
+        isLoading={isLoading} />
     </div>
   )
 }
