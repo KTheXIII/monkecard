@@ -1,14 +1,13 @@
-import React, { forwardRef, useImperativeHandle } from 'react'
-import { FileCode, Pen } from '@assets/BootstrapIcons'
+import React, {
+  forwardRef,
+  useState,
+  useImperativeHandle
+} from 'react'
 
-import {
-  MemoList,
-  MemoListButtonItem,
-} from '@components/MemoList'
 import { ICollectionSet } from '@models/dataset'
-import {
-  COMMIT_HASH, REPOSITORY_URL, VERSION
-} from '@scripts/env'
+import { SettingsFoot } from '@components/Settings/SettingsFoot'
+import { SettingsMain } from '@components/Settings/SettingsMain'
+import { EditSource } from '@components/Settings/EditSource'
 
 interface Props {
   collections: ICollectionSet[]
@@ -19,46 +18,32 @@ export interface SettingsPageRef {
   onActive: () => void
 }
 
+enum SettingsPageState {
+  Main,
+  EditSource
+}
+
 export const SettingsPage = forwardRef<SettingsPageRef, Props>((props, ref) => {
+  const [state, setState] = useState(SettingsPageState.Main)
+
   useImperativeHandle(ref, () => ({
     onActive: () => {
-      console.log('SettingsPage.onActive')
+      setState(SettingsPageState.Main)
     },
   }))
 
   return (
     <div className="settings h-full flex flex-col">
       <div className="flex-grow p-4">
-        <MemoList>
-          <MemoListButtonItem
-            iconL={FileCode}
-            hideIconL={false}
-            iconR={Pen}
-            hideIconR={false}
-            text="edit sources"
-            onClick={() => {
-            // TODO: edit sources page
-            }}
-          />
-        </MemoList>
+        {state === SettingsPageState.Main &&
+        <SettingsMain onEditSource={() => {
+          setState(SettingsPageState.EditSource)
+        }} />}
+
+        {state === SettingsPageState.EditSource &&
+        <EditSource reload={props.onReload} />}
       </div>
-      <div className="text-center font-mono text-sm font-light pb-24">
-        <a
-          title="Github repository link"
-          className="text-mt-1 transition-colors duration-100x ease-in hover:text-mt-0"
-          rel="noreferrer"
-          target="_blank"
-          href={REPOSITORY_URL}>
-            v{VERSION}-{COMMIT_HASH.substring(0, 7)}
-        </a>
-        {/* <a
-          title="report bugs link"
-          className="ml-4 text-mt-1 transition-colors duration-100x ease-in hover:text-mt-0"
-          rel="noreferrer"
-          target="_blank"
-          href={`${REPOSITORY_URL}/issues`}
-        >report bugs</a> */}
-      </div>
+      <SettingsFoot />
     </div>
   )
 })
