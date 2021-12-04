@@ -72,6 +72,11 @@ export const App: React.FC = () => {
       e.preventDefault()
       return
     }
+    if (e.code === 'KeyK' && e.metaKey) {
+      setIsComHidden(!isComHidden)
+      e.preventDefault()
+      return
+    }
     // Hide Command Palette
     if (e.key === 'Escape' && !isComHidden) {
       setIsComHidden(true)
@@ -84,7 +89,7 @@ export const App: React.FC = () => {
   }, [isComHidden, studyRef])
 
   const onClick = useCallback((e: MouseEvent) => {
-    if (!isComHidden && e.target !== commandRef.current?.target) {
+    if (!isComHidden && e.target === commandRef.current?.target) {
       setIsComHidden(true)
       e.preventDefault()
       e.stopImmediatePropagation()
