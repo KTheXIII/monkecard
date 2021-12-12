@@ -84,6 +84,7 @@ export const App: React.FC = () => {
       return
     }
 
+    commandRef.current?.onKeyDown(e)
     if (!isComHidden) return
     studyRef.current?.onKeyDown(e)
   }, [isComHidden, studyRef])
