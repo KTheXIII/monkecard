@@ -1,5 +1,4 @@
 import React, {
-  forwardRef,
   useImperativeHandle,
   useRef,
   useEffect,
@@ -33,7 +32,7 @@ export interface CommandPaletteRef {
 }
 
 export const CommandPalette =
-forwardRef<CommandPaletteRef, Props>((props, ref) => {
+React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
   const { isHidden } = props
   const [commands, setCommands] = useState<ICommandBase[]>(props.commands)
   const [filtered, setFiltered] = useState<ICommandBase[]>(commands)
@@ -110,9 +109,16 @@ forwardRef<CommandPaletteRef, Props>((props, ref) => {
     }
     case ECommandType.Option: {
       const option = (cmd as ICommandOption)
-      const res = option.fn()
-      setPlaceholder(res.hint)
-      setCommands(res.cmds)
+      setPlaceholder(option.hint)
+      inputRef.current.value = ''
+      console.log(option.list)
+
+      setCommands(option.list().map(item => ({
+        type: ECommandType.Normal,
+        name: item,
+        fn:() => option.fn(item)
+      } as ICommandNormal)))
+      setMode(ECommandType.Option)
       break
     }
     case ECommandType.Input: {
@@ -121,6 +127,7 @@ forwardRef<CommandPaletteRef, Props>((props, ref) => {
       setPlaceholder(input.hint)
       inputRef.current.value = ''
       setMode(ECommandType.Input)
+      inputRef.current.focus()
       break
     }
     }
@@ -166,25 +173,27 @@ forwardRef<CommandPaletteRef, Props>((props, ref) => {
                                      bg-black flex font-light">
         <div className="w-full mx-5 md:mx-auto md:mt-56 mt-8 mb-auto
                         md:w-[500pt] rounded-memo overflow-hidden">
-          <input ref={inputRef}
-            className="text-mt-0 bg-mbg-1 md:text-base font-light text-mbase
-                       py-2 px-3 rounded-b-none w-full outline-none"
-            placeholder={placeholder}
-            type="text"
-            onKeyUp={e => onKey(e.nativeEvent)}
-          />
+          <div className="flex">
+            <input ref={inputRef}
+              className="text-mt-0 bg-mbg-1 md:text-base font-light text-mbase
+                       py-2 px-3 w-full outline-none rounded-none"
+              placeholder={placeholder}
+              type="text"
+              onKeyUp={e => onKey(e.nativeEvent)}
+            />
+            {/* <button className="md:hidden w-16 bg-mbg-2 text-mtext-dim-1">run</button> */}
+          </div>
           {mode !== ECommandType.Input &&
           <div ref={listRef} className="max-h-[336px] bg-mbg-base rounded-b-memo
                                         overflow-y-scroll snap-y scroll-auto">
             {filtered.map((x, index) => (
               <div key={x.name}
-                className={`h-[28px] pl-3 overflow-x-auto
-                            select-none flex snap-start
-                            hover:bg-mbg-hover cursor-pointer border-none
-                            active:bg-mbg-active
+                className={`md:h-[28px] h-10 w-full pl-3 select-none 
+                            flex snap-start hover:bg-mbg-hover 
+                            cursor-pointer border-none active:bg-mbg-active
                             ${index === select ? 'bg-mbg-active' : ''}`}
                 onClick={_ => onSelectCommand(index)}>
-                <span className='my-auto'>{x.name}</span>
+                <span className="my-auto overflow-x-scroll whitespace-nowrap">{x.name}</span>
               </div>
             ))}
             {filtered.length === 0 && commands.length != 0 &&

@@ -2,12 +2,14 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useRef
+  useRef,
+  useMemo
 } from 'react'
 import './app.css'
 
 import {
-  ChevronRight, FileEarmarkCodeFill, MenuButtonWideFill
+  ChevronRight,
+  FileEarmarkCodeFill,
 } from '@assets/BootstrapIcons'
 import { CommandPalette, CommandPaletteRef } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
@@ -15,69 +17,19 @@ import { HomePage, HomePageRef } from '@pages/HomePage'
 import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
 
-import { ISourceSet, ICollectionSet } from '@models/dataset'
-import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
-import { mergeCollection } from '@scripts/collection'
-import { extractQuerySource, loadSourceSet } from '@scripts/source'
+import { ICollectionSet } from '@models/dataset'
+import { ICommandBase } from '@models/command'
 import { GetPlatform } from '@scripts/env'
+import { Monke } from '@scripts/monke'
 import {
   emptySession,
   createSession
 } from '@models/study'
-import {
-  ECommandType,
-  ICommandNormal,
-  ICommandBase,
-  ICommandInput,
-  ICommandOption
-} from '@models/command'
 
 enum Page {
   Home,
   Settings,
   Study,
-}
-const cmd1: ICommandNormal = {
-  type: ECommandType.Normal,
-  name: 'Hello',
-  fn: () => {
-    console.log('Hello')
-  },
-}
-const cmd2: ICommandInput = {
-  type: ECommandType.Input,
-  name: 'Much input',
-  hint: 'input text',
-  fn: (input: string) => {
-    console.log('user entered', input)
-  }
-}
-const cmd3: ICommandOption = {
-  type: ECommandType.Option,
-  name: 'Option',
-  fn: () => {
-    return {
-      hint: 'select option (up/down keys)',
-      cmds: [
-        cmd1,
-        cmd2
-      ],
-    }
-  }
-}
-const testlist: ICommandBase[] = [cmd1, cmd2, cmd3]
-
-let sourceSetList: ISourceSet[] = []
-let collectionSetList: ICollectionSet[] = []
-async function initURLSourceList(): Promise<string[]> {
-  const sourceSet = extractQuerySource(window.location.search)
-    .reduce((acc, cur) => acc.add(cur), new Set<string>())
-  await getLocalSourceList().then(list =>
-    list.forEach(value => sourceSet.add(value))
-  )
-  const list = Array.from(sourceSet)
-  await saveLocalSourceList(list)
-  return list
 }
 
 export const App: React.FC = () => {
@@ -85,12 +37,44 @@ export const App: React.FC = () => {
   const [isLoading,   setIsLoading]   = useState(true)
   const [isNavHidden, setIsNavHidden] = useState(true)
   const [page, setPage]               = useState(Page.Home)
-  const [setList, setSetList]         = useState(collectionSetList)
-  const homeRef                       = useRef<HomePageRef>(null)
-  const settingsRef                   = useRef<SettingsPageRef>(null)
-  const studyRef                      = useRef<StudyPageRef>(null)
-  const commandRef                    = useRef<CommandPaletteRef>(null)
-  const [session, setSession] = useState(emptySession())
+  const [session, setSession]         = useState(emptySession())
+  const [commandList, setCommandList] = useState<ICommandBase[]>([])
+  const [colleciontSet, setColleciontSet] = useState<ICollectionSet[]>([])
+
+  const homeRef     = useRef<HomePageRef>(null)
+  const settingsRef = useRef<SettingsPageRef>(null)
+  const studyRef    = useRef<StudyPageRef>(null)
+  const commandRef  = useRef<CommandPaletteRef>(null)
+  const monke = useMemo(() =>  new Monke(), [])
+
+  useEffect(() => {
+    setIsLoading(true)
+    monke.init().then(_ => {
+      setColleciontSet(monke.collectionSet)
+      monke.addCommandN('home', () => setPage(Page.Home))
+      monke.addCommandN('settings', () => setPage(Page.Settings))
+      monke.addCommandN('reload', () => monke.load()
+        .then(_ => setColleciontSet(monke.collectionSet)))
+      monke.addCommandI('add source', 'enter source url',
+        (input) => monke.addSource(input)
+          .then(_ => setColleciontSet(monke.collectionSet)))
+      monke.addCommandO('remove source', 'select source to remove (up/down keys)',
+        monke.getUrls.bind(monke),
+        (src) => monke.removeSource(src)
+          .then(_ => setColleciontSet(monke.collectionSet)))
+      monke.addInternalCommands()
+      setCommandList(monke.commands)
+      setIsLoading(false)
+    })
+  }, [monke])
+
+  const onReload = useCallback(() => {
+    setIsLoading(true)
+    monke.load().then(_ => {
+      setColleciontSet(monke.collectionSet)
+      setIsLoading(false)
+    })
+  }, [monke])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === '/') {
@@ -128,46 +112,13 @@ export const App: React.FC = () => {
   }, [isComHidden, studyRef])
 
   const onClick = useCallback((e: MouseEvent) => {
-    console.log('target: ', e.target)
-    console.log('com: ', commandRef.current?.target)
-
     if (!isComHidden && e.target === commandRef.current?.target) {
       setIsComHidden(true)
       e.preventDefault()
       e.stopImmediatePropagation()
       return
     }
-
   }, [isComHidden, commandRef])
-
-  async function init() {
-    setIsLoading(true)
-    try {
-      const urls        = await initURLSourceList()
-      sourceSetList     = await loadSourceSet(urls)
-      collectionSetList = mergeCollection(sourceSetList)
-
-      console.dir(collectionSetList)
-      console.log('?source=' + urls.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
-
-      setSetList(collectionSetList)
-
-      // TODO: Might save the data in the indexeddb instead
-      // const dbs = await indexedDB.databases()
-      // dbs.forEach(db =>  db.name && indexedDB.deleteDatabase(db.name))
-    } catch (err) {
-      console.error(err)
-    }
-    setIsLoading(false)
-  }
-
-  const onReload = useCallback(() => {
-    init()
-  }, [])
-
-  useEffect(() => {
-    init()
-  }, [])
 
   useEffect(() => {
     window.addEventListener('keydown', onKeyDown)
@@ -184,11 +135,11 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      {/* {page === Page.Home     &&
+      {page === Page.Home     &&
       <HomePage
         ref={homeRef}
         isLoading={isLoading}
-        collections={setList}
+        collections={colleciontSet}
         onStart={(type, items) => {
           setPage(Page.Study)
           setSession(createSession(type, items))
@@ -197,7 +148,7 @@ export const App: React.FC = () => {
       {page === Page.Settings &&
       <SettingsPage
         ref={settingsRef}
-        collections={setList}
+        collections={colleciontSet}
         onReload={onReload}
       />}
       {page === Page.Study    &&
@@ -206,7 +157,7 @@ export const App: React.FC = () => {
         onHome={() => {
           setPage(Page.Home)
         }} session={session}
-      />} */}
+      />}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
@@ -215,13 +166,6 @@ export const App: React.FC = () => {
           onClick={() => {
             setPage(Page.Home)
             homeRef.current?.onActive()
-          }} />
-        <ToolsFloatButton
-          text="more"
-          icon={MenuButtonWideFill}
-          onClick={() => {
-            setPage(Page.Settings)
-            settingsRef.current?.onActive()
           }} />
         <ToolsFloatButton
           text="cmd"
@@ -233,7 +177,7 @@ export const App: React.FC = () => {
       <CommandPalette
         ref={commandRef}
         isHidden={isComHidden}
-        commands={testlist}
+        commands={commandList}
         onHide={() => {
           setIsComHidden(true)
         }}
