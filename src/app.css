@@ -18,6 +18,48 @@
       @apply w-6 h-6;
     }
   }
+
+  :root {
+    font-size: 11pt;
+  }
+}
+
+.auto-theme {
+  --black: #2b2d3a;
+  --gray: #8a8ea8;
+  --red: #fb617e;
+  --yellow: #edc763;
+  --green: #9ed06c;
+  --blue: #6dcae8;
+  --purple: #bb97ee;
+  --orange: #f89860;
+  --white: #f0f1f4;
+
+  --bg-base: var(--black);
+  --bg-active: #21222C;
+  --bg-hover: #414458;
+  --bg-1: #363949;
+  --bg-2: #4C5067;
+  --bg-3: #575B75;
+
+  --text-base: var(--white);
+  --text-active: #E2E4E9;
+  --text-hover: #D3D6DF;
+  --text-dim-1: #8488A4;
+  --text-dim-2: #6D7292;
+  --text-dim-3: #575B75;
+}
+
+
+html,
+body,
+#root {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  background-color: var(--bg-base);
+  color: var(--text-base);
+
+  height: 100%;
 }
 
 .app {
@@ -25,4 +67,7 @@
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+}
+
+@media (prefers-color-scheme: light) {
 }

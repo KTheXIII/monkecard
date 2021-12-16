@@ -74,7 +74,7 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
     <button
       className="memo-list-item flex font-light
                  hover:bg-mbg-2 active:bg-mbg-3
-                 disabled:bg-mbg-1 disabled:text-mt-2
+                 disabled:bg-mbg-1 disabled:text-mtext-dim-2
                  disabled:cursor-default group"
       disabled={isDisabled}
       title={props.title}
@@ -85,14 +85,14 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
         style={iconLStyle}>{props.iconL}</div>}
       <div className="flex-grow ml-4 py-4 pr-4
                       border-solid border-b
-                      border-mbg-0 group-last:border-b-0">
+                      border-mbg-base group-last:border-b-0">
         <div className="flex m-auto w-full">
           <div className="text-left flex-grow break-all
                           select-text w-0 m-auto">
             {text}
           </div>
           {preview && <div
-            className="text-right w-1/4 text-mt-1 m-auto
+            className="text-right w-1/4 text-mtext-dim-1 m-auto
                        whitespace-nowrap overflow-hidden">
             <span>{preview}</span></div>}
           {!hideIconR && <div className="m-auto ml-4 w-4 h-4"

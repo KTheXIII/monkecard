@@ -6,7 +6,9 @@ import React, {
 } from 'react'
 import './app.css'
 
-import { FileEarmarkCodeFill, MenuButtonWideFill } from '@assets/BootstrapIcons'
+import {
+  ChevronRight, FileEarmarkCodeFill, MenuButtonWideFill
+} from '@assets/BootstrapIcons'
 import { CommandPalette, CommandPaletteRef } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage, HomePageRef } from '@pages/HomePage'
@@ -22,12 +24,48 @@ import {
   emptySession,
   createSession
 } from '@models/study'
+import {
+  ECommandType,
+  ICommandNormal,
+  ICommandBase,
+  ICommandInput,
+  ICommandOption
+} from '@models/command'
 
 enum Page {
   Home,
   Settings,
   Study,
 }
+const cmd1: ICommandNormal = {
+  type: ECommandType.Normal,
+  name: 'Hello',
+  fn: () => {
+    console.log('Hello')
+  },
+}
+const cmd2: ICommandInput = {
+  type: ECommandType.Input,
+  name: 'Much input',
+  hint: 'input text',
+  fn: (input: string) => {
+    console.log('user entered', input)
+  }
+}
+const cmd3: ICommandOption = {
+  type: ECommandType.Option,
+  name: 'Option',
+  fn: () => {
+    return {
+      hint: 'select option (up/down keys)',
+      cmds: [
+        cmd1,
+        cmd2
+      ],
+    }
+  }
+}
+const testlist: ICommandBase[] = [cmd1, cmd2, cmd3]
 
 let sourceSetList: ISourceSet[] = []
 let collectionSetList: ICollectionSet[] = []
@@ -90,12 +128,16 @@ export const App: React.FC = () => {
   }, [isComHidden, studyRef])
 
   const onClick = useCallback((e: MouseEvent) => {
+    console.log('target: ', e.target)
+    console.log('com: ', commandRef.current?.target)
+
     if (!isComHidden && e.target === commandRef.current?.target) {
       setIsComHidden(true)
       e.preventDefault()
       e.stopImmediatePropagation()
       return
     }
+
   }, [isComHidden, commandRef])
 
   async function init() {
@@ -125,6 +167,9 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     init()
+  }, [])
+
+  useEffect(() => {
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('click', onClick)
     return () => {
@@ -139,7 +184,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      {page === Page.Home     &&
+      {/* {page === Page.Home     &&
       <HomePage
         ref={homeRef}
         isLoading={isLoading}
@@ -161,7 +206,7 @@ export const App: React.FC = () => {
         onHome={() => {
           setPage(Page.Home)
         }} session={session}
-      />}
+      />} */}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
@@ -178,10 +223,20 @@ export const App: React.FC = () => {
             setPage(Page.Settings)
             settingsRef.current?.onActive()
           }} />
+        <ToolsFloatButton
+          text="cmd"
+          icon={ChevronRight}
+          onClick={() => {
+            setIsComHidden(false)
+          }} />
       </ToolsFloat>
       <CommandPalette
         ref={commandRef}
         isHidden={isComHidden}
+        commands={testlist}
+        onHide={() => {
+          setIsComHidden(true)
+        }}
         isLoading={isLoading} />
     </div>
   )

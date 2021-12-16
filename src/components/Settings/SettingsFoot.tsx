@@ -11,7 +11,8 @@ export const SettingsFoot: React.FC = (props) => {
     <div className="text-center font-mono text-sm font-light pb-24">
       <a
         title="Github repository link"
-        className="text-mt-1 transition-colors duration-100x ease-in hover:text-mt-0"
+        className="text-mtext-dim-2 transition-colors
+                    uration-100x ease-in hover:text-mtext-hover"
         rel="noreferrer"
         target="_blank"
         href={REPOSITORY_URL}>

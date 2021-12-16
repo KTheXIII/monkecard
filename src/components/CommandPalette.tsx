@@ -8,47 +8,41 @@ import React, {
 } from 'react'
 import Fuse from 'fuse.js'
 
+import {
+  ECommandType,
+  ICommandNormal,
+  ICommandBase,
+  ICommandInput,
+  ICommandOption
+} from '@models/command'
+
+const DEFAULT_PLACEHOLDER = 'search command'
+const FUSE_OPTIONS: Fuse.IFuseOptions<ICommandBase> = {
+  keys: ['name'],
+}
+
 interface Props {
   isHidden: boolean
   isLoading: boolean
+  commands: ICommandBase[]
   onHide?: () => void
 }
-
 export interface CommandPaletteRef {
   target: HTMLDivElement | null
   onKeyDown: (e: KeyboardEvent) => void
 }
 
-const DEFAULT_PLACEHOLDER = 'search command'
-
-const commandList = [
-  `A Crule Angle's Thesis`,
-  'Beautilful World',
-  'Hello, World',
-  'Komm, Susser, Tod',
-  'One Last Kiss',
-  'Kokoro yo Genshi ni Modore 2020',
-  'Home',
-  'I love you more than you\'ll ever know',
-  'Komm, Susser Tod',
-  'Lucky Orb',
-  'Hello my world',
-  'Hello, Planet',
-  'Highlight',
-  'Wow',
-  'oh no',
-  'anyway'
-]
-
-const fuse = new Fuse(commandList)
-
 export const CommandPalette =
 forwardRef<CommandPaletteRef, Props>((props, ref) => {
   const { isHidden } = props
-  const [commands, setCommands] = useState(commandList)
-  const [search, setSearch]     = useState('')
+  const [commands, setCommands] = useState<ICommandBase[]>(props.commands)
+  const [filtered, setFiltered] = useState<ICommandBase[]>(commands)
+  const [fuse, setFuse]         = useState(new Fuse(filtered, FUSE_OPTIONS))
+  const [mode, setMode]         = useState(ECommandType.Normal)
+  const [inputBox, setInputBox] = useState('')
+  const [select, setSelect]     = useState(0)
+  const [command, setCommand]   = useState<ICommandBase | null>(null)
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER)
-  const [select, setSelect] = useState(0)
   const commandRef = useRef<HTMLDivElement>(null)
   const listRef    = useRef<HTMLDivElement>(null)
   const inputRef   = useRef<HTMLInputElement>(null)
@@ -58,84 +52,151 @@ forwardRef<CommandPaletteRef, Props>((props, ref) => {
     onKeyDown: onKeyDown
   }))
 
+  // Reset to default value when isHidden changes
   useEffect(() => {
+    setSelect(0)
+    setCommands(props.commands)
+    setCommand(null)
+    setPlaceholder(DEFAULT_PLACEHOLDER)
+    setMode(ECommandType.Normal)
+    setInputBox('')
+
     if (!inputRef.current) return
     inputRef.current.focus()
-    setSelect(0)
-    setCommands(commandList)
-  }, [isHidden])
+  }, [isHidden, props])
 
   useEffect(() => {
-    const res = fuse.search(search)
+    if (mode === ECommandType.Input) return
+
+    const res = fuse.search(inputBox)
     if (res.length > 0) {
-      setCommands(res.map(value => value.item))
-    } else if (search.length === 0) {
-      setCommands(commandList)
-    } else {
-      setCommands([])
+      setFiltered(res.map(value => value.item))
+      setSelect(0)
+    } else if (inputBox === '') {
+      setFiltered(commands)
+      setSelect(0)
+    } else if (res.length === 0) {
+      setFiltered([])
+      setSelect(-1)
     }
-    setSelect(0)
-  }, [search])
+  }, [inputBox, fuse, commands, mode])
 
   useEffect(() => {
     const element = listRef.current?.children[select]
     element?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [select])
 
+  useEffect(() => {
+    setFiltered(commands)
+    setFuse(new Fuse(commands, FUSE_OPTIONS))
+  }, [commands])
+
   const onKey = useCallback((e: KeyboardEvent) => {
     const input = inputRef.current
     if (!input) return
-    setSearch(input.value)
+    setInputBox(input.value)
   }, [inputRef])
+
+  const onSelectCommand = useCallback((index: number) => {
+    if (mode === ECommandType.Input ||
+        index < 0 || !inputRef.current) return
+
+    const cmd = filtered[index]
+    switch (cmd.type) {
+    case ECommandType.Normal: {
+      (cmd as ICommandNormal).fn()
+      props.onHide?.()
+      break
+    }
+    case ECommandType.Option: {
+      const option = (cmd as ICommandOption)
+      const res = option.fn()
+      setPlaceholder(res.hint)
+      setCommands(res.cmds)
+      break
+    }
+    case ECommandType.Input: {
+      const input = (cmd as ICommandInput)
+      setCommand(input)
+      setPlaceholder(input.hint)
+      inputRef.current.value = ''
+      setMode(ECommandType.Input)
+      break
+    }
+    }
+  }, [mode, filtered, props])
+
+  const onInputEnter = useCallback(() => {
+    if (!command || !inputRef.current) return
+    const cmd = command as ICommandInput
+    cmd.fn(inputRef.current.value)
+    props.onHide?.()
+    setCommand(null)
+  }, [command, inputRef, props])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (!inputRef.current) return
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      const newSelect = (select + commands.length - 1) % commands.length
+      const newSelect = (select + filtered.length - 1) % filtered.length
       setSelect(newSelect)
+      return
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
-      const newSelect = (select + 1) % commands.length
+      const newSelect = (select + 1) % filtered.length
       setSelect(newSelect)
+      return
     }
 
     if (e.key === 'Enter') {
-      alert(commands[select])
+      switch (mode) {
+      case ECommandType.Input:
+        onInputEnter()
+        break
+      default:
+        onSelectCommand(select)
+      }
     }
-  }, [commands, inputRef, select])
+  }, [select, filtered, mode, onInputEnter, onSelectCommand])
 
   return (
     <div className="command-palette fixed top-0 left-1/2 -translate-x-1/2">
       {!isHidden &&
       <div ref={commandRef} className="w-screen h-screen bg-opacity-50
                                      bg-black flex font-light">
-        <div className="w-full mx-8 md:mx-auto my-auto mt-56
-                        md:w-[500pt] rounded overflow-hidden">
+        <div className="w-full mx-5 md:mx-auto md:mt-56 mt-8 mb-auto
+                        md:w-[500pt] rounded-memo overflow-hidden">
           <input ref={inputRef}
-            className="text-mt-0 bg-mbg-1 text-base font-light
-                       py-2 px-3 rounded-t w-full outline-none"
+            className="text-mt-0 bg-mbg-1 md:text-base font-light text-mbase
+                       py-2 px-3 rounded-b-none w-full outline-none"
             placeholder={placeholder}
             type="text"
             onKeyUp={e => onKey(e.nativeEvent)}
           />
-          <div ref={listRef} className="max-h-[336px] bg-mbg-0 overflow-hidden
-                                        overflow-y-scroll rounded-b snap-y">
-            {commands.map((x, index) => (
-              <div key={x} className={`h-[28px] pl-3 overflow-x-auto
-                                       select-none flex snap-start
-                                       hover:bg-mbg-2 cursor-pointer border-none
-                                       active:bg-mbg-0
-                                       ${index === select ? 'bg-mbg-2' : ''}`}>
-                <span className='my-auto'>{x}</span>
+          {mode !== ECommandType.Input &&
+          <div ref={listRef} className="max-h-[336px] bg-mbg-base rounded-b-memo
+                                        overflow-y-scroll snap-y scroll-auto">
+            {filtered.map((x, index) => (
+              <div key={x.name}
+                className={`h-[28px] pl-3 overflow-x-auto
+                            select-none flex snap-start
+                            hover:bg-mbg-hover cursor-pointer border-none
+                            active:bg-mbg-active
+                            ${index === select ? 'bg-mbg-active' : ''}`}
+                onClick={_ => onSelectCommand(index)}>
+                <span className='my-auto'>{x.name}</span>
               </div>
             ))}
-            {commands.length === 0 && <div className="h-[28px] pl-3 flex">
+            {filtered.length === 0 && commands.length != 0 &&
+            <div className="h-[28px] pl-3 flex">
               <span className='my-auto'>no result...</span>
-            </div>}
+            </div>
+            }
           </div>
+          }
         </div>
-      </div>}
+      </div>
+      }
     </div>
   )
 })

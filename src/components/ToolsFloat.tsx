@@ -33,10 +33,10 @@ export const ToolsFloatButton: React.FC<ToolsButtonProps> = (props) => {
   )
 
   return (
-    <button className="cursor-pointer m-0 p-3 px-3
+    <button className={`cursor-pointer m-0 px-3
                        transition-all duration-100 ease-in
-                       border-solid border-r border-mbg-0 last:border-r-0
-                       hover:bg-mbg-3 active:bg-mbg-2"
+                       border-solid border-r border-mbg-base last:border-r-0
+                       hover:bg-mbg-3 active:bg-mbg-2`}
     title={props.title}
     onClick={props.onClick}>
       <div className="flex gap-3">
