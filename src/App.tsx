@@ -18,6 +18,7 @@ import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
 
 import { ICollectionSet } from '@models/dataset'
+import { IActivity } from '@models/user'
 import {
   ECommandType, ICommandBase, ICommandInput, ICommandNormal, ICommandOption
 } from '@models/command'
@@ -162,13 +163,17 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
-  const activites = Array(180).fill(0).map((_, i) => {
+  const activites = Array(365).fill(0).map((_, i) => {
     return Math.random() * (Math.random() > 0.2 ? 1 : 0)
-  })
+  }).map((v, i) => ({
+    active: v,
+    count: Math.floor(v * 25),
+    date: new Date(Date.now() - (i * 1000 * 60 * 60 * 24)),
+  } as IActivity)).reverse()
 
   return (
     <div className="app">
-      <MemoActivity activties={activites} colors={colors} />
+      <MemoActivity activities={activites} colors={colors} />
       {/* {page === Page.Home     &&
       <HomePage
         ref={homeRef}
