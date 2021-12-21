@@ -97,14 +97,14 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
   }, [inputRef])
 
   const onSelectCommand = useCallback((index: number) => {
-    if (mode === ECommandType.Input ||
+    if (mode === ECommandType.Input || !props.onHide ||
         index < 0 || !inputRef.current) return
 
     const cmd = filtered[index]
     switch (cmd.type) {
     case ECommandType.Normal: {
       (cmd as ICommandNormal).fn()
-      props.onHide?.()
+      props.onHide()
       break
     }
     case ECommandType.Option: {
@@ -134,10 +134,10 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
   }, [mode, filtered, props])
 
   const onInputEnter = useCallback(() => {
-    if (!command || !inputRef.current) return
+    if (!command || !inputRef.current || !props.onHide) return
     const cmd = command as ICommandInput
     cmd.fn(inputRef.current.value)
-    props.onHide?.()
+    props.onHide()
     setCommand(null)
   }, [command, inputRef, props])
 
@@ -185,7 +185,7 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
           </div>
           {mode !== ECommandType.Input &&
           <div ref={listRef} className="max-h-[336px] bg-mbg-base rounded-b-memo
-                                        overflow-y-scroll snap-y scroll-auto">
+                                        overflow-y-auto snap-y scroll-auto">
             {filtered.map((x, index) => (
               <div key={x.name}
                 className={`md:h-[28px] h-10 w-full pl-3 select-none 
@@ -193,7 +193,7 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
                             cursor-pointer border-none active:bg-mbg-active
                             ${index === select ? 'bg-mbg-active' : ''}`}
                 onClick={_ => onSelectCommand(index)}>
-                <span className="my-auto overflow-x-scroll whitespace-nowrap">{x.name}</span>
+                <span className="my-auto overflow-x-auto whitespace-nowrap">{x.name}</span>
               </div>
             ))}
             {filtered.length === 0 && commands.length != 0 &&

@@ -99,7 +99,7 @@ export const CollectionItemList: React.FC<Props> = (props) => {
           setSelected(selected)
         }} />}
       </div>
-      <div className="flex gap-1 overflow-x-scroll mb-3">
+      <div className="flex gap-1 overflow-x-auto mb-3">
         <FilterButton text="memo" active={filter === EItemType.Memo}
           onClick={() => onFilterClick(EItemType.Memo)} />
         <FilterButton text="quiz" active={filter === EItemType.Question}

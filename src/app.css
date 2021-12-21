@@ -19,6 +19,12 @@
     }
   }
 
+  @media all and (display-mode: fullscreen) {
+      .float-margin-b {
+      @apply mb-8;
+    }
+  }
+
   :root {
     font-size: 11pt;
   }
@@ -41,6 +47,9 @@
   --bg-1: #363949;
   --bg-2: #4C5067;
   --bg-3: #575B75;
+
+  --activity-min: var(--bg-2);
+  --activity-max: var(--blue);
 
   --text-base: var(--white);
   --text-active: #E2E4E9;

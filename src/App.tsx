@@ -18,13 +18,16 @@ import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
 
 import { ICollectionSet } from '@models/dataset'
-import { ICommandBase } from '@models/command'
+import {
+  ECommandType, ICommandBase, ICommandInput, ICommandNormal, ICommandOption
+} from '@models/command'
 import { GetPlatform } from '@scripts/env'
 import { Monke } from '@scripts/monke'
 import {
   emptySession,
   createSession
 } from '@models/study'
+import { MemoActivity } from '@components/MemoActivity'
 
 enum Page {
   Home,
@@ -45,35 +48,61 @@ export const App: React.FC = () => {
   const settingsRef = useRef<SettingsPageRef>(null)
   const studyRef    = useRef<StudyPageRef>(null)
   const commandRef  = useRef<CommandPaletteRef>(null)
+  const colors = useMemo(() => {
+    const base = getComputedStyle(document.body)
+      .getPropertyValue('--activity-min')
+    const max = getComputedStyle(document.body)
+      .getPropertyValue('--activity-max')
+    const colorBase = parseInt(base.slice(1), 16)
+    const colorMax = parseInt(max.slice(1), 16)
+    return [colorBase, colorMax] as [number, number]
+  }, [])
   const monke = useMemo(() =>  new Monke(), [])
 
   useEffect(() => {
-    setIsLoading(true)
-    monke.init().then(_ => {
-      setColleciontSet(monke.collectionSet)
-      monke.addCommandN('home', () => setPage(Page.Home))
-      monke.addCommandN('settings', () => setPage(Page.Settings))
-      monke.addCommandN('reload', () => monke.load()
-        .then(_ => setColleciontSet(monke.collectionSet)))
-      monke.addCommandI('add source', 'enter source url',
-        (input) => monke.addSource(input)
-          .then(_ => setColleciontSet(monke.collectionSet)))
-      monke.addCommandO('remove source', 'select source to remove (up/down keys)',
-        monke.getUrls.bind(monke),
-        (src) => monke.removeSource(src)
-          .then(_ => setColleciontSet(monke.collectionSet)))
-      monke.addInternalCommands()
-      setCommandList(monke.commands)
-      setIsLoading(false)
-    })
+    monke.subjectIsLoading.subscribe(setIsLoading)
+    monke.subjectCollections.subscribe(setColleciontSet)
+    monke.subjectCommands.subscribe(setCommandList)
+    monke.init()
+
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'home',
+      fn: () => setPage(Page.Home),
+    } as ICommandNormal)
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'settings',
+      fn: () => setPage(Page.Settings),
+    } as ICommandNormal)
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'reload',
+      fn: () => monke.load(monke.getSources()),
+    } as ICommandNormal)
+    monke.addCommand({
+      type: ECommandType.Input,
+      name: 'add source',
+      hint: 'enter source url',
+      fn: input => monke.addSource(input),
+    } as ICommandInput)
+    monke.addCommand({
+      type: ECommandType.Option,
+      name: 'remove source',
+      hint: 'select source to remove',
+      list: monke.getSources.bind(monke),
+      fn: option => monke.removeSource(option),
+    } as ICommandOption)
+    // monke.addCommand({
+    //   type: ECommandType.Input,
+    //   name: 'create collection',
+    //   hint: 'enter collection name',
+    //   fn: input => monke.createCollection(input),
+    // } as ICommandInput)
   }, [monke])
 
   const onReload = useCallback(() => {
-    setIsLoading(true)
-    monke.load().then(_ => {
-      setColleciontSet(monke.collectionSet)
-      setIsLoading(false)
-    })
+    monke.load(monke.getSources())
   }, [monke])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
@@ -133,9 +162,14 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
+  const activites = Array(180).fill(0).map((_, i) => {
+    return Math.random() * (Math.random() > 0.2 ? 1 : 0)
+  })
+
   return (
     <div className="app">
-      {page === Page.Home     &&
+      <MemoActivity activties={activites} colors={colors} />
+      {/* {page === Page.Home     &&
       <HomePage
         ref={homeRef}
         isLoading={isLoading}
@@ -157,7 +191,7 @@ export const App: React.FC = () => {
         onHome={() => {
           setPage(Page.Home)
         }} session={session}
-      />}
+      />} */}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
@@ -170,17 +204,13 @@ export const App: React.FC = () => {
         <ToolsFloatButton
           text="cmd"
           icon={ChevronRight}
-          onClick={() => {
-            setIsComHidden(false)
-          }} />
+          onClick={() => setIsComHidden(false)} />
       </ToolsFloat>
       <CommandPalette
         ref={commandRef}
         isHidden={isComHidden}
         commands={commandList}
-        onHide={() => {
-          setIsComHidden(true)
-        }}
+        onHide={() => setIsComHidden(true)}
         isLoading={isLoading} />
     </div>
   )

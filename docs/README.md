@@ -8,7 +8,7 @@ Sources can be add with `query` parameter in the URL.
 ?source=url1+url2
 ```
 
-multiple urls can be separate with `+`
+multiple urls can be separate with `+`, this means that any url that uses `+` will not work.
 
 ## Collection Source
 
