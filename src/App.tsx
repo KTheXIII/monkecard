@@ -164,7 +164,7 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
-  const activites = useMemo(() => Array(212).fill(0).map((_, i) => {
+  const activites = useMemo(() => Array(365).fill(0).map((_, i) => {
     return Math.random() * (Math.random() > 0.2 ? 1 : 0)
   }).map((v, i) => ({
     active: v,

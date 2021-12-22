@@ -4,42 +4,51 @@ import React, {
   useRef,
 } from 'react'
 import { IActivity } from '@models/user'
+import { number } from 'fp-ts'
 
 const MONTH_NAMES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+const BOX_SIZE    = 10
+const BOX_PADDING = 3
+const BOX_R       = 2
 
-const Day: React.FC<{data: IActivity, color: number}> = (props) => {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.setAttribute('data-date', props.data.date.toLocaleDateString('en-SE'))
-    ref.current.setAttribute('data-count', props.data.count.toString())
-    ref.current.setAttribute('data-active', props.data.active.toFixed(3))
-    ref.current.style.setProperty('background-color', `#${props.color.toString(16)}`)
-  }, [ref, props])
+interface DayProps {
+  data: IActivity
+  color: number
+  x: number
+  y: number
+}
+
+const Day: React.FC<DayProps> = (props) => {
   return (
-    <div ref={ref} className="day w-[10px] h-[10px] rounded-sm
-                              mb-[3px] last:m-0 bg-inherit">
-    </div>
+    <rect width={BOX_SIZE} height={BOX_SIZE} x={props.x} y={props.y}
+      rx={BOX_R} ry={BOX_R}
+      data-date={props.data.date.toLocaleDateString('en-SE')}
+      data-count={props.data.count.toString()}
+      fill={`#${props.color.toString(16)}`}
+    ></rect>
   )
 }
 
 interface IWeek {
   activities: IActivity[],
   colors: [number, number],
+  x: number
+  y: number
 }
 const Week: React.FC<IWeek> = (props) => {
-  const { activities, colors } = props
+  const { activities, colors, x, y } = props
   return (
-    <div className='flex flex-col mr-[3px] last:m-0 snap-start justify-start'>
+    <g x={x} y={y}>
       {activities.map((data, i) => <Day data={data} key={i}
+        x={x} y={i * (BOX_PADDING + BOX_SIZE) + y}
         color={linearInterpolate(colors[0], colors[1], data.active)} />)}
-    </div>
+    </g>
   )
 }
 
 const WeekNames: React.FC = (props) => {
   return (
-    <div className="flex flex-col mr-[5px] text-mtext-dim-1 text-xs mt-[17px]">
+    <div className="flex flex-col mr-[5px] text-mtext-dim-1 text-xs mt-[20px]">
       {['mon', '', 'wed', '', 'fri', '', ''].map((v, i) => (
         <div className="h-[10px] rounded-sm mb-[3px] last:m-0" key={i}>
           {v}
@@ -103,11 +112,13 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
   }, [weeks])
 
   return (
-    <div className="bg-mbg-1 px-3 pb-2 pt-2 m-auto rounded">
+    <div className="bg-mbg-1 px-3 pb-2 pt-2 m-auto rounded w-full md:w-[480px]">
       <div className="flex m-1">
         <WeekNames />
-        <div ref={conRef} className='overflow-auto'>
-          <div className='grid grid-flow-col h-[13px] text-xs text-mtext-dim-1'>
+        <div ref={conRef} className='overflow-auto m-auto'>
+          <svg className='text-mtext-dim-1'
+            width={`${weeks.length * (BOX_SIZE + BOX_PADDING)}px`}
+            height={`${7 * (BOX_SIZE + BOX_PADDING) + 20}px`}>
             {weeks.reduce((acc, week, i) => {
               const dayIndex = week.findIndex(d => d.date.getDate() === 1)
               if (dayIndex !== -1) {
@@ -117,17 +128,20 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
                 acc.push(-1)
               }
               return acc
-            }, [] as number[]).map((month, i) => (
-              <span className='w-[10px] mr-[3px] last:m-0' key={i}>
-                {month === -1 ? '' : MONTH_NAMES[month]}
-              </span>
-            ))}
-          </div>
-          <div className='grid grid-flow-col mt-1'>
+            }, [] as number[])
+              .map((m, i) => [m, i]).filter(([m]) => m !== -1)
+              .map(([month, i]) => (
+                <text key={i} x={i * (BOX_SIZE + BOX_PADDING) + 1} y={15}
+                  fontSize='11px'
+                  fill='currentColor'>
+                  {month === -1 ? '' : MONTH_NAMES[month]}
+                </text>
+              ))}
             {weeks.map((week, i) => (
-              <Week activities={week} key={i} colors={colors} />
+              <Week activities={week} key={i}
+                colors={colors} x={i * (BOX_SIZE + BOX_PADDING)} y={20} />
             ))}
-          </div>
+          </svg>
         </div>
       </div>
       <div className='flex text-sm justify-end text-mtext-dim-1'>
