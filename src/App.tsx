@@ -28,7 +28,7 @@ import {
   emptySession,
   createSession
 } from '@models/study'
-import { MemoActivity } from '@components/MemoActivity'
+import { MemoHeatmap } from '@components/MemoHeatmap'
 
 enum Page {
   Home,
@@ -164,7 +164,7 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
-  const activites = useMemo(() => Array(373).fill(0).map((_, i) => {
+  const activites = useMemo(() => Array(212).fill(0).map((_, i) => {
     return Math.random() * (Math.random() > 0.2 ? 1 : 0)
   }).map((v, i) => ({
     active: v,
@@ -174,7 +174,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      <MemoActivity activities={activites} colors={colors} />
+      <MemoHeatmap heats={activites} colors={colors} />
       {/* {page === Page.Home     &&
       <HomePage
         ref={homeRef}

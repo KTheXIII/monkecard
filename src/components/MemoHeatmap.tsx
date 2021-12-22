@@ -1,9 +1,7 @@
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react'
 import { IActivity } from '@models/user'
 
@@ -15,9 +13,8 @@ const Day: React.FC<{data: IActivity, color: number}> = (props) => {
     if (!ref.current) return
     ref.current.setAttribute('data-date', props.data.date.toLocaleDateString('en-SE'))
     ref.current.setAttribute('data-count', props.data.count.toString())
-    ref.current.setAttribute('data-active', props.data.active.toString())
+    ref.current.setAttribute('data-active', props.data.active.toFixed(3))
     ref.current.style.setProperty('background-color', `#${props.color.toString(16)}`)
-    ref.current.style.setProperty('background', `#${props.color.toString(16)}`)
   }, [ref, props])
   return (
     <div ref={ref} className="day w-[10px] h-[10px] rounded-sm
@@ -52,8 +49,8 @@ const WeekNames: React.FC = (props) => {
   )
 }
 
-interface MemoActivityProps {
-  activities: IActivity[]
+interface MemoHeatmapProps {
+  heats: IActivity[]
   colors: [number, number]
   startWeekday?: number
 }
@@ -77,8 +74,8 @@ function linearInterpolate(colorA: number, colorB: number, ratio: number) {
          Math.floor((bb - ab) * ratio + ab)          // blue
 }
 
-export const MemoActivity: React.FC<MemoActivityProps> = (props) => {
-  const { activities, colors } = props
+export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
+  const { heats, colors } = props
   const startWeekday = props.startWeekday ?? 1  // Default: Monday
   const colorLevels  = useMemo(() => {
     return Array(5).fill(0).map((_, i) => {
@@ -88,7 +85,7 @@ export const MemoActivity: React.FC<MemoActivityProps> = (props) => {
   }, [colors])
   const weeks = useMemo(() => {
     let dayCount = 0
-    return activities.reduce((acc, day, i, arr) => {
+    return heats.reduce((acc, day, i, arr) => {
       dayCount++
       if (day.date.getDay() === startWeekday) {  // start of week
         acc.push(arr.slice(i, i + dayCount))
@@ -96,52 +93,21 @@ export const MemoActivity: React.FC<MemoActivityProps> = (props) => {
       }
       return acc
     }, [] as IActivity[][])
-  }, [activities, startWeekday])
-
-  const hoverRef = useRef<HTMLDivElement>(null)
-  const toolRef = useRef<HTMLDivElement>(null)
-  const [dataDate, setDataDate]   = useState<string | null>(null)
-  const [dataCount, setDataCount] = useState<string | null>(null)
-
-  const onMouseOver = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLDivElement
-    if (!target) return
-    if (target.classList[0] === 'day') {
-      const rect = target.getBoundingClientRect()
-      toolRef.current?.style.setProperty('top', `${rect.top - 35}px`)
-      toolRef.current?.style.setProperty('left', `${rect.left + 5}px`)
-      toolRef.current?.style.setProperty('display', 'block')
-      const dateString = target.getAttribute('data-date')
-      const countString = target.getAttribute('data-count')
-      setDataCount(countString)
-      setDataDate(dateString)
-    }
-  }, [toolRef])
-
-  const onMouseLeave = useCallback(() => {
-    toolRef.current?.style.setProperty('display', 'none')
-  }, [toolRef])
+  }, [heats, startWeekday])
+  const conRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!hoverRef.current) return
-    const hover = hoverRef.current
-    toolRef.current?.style.setProperty('display', 'none')
-    hover.addEventListener('mouseover', onMouseOver)
-    hover.addEventListener('mouseleave', onMouseLeave)
-    // NOTE: Hack to scroll to the latest data first
-    hoverRef.current.scrollLeft = hoverRef.current.scrollWidth
-    return () => {
-      hover.removeEventListener('mouseover', onMouseOver)
-      hover.removeEventListener('mouseleave', onMouseLeave)
-    }
-  }, [onMouseOver, onMouseLeave, hoverRef, toolRef])
+    if (!conRef.current) return
+    if (conRef.current.scrollLeft === 0)
+      conRef.current.scrollLeft = conRef.current.scrollWidth
+  }, [weeks])
 
   return (
     <div className="bg-mbg-1 px-3 pb-2 pt-2 m-auto rounded">
       <div className="flex m-1">
         <WeekNames />
-        <div ref={hoverRef} className='w-[350px] overflow-scroll snap-x' >
-          <div className='grid grid-flow-col h-[17px] text-xs text-mtext-dim-1'>
+        <div ref={conRef} className='overflow-auto'>
+          <div className='grid grid-flow-col h-[13px] text-xs text-mtext-dim-1'>
             {weeks.reduce((acc, week, i) => {
               const dayIndex = week.findIndex(d => d.date.getDate() === 1)
               if (dayIndex !== -1) {
@@ -157,7 +123,7 @@ export const MemoActivity: React.FC<MemoActivityProps> = (props) => {
               </span>
             ))}
           </div>
-          <div className='grid grid-flow-col ml-auto snap-start'>
+          <div className='grid grid-flow-col mt-1'>
             {weeks.map((week, i) => (
               <Week activities={week} key={i} colors={colors} />
             ))}

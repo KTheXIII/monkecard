@@ -27,6 +27,7 @@ export interface OptionBase {
 export interface QuestionBase extends Item {
   text: string
   description?: string
+  note?: string
 }
 
 export interface IOption extends OptionBase {

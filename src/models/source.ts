@@ -1,3 +1,6 @@
+/**
+ * Data model for a source.
+ */
 import { EItemType } from './collection'
 
 export type TItemType = keyof typeof EItemType
@@ -16,6 +19,7 @@ export interface QuestionSource extends ItemSource {
   text: string
   description?: string
   options: OptionSource[]
+  note?: string
 }
 
 export interface MemoSource extends ItemSource {

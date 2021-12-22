@@ -34,6 +34,22 @@ items:
     type: Question
     lang: en
 
+  - text: Sample Question 03
+    description: Some kind of description
+    options:
+      - text: Sample 03 Option A
+        correct: true
+      - text: Sample 03 Option B
+        correct: false
+      - text: Sample 03 Option C
+        correct: true
+    note: Option A is correct because
+    keywords:
+      - sample-key2
+    id: sample-question-02
+    type: Question
+    lang: en
+
   - front: Sample Memo 01
     back: Sample Memo 01 Back
     keywords:

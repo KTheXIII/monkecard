@@ -19,6 +19,17 @@
     }
   }
 
+  .flow-direction-rtl {
+    direction: rtl;
+  }
+
+  .scroll-hide {
+    scrollbar-width: none;
+  }
+  .scroll-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   @media all and (display-mode: fullscreen) {
       .float-margin-b {
       @apply mb-8;
@@ -49,7 +60,6 @@
   --bg-3: #575B75;
 
   --activity-min: var(--bg-2);
-  --activity-max: var(--blue);
 
   --text-base: var(--white);
   --text-active: #E2E4E9;

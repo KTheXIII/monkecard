@@ -61,6 +61,7 @@ lang: string (optional)
 text: string
 description: string (optional)
 options: Option[]
+note: string (optional)
 
 type: ItemType
 id: string
