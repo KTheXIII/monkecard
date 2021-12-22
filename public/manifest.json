@@ -4,7 +4,6 @@
   "start_url": "./",
   "display": "standalone",
   "description": "Memo app with quizes and card memos.",
-  "theme_color": "currentcolor",
   "background_color": "#0f0f0f",
   "orientation": "portrait-primary",
   "icons": [

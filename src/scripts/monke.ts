@@ -45,8 +45,8 @@ export class Monke {
       const sets = await loadSourceSet(sources)
       this.subject.collections.next(mergeCollection(sets))
 
-      console.dir(this.data.collections)
-      console.log('?source=' + this.data.sources.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
+      // console.dir(this.data.collections)
+      // console.log('?source=' + this.data.sources.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
     } catch (e) {
       console.error(e)
     }

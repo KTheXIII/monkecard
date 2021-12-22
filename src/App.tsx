@@ -51,11 +51,12 @@ export const App: React.FC = () => {
   const commandRef  = useRef<CommandPaletteRef>(null)
   const colors = useMemo(() => {
     const base = getComputedStyle(document.body)
-      .getPropertyValue('--activity-min')
+      .getPropertyValue('--activity-min').trim()
     const max = getComputedStyle(document.body)
-      .getPropertyValue('--activity-max')
+      .getPropertyValue('--blue').trim()
     const colorBase = parseInt(base.slice(1), 16)
     const colorMax = parseInt(max.slice(1), 16)
+
     return [colorBase, colorMax] as [number, number]
   }, [])
   const monke = useMemo(() =>  new Monke(), [])
@@ -163,13 +164,13 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
-  const activites = Array(365).fill(0).map((_, i) => {
+  const activites = useMemo(() => Array(373).fill(0).map((_, i) => {
     return Math.random() * (Math.random() > 0.2 ? 1 : 0)
   }).map((v, i) => ({
     active: v,
     count: Math.floor(v * 25),
     date: new Date(Date.now() - (i * 1000 * 60 * 60 * 24)),
-  } as IActivity)).reverse()
+  } as IActivity)).reverse(), [])
 
   return (
     <div className="app">
