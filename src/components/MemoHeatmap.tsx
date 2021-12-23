@@ -1,15 +1,17 @@
 import React, {
+  ReactElement,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 import { IActivity } from '@models/user'
-import { number } from 'fp-ts'
 
 const MONTH_NAMES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 const BOX_SIZE    = 10
 const BOX_PADDING = 3
-const BOX_R       = 2
+const BOX_R       = 1.5
 
 interface DayProps {
   data: IActivity
@@ -24,6 +26,7 @@ const Day: React.FC<DayProps> = (props) => {
       rx={BOX_R} ry={BOX_R}
       data-date={props.data.date.toLocaleDateString('en-SE')}
       data-count={props.data.count.toString()}
+      data-active={props.data.active.toFixed(2)}
       fill={`#${props.color.toString(16)}`}
     ></rect>
   )
@@ -35,6 +38,7 @@ interface IWeek {
   x: number
   y: number
 }
+
 const Week: React.FC<IWeek> = (props) => {
   const { activities, colors, x, y } = props
   return (
@@ -85,6 +89,7 @@ function linearInterpolate(colorA: number, colorB: number, ratio: number) {
 
 export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
   const { heats, colors } = props
+  const [heatmap, setHeatmap] = useState<ReactElement[]>()
   const startWeekday = props.startWeekday ?? 1  // Default: Monday
   const colorLevels  = useMemo(() => {
     return Array(5).fill(0).map((_, i) => {
@@ -103,48 +108,75 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
       return acc
     }, [] as IActivity[][])
   }, [heats, startWeekday])
+  const months = useMemo(() => {
+    // NOTE: This needs to be optimized
+    return weeks.reduce((acc, week, i) => {
+      const dayIndex = week.findIndex(d => d.date.getDate() === 1)
+      if (dayIndex !== -1) {
+        const day = week[dayIndex]
+        acc.push(day.date.getMonth())
+      } else {
+        acc.push(-1)
+      }
+      return acc
+    }, [] as number[])
+      .map((m, i) => [m, i]).filter(([m]) => m !== -1)
+  }, [weeks])
   const conRef = useRef<HTMLDivElement>(null)
+
+  const onMouseHover = useCallback((e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (!target) return
+    const date = target.getAttribute('data-date')
+    const count = target.getAttribute('data-count')
+    if (!date || !count) return
+    // console.log(date, count)
+  }, [])
 
   useEffect(() => {
     if (!conRef.current) return
-    if (conRef.current.scrollLeft === 0)
-      conRef.current.scrollLeft = conRef.current.scrollWidth
-  }, [weeks])
+    conRef.current.scrollLeft = conRef.current.scrollWidth
+    const el = conRef.current
+    el.addEventListener('mousemove', onMouseHover)
+    return () => {
+      el.removeEventListener('mousemove', onMouseHover)
+    }
+  }, [onMouseHover])
+
+  useEffect(() => {
+    // Hack to speed up rendering
+    // TODO: Find a better way to do this
+    const id = setTimeout(() => {
+      setHeatmap(
+        weeks.map((week, i) => (
+          <Week activities={week} key={i}
+            colors={colors} x={i * (BOX_SIZE + BOX_PADDING) + 2} y={20} />
+        ))
+      )
+    }, 25)
+    return () => clearTimeout(id)
+  }, [heats, colors, weeks])
 
   return (
-    <div className="bg-mbg-1 px-3 pb-2 pt-2 m-auto rounded w-full md:w-[480px]">
+    <div className="bg-mbg-1 px-3 pb-2 pt-2 mx-auto rounded">
       <div className="flex m-1">
         <WeekNames />
-        <div ref={conRef} className='overflow-auto m-auto'>
-          <svg className='text-mtext-dim-1'
-            width={`${weeks.length * (BOX_SIZE + BOX_PADDING)}px`}
+        <div className="overflow-auto" ref={conRef}>
+          <svg className="text-mtext-dim-1"
+            width={`${weeks.length * (BOX_SIZE + BOX_PADDING) + 2}px`}
             height={`${7 * (BOX_SIZE + BOX_PADDING) + 20}px`}>
-            {weeks.reduce((acc, week, i) => {
-              const dayIndex = week.findIndex(d => d.date.getDate() === 1)
-              if (dayIndex !== -1) {
-                const day = week[dayIndex]
-                acc.push(day.date.getMonth())
-              } else {
-                acc.push(-1)
-              }
-              return acc
-            }, [] as number[])
-              .map((m, i) => [m, i]).filter(([m]) => m !== -1)
-              .map(([month, i]) => (
-                <text key={i} x={i * (BOX_SIZE + BOX_PADDING) + 1} y={15}
-                  fontSize='11px'
-                  fill='currentColor'>
-                  {month === -1 ? '' : MONTH_NAMES[month]}
-                </text>
-              ))}
-            {weeks.map((week, i) => (
-              <Week activities={week} key={i}
-                colors={colors} x={i * (BOX_SIZE + BOX_PADDING)} y={20} />
+            {months.map(([month, i]) => (
+              <text key={i} x={i * (BOX_SIZE + BOX_PADDING) + 2} y={12}
+                fontSize='11px'
+                fill='currentColor'>
+                {MONTH_NAMES[month]}
+              </text>
             ))}
+            {heatmap}
           </svg>
         </div>
       </div>
-      <div className='flex text-sm justify-end text-mtext-dim-1'>
+      <div className='flex text-sm justify-end text-mtext-dim-1 mr-auto'>
         <span className='mr-2'>less</span>
         <div className='flex'>
           {colorLevels.map((color, i) => (

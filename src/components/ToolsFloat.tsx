@@ -7,7 +7,7 @@ export const ToolsFloat: React.FC<ToolsFloatProps> = (props) => {
   const isHidden = props.isHidden === undefined ? false : props.isHidden
   return (
     <div className="tools-float fixed left-1/2 bottom-0 -translate-x-1/2 mb-8
-                    flex flex-row flex-nowrap justify-center select-none">
+                    flex flex-row flex-nowrap justify-center select-none print:hidden">
       <div className="tools my-0 mx-auto flex h-10 rounded-memo bg-mbg-1 overflow-hidden
                       shadow-memo">
         {!isHidden && props.children}

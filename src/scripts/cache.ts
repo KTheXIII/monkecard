@@ -1,4 +1,4 @@
-// import { Collection } from './question'
+import { UserJSON } from '@models/user'
 
 const SOURCE_LIST_KEY  = 'sources'
 const OFFLINE_LIST_KEY = 'offline'
@@ -22,3 +22,14 @@ export async function clearCache(): Promise<void> {
 }
 
 // TODO: Offline list
+
+export async function saveUser(user: UserJSON): Promise<void> {
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
+  return Promise.resolve()
+}
+
+export async function loadUser(): Promise<UserJSON> {
+  const user = localStorage.getItem(USER_KEY)
+  if (user) return JSON.parse(user)
+  return Promise.reject('No user saved')
+}

@@ -5,11 +5,12 @@ import {
   EItemType,
   Memo
 } from '@models/collection'
-import { StudySession } from '@models/study'
 import { MemoCard, MemoCardRef } from '@components/MemoCard'
+import { UserMonke } from '@scripts/user'
+import { StudySession } from '@models/study'
 
 interface Props {
-  session: StudySession
+  user: UserMonke
   onHome: () => void
 }
 
@@ -19,7 +20,8 @@ export interface StudyPageRef {
 
 export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
   const memoRef = useRef<MemoCardRef>(null)
-  const { session } = props
+  const { user } = props
+  const [session, setSession] = useState<StudySession>()
 
   useImperativeHandle(ref, () => ({
     onKeyDown: (e: KeyboardEvent) => {
@@ -28,8 +30,8 @@ export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
   }))
 
   useEffect(() => {
-    console.log(session)
-  }, [session])
+    setSession(user.getSession())
+  }, [user])
 
   return (
     <div className="h-full">
@@ -41,15 +43,14 @@ export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
           </button>
         </div>
       </div>
-      {session.type === EItemType.Memo &&
+      {session && session.type === EItemType.Memo &&
        <MemoCard
          ref={memoRef}
          onBack={() => {
            props.onHome()
          }} memos={session.items as Memo[]}
        />}
-
-      {session.type === EItemType.Question &&
+      {session && session.type === EItemType.Question &&
       // TODO: Implement Question
       <div className="flex flex-col h-full">
         <button onClick={() => props.onHome()}>go back</button>

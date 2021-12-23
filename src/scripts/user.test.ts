@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 
+import { UserJSON, } from '@models/user'
 import {
   createUser,
   toJSON,
   toUser,
-  UserJSON
 } from './user'
 
 describe('User', () => {
@@ -23,7 +23,13 @@ describe('User', () => {
     const user = createUser('Penguin')
     const userJSON: UserJSON = {
       name: user.name,
-      theme: 'auto-theme',
+      avatar: user.avatar,
+      preference: {
+        theme: user.preference.theme
+      },
+      metrics: {
+        visits: [],
+      },
       created: user.created.getTime(),
       updated: user.updated.getTime()
     }

@@ -16,7 +16,7 @@ export const MemoMarkdown: React.FC<MemoMarkedownProps> = (props) => {
     }
   }, [props])
   return (
-    <div ref={ref} className={`memo-markdown ${props.className}`}>
+    <div ref={ref} className={`memo-markdown`}>
     </div>
   )
 }

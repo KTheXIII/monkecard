@@ -8,9 +8,10 @@ import { ICollectionSet } from '@models/dataset'
 import { SettingsFoot } from '@components/Settings/SettingsFoot'
 import { SettingsMain } from '@components/Settings/SettingsMain'
 import { EditSource } from '@components/Settings/EditSource'
+import { Monke } from '@scripts/monke'
 
 interface Props {
-  collections: ICollectionSet[]
+  monke: Monke
   onReload: () => void
 }
 

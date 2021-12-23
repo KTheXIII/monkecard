@@ -111,12 +111,11 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
       const option = (cmd as ICommandOption)
       setPlaceholder(option.hint)
       inputRef.current.value = ''
-      console.log(option.list)
 
-      setCommands(option.list().map(item => ({
+      setCommands(option.list().map((item, i) => ({
         type: ECommandType.Normal,
         name: item,
-        fn:() => option.fn(item)
+        fn:() => option.fn(item, i)
       } as ICommandNormal)))
       setMode(ECommandType.Option)
       break
@@ -128,6 +127,7 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
       inputRef.current.value = ''
       setMode(ECommandType.Input)
       inputRef.current.focus()
+      if (input.default) inputRef.current.value = input.default()
       break
     }
     }

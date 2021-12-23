@@ -24,7 +24,7 @@ export interface ICommandOption extends ICommandBase {
   type: ECommandType.Option
   hint: string
   list: () => string[]
-  fn: (value: string) => void
+  fn: (value: string, index: number) => void
 }
 
 export interface ICommandSubs extends ICommandBase {
@@ -33,17 +33,8 @@ export interface ICommandSubs extends ICommandBase {
 }
 
 export interface ICommandInput extends ICommandBase {
+  default?: () => string
   hint: string
   type: ECommandType.Input
   fn: (value: string) => void
-}
-
-export function createInputCommand(name: string, hint: string,
-  cmd: (input: string) => void): ICommandInput {
-  return {
-    name,
-    type: ECommandType.Input,
-    hint,
-    fn: cmd,
-  }
 }

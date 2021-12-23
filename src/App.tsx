@@ -13,26 +13,25 @@ import {
 } from '@assets/BootstrapIcons'
 import { CommandPalette, CommandPaletteRef } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
-import { HomePage, HomePageRef } from '@pages/HomePage'
+import { HomePage } from '@pages/HomePage'
 import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
-
-import { ICollectionSet } from '@models/dataset'
-import { IActivity } from '@models/user'
 import {
-  ECommandType, ICommandBase, ICommandInput, ICommandNormal, ICommandOption
+  ECommandType,
+  ICommandBase,
+  ICommandInput,
+  ICommandNormal,
+  ICommandOption
 } from '@models/command'
-import { GetPlatform } from '@scripts/env'
+import { GetPlatform, REPOSITORY_URL } from '@scripts/env'
 import { Monke } from '@scripts/monke'
-import {
-  emptySession,
-  createSession
-} from '@models/study'
-import { MemoHeatmap } from '@components/MemoHeatmap'
+import { UserMonke } from '@scripts/user'
+import { CollectionPage } from '@pages/CollectionPage'
 
 enum Page {
   Home,
   Settings,
+  Collection,
   Study,
 }
 
@@ -41,36 +40,33 @@ export const App: React.FC = () => {
   const [isLoading,   setIsLoading]   = useState(true)
   const [isNavHidden, setIsNavHidden] = useState(true)
   const [page, setPage]               = useState(Page.Home)
-  const [session, setSession]         = useState(emptySession())
   const [commandList, setCommandList] = useState<ICommandBase[]>([])
-  const [colleciontSet, setColleciontSet] = useState<ICollectionSet[]>([])
 
-  const homeRef     = useRef<HomePageRef>(null)
   const settingsRef = useRef<SettingsPageRef>(null)
   const studyRef    = useRef<StudyPageRef>(null)
   const commandRef  = useRef<CommandPaletteRef>(null)
-  const colors = useMemo(() => {
-    const base = getComputedStyle(document.body)
-      .getPropertyValue('--activity-min').trim()
-    const max = getComputedStyle(document.body)
-      .getPropertyValue('--blue').trim()
-    const colorBase = parseInt(base.slice(1), 16)
-    const colorMax = parseInt(max.slice(1), 16)
 
-    return [colorBase, colorMax] as [number, number]
-  }, [])
-  const monke = useMemo(() =>  new Monke(), [])
+  const monke = useMemo(() => new Monke(), [])
+  const user  = useMemo(() => new UserMonke(), [])
 
   useEffect(() => {
+    user.subjectSession.subscribe(s => {
+      setPage(Page.Study)
+    })
+    user.init()
     monke.subjectIsLoading.subscribe(setIsLoading)
-    monke.subjectCollections.subscribe(setColleciontSet)
     monke.subjectCommands.subscribe(setCommandList)
+    monke.subjectCollection.subscribe(c => {
+      setPage(Page.Collection)
+    })
     monke.init()
 
     monke.addCommand({
       type: ECommandType.Normal,
       name: 'home',
-      fn: () => setPage(Page.Home),
+      fn: () => {
+        setPage(Page.Home)
+      },
     } as ICommandNormal)
     monke.addCommand({
       type: ECommandType.Normal,
@@ -95,23 +91,48 @@ export const App: React.FC = () => {
       list: monke.getSources.bind(monke),
       fn: option => monke.removeSource(option),
     } as ICommandOption)
-    // monke.addCommand({
-    //   type: ECommandType.Input,
-    //   name: 'create collection',
-    //   hint: 'enter collection name',
-    //   fn: input => monke.createCollection(input),
-    // } as ICommandInput)
-  }, [monke])
+    monke.addCommand({
+      type: ECommandType.Option,
+      name: 'collections',
+      hint: 'select collection to go to',
+      list: () => monke.getCollections().map(c => c.collection.title),
+      fn: (option, i) => {
+        monke.subjectCollection.next(i)
+      },
+    } as ICommandOption)
+    monke.addCommand({
+      type: ECommandType.Input,
+      name: 'edit username',
+      default: () => user.getUser().name,
+      hint: 'enter source url',
+      fn: input => {
+        const u = user.getUser()
+        u.name = input
+        user.subjectUser.next(u)
+      },
+    } as ICommandInput)
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'repository',
+      fn: () => window.open(REPOSITORY_URL, '_blank'),
+    } as ICommandNormal)
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'report bugs',
+      fn: () => window.open(`${REPOSITORY_URL}/issues`, '_blank'),
+    } as ICommandNormal)
+    monke.addCommand({
+      type: ECommandType.Normal,
+      name: 'docs',
+      fn: () => window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank'),
+    } as ICommandNormal)
+  }, [monke, user])
 
   const onReload = useCallback(() => {
     monke.load(monke.getSources())
   }, [monke])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === '/') {
-      console.log('/ pressed')
-      e.preventDefault()
-    }
     // Show Command Palette
     if (e.code === 'KeyP' && e.metaKey && e.shiftKey &&
         GetPlatform() === 'macOS') {
@@ -164,40 +185,34 @@ export const App: React.FC = () => {
     setIsNavHidden(page === Page.Study)
   }, [page])
 
-  const activites = useMemo(() => Array(365).fill(0).map((_, i) => {
-    return Math.random() * (Math.random() > 0.2 ? 1 : 0)
-  }).map((v, i) => ({
-    active: v,
-    count: Math.floor(v * 25),
-    date: new Date(Date.now() - (i * 1000 * 60 * 60 * 24)),
-  } as IActivity)).reverse(), [])
-
   return (
-    <div className="app">
-      <MemoHeatmap heats={activites} colors={colors} />
-      {/* {page === Page.Home     &&
+    <div className="app md:w-[600px] md:mx-auto">
+      {page === Page.Home       &&
       <HomePage
-        ref={homeRef}
         isLoading={isLoading}
-        collections={colleciontSet}
-        onStart={(type, items) => {
-          setPage(Page.Study)
-          setSession(createSession(type, items))
-        }}
-        onReload={onReload} />}
-      {page === Page.Settings &&
+        monke={monke}
+        user={user}
+      />}
+      {page === Page.Settings   &&
       <SettingsPage
         ref={settingsRef}
-        collections={colleciontSet}
+        monke={monke}
         onReload={onReload}
       />}
-      {page === Page.Study    &&
+      {page === Page.Study      &&
       <StudyPage
         ref={studyRef}
         onHome={() => {
           setPage(Page.Home)
-        }} session={session}
-      />} */}
+        }}
+        user={user}
+      />}
+      {page === Page.Collection &&
+      <CollectionPage
+        monke={monke}
+        user={user}
+        isLoading={isLoading}
+      />}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
@@ -205,7 +220,6 @@ export const App: React.FC = () => {
           icon={FileEarmarkCodeFill}
           onClick={() => {
             setPage(Page.Home)
-            homeRef.current?.onActive()
           }} />
         <ToolsFloatButton
           text="cmd"

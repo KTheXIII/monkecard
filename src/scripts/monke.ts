@@ -1,3 +1,4 @@
+import { number } from 'fp-ts'
 import { Subject } from 'rxjs'
 
 import { mergeCollection } from '@scripts/collection'
@@ -10,13 +11,15 @@ interface IMonke {
   commands: ICommandBase[]
   sources: string[]
   collections: ICollectionSet[]
+  selected: number
 }
 
 interface IMonkeSubjects {
   cmd: Subject<ICommandBase>
   commands: Subject<ICommandBase[]>
   sources: Subject<string[]>
-  collections: Subject<ICollectionSet[]>
+  collectionSets: Subject<ICollectionSet[]>
+  collection: Subject<number>
   isLoading: Subject<boolean>
 }
 
@@ -31,7 +34,8 @@ export class Monke {
     await getLocalSourceList().then(list =>
       list.forEach(url => urls.add(url))
     )
-    this.subject.collections.subscribe(c => this.data.collections = c)
+    this.subject.collection.subscribe(c => this.data.selected = c)
+    this.subject.collectionSets.subscribe(c => this.data.collections = c)
     this.subject.sources.subscribe(s => this.data.sources = s)
     this.subject.sources.subscribe(s => saveLocalSourceList(s))
     this.subject.sources.subscribe(s => this.load(s))
@@ -43,7 +47,7 @@ export class Monke {
     this.subject.isLoading.next(true)
     try {
       const sets = await loadSourceSet(sources)
-      this.subject.collections.next(mergeCollection(sets))
+      this.subject.collectionSets.next(mergeCollection(sets))
 
       // console.dir(this.data.collections)
       // console.log('?source=' + this.data.sources.reduce((acc, cur) => `${acc}${acc && '+'}${cur}`, ''))
@@ -63,7 +67,7 @@ export class Monke {
   async removeSource(url: string) {
     const index = this.data.sources.findIndex(s => s === url)
     if (index === -1) return
-    this.data.sources.splice(index)
+    this.data.sources.splice(index, 1)
     this.subject.sources.next(this.data.sources)
   }
 
@@ -75,8 +79,11 @@ export class Monke {
   get subjectSources() {
     return this.subject.sources
   }
-  get subjectCollections() {
-    return this.subject.collections
+  get subjectCollectionSets() {
+    return this.subject.collectionSets
+  }
+  get subjectCollection() {
+    return this.subject.collection
   }
   get subjectCommands() {
     return this.subject.commands
@@ -97,17 +104,27 @@ export class Monke {
   getCollections() {
     return this.data.collections
   }
+  getCollectionByName(name: string) {
+    return this.data.collections.find(c => c.collection.title === name)
+  }
+  getCollection() {
+    if (this.data.selected === -1) return null
+    return this.data.collections[this.data.selected]
+  }
 
   private data: IMonke = {
     commands: [],
     sources: [],
     collections: [],
+    selected: -1
   }
+
   private subject: IMonkeSubjects = {
     cmd: new Subject<ICommandBase>(),
     commands: new Subject<ICommandBase[]>(),
     sources: new Subject<string[]>(),
-    collections: new Subject<ICollectionSet[]>(),
+    collectionSets: new Subject<ICollectionSet[]>(),
+    collection: new Subject<number>(),
     isLoading: new Subject<boolean>(),
   }
 }

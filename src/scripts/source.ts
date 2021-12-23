@@ -14,6 +14,7 @@ const SRCLZ_REGEX    = /src_lz=([^&]+)&?/gi   // Compressed source links
 const NODE_REGEX     = /node=([^&]+)&?/gi
 const JSON_EXT_REGEX = /\.json$/i
 const YAML_EXT_REGEX = /\.ya?ml$/i
+const GITHUB_GIST_REGEX = /^https:\/\/gist\.github\.com\/([^/]+)\/([^/]+)\/?$/i
 
 /**
  * Extract query value from query string.
@@ -102,6 +103,25 @@ export async function fetchJSON<T>(url: string): Promise<T> {
   }
 }
 
+export async function fetchGistGithub<T>(url: string): Promise<T> {
+  try {
+    const res = await fetch(url.replace(GITHUB_GIST_REGEX, 'https://gist.githubusercontent.com/$1/$2/raw'))
+    if (!res.ok) return Promise.reject(res.statusText)
+    const text = await res.text()
+    try {
+      const data = JSON.parse(text)
+      return Promise.resolve(data)
+    } catch (e) {
+      const data = yaml.load(text)
+      if (typeof data === 'object')
+        return Promise.resolve(Object(data))
+    }
+    return Promise.reject('data is not an object')
+  } catch (err) {
+    return Promise.reject(err)
+  }
+}
+
 // TODO: Add data validation for source
 /**
  * Fetch collection data from a url.
@@ -117,8 +137,10 @@ export async function fetchCollectionSource(url: string):
       return fetchJSON<CollectionSource>(url)
     else if (YAML_EXT_REGEX.test(url))
       return fetchYAML<CollectionSource>(url)
+    else if (GITHUB_GIST_REGEX.test(url))
+      return fetchGistGithub<CollectionSource>(url)
     else
-      return Promise.reject(`Unknown file extension: ${url}`)
+      return Promise.reject(`Unsupported URL type: ${url}`)
   } catch (err) {
     return Promise.reject(err)
   }

@@ -48,12 +48,10 @@ export const MemoFlipCard = forwardRef<MemoFlipCardRef, Props>((props, ref) => {
   }, [props, show])
 
   return (
-    <div className="memo-card grid cursor-pointer m-auto min-h-mcard min-w-mcard"
+    <div className="memo-card grid cursor-pointer pb-28"
       onClick={onClick}>
-      <div className="memo-card-content flex rounded-xl overflow-x-scroll bg-mbg-1">
-        <div className="memo-card-render m-auto px-8 py-4">
-          <MemoMarkdown markdown={active} />
-        </div>
+      <div className="m-auto">
+        <MemoMarkdown markdown={active} />
       </div>
     </div>
   )

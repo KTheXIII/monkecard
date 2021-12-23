@@ -19,3 +19,5 @@ export function GetPlatform(): string {
 
   return 'Unknwon'
 }
+
+export const FORMATED_VERSION = `v${VERSION}-${COMMIT_HASH.substring(0, 7)}`
