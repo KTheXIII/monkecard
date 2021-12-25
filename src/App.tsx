@@ -23,6 +23,8 @@ import { GetPlatform } from '@scripts/env'
 import { Monke } from '@scripts/monke'
 import { UserMonke } from '@scripts/user'
 import { CollectionPage } from '@pages/CollectionPage'
+import { Command } from '@scripts/command'
+import { TCommand } from '@models/command'
 
 enum Page {
   Home,
@@ -43,41 +45,25 @@ export const App: React.FC = () => {
   const studyRef    = useRef<StudyPageRef>(null)
   const commandRef  = useRef<CommandPaletteRef>(null)
 
-  const monke = useMemo(() => new Monke(), [])
-  const user  = useMemo(() => new UserMonke(), [])
+  const command = useMemo(() => new Command<TCommand>(), [])
+  const monke   = useMemo(() => new Monke(), [])
+  const user    = useMemo(() => new UserMonke(), [])
 
   useEffect(() => {
+    command.sub(s => setCMDList(command.cmdStrings()))
+    command.addBase('home', async () => setPage(Page.Home))
+    command.addBase('settings', async () => setPage(Page.Settings))
+
     user.subjectSession.subscribe(s => setPage(Page.Study))
     user.init()
+
     monke.subjectIsLoading.subscribe(setIsLoading)
     monke.subjectCollection.subscribe(c => setPage(Page.Collection))
     monke.init()
 
-    monke.subjectCommands.subscribe((cmds) =>
-      setCMDList(Array.from(cmds.keys())))
-    monke.addCommand('home', async () => {
-      setPage(Page.Home)
-      return { success: true }
-    })
-    monke.addCommand('settings', async () => {
-      setPage(Page.Settings)
-      return { success: true }
-    })
-    user.registerCommands(monke)
-    monke.addCommand('scroll', async () => {
-      monke.subjectCommands.next(new Map([
-        ['top', async () => window.scrollTo({
-          top: 0, left: 0,
-          behavior: 'smooth'
-        })],
-      ]))
-      return {
-        success: false,
-        restore: monke.restoreCommands.bind(monke)
-      }
-    })
-    monke.registerCommands()
-  }, [monke, user])
+    user.regiser(command)
+    monke.register(command)
+  }, [monke, user, command])
 
   const onReload = useCallback(() => {
     monke.load(monke.getSources())
@@ -98,7 +84,10 @@ export const App: React.FC = () => {
       return
     }
     if (e.code === 'KeyK' && e.metaKey) {
-      setIsCMDHidden(!isCMDHidden)
+      if (!isCMDHidden) {
+        command.restore()
+        commandRef.current?.onReset()
+      } else setIsCMDHidden(!isCMDHidden)
       e.preventDefault()
       return
     }
@@ -112,7 +101,7 @@ export const App: React.FC = () => {
     commandRef.current?.onKeyDown(e)
     if (!isCMDHidden) return
     studyRef.current?.onKeyDown(e)
-  }, [isCMDHidden, studyRef])
+  }, [command, isCMDHidden])
 
   const onClick = useCallback((e: MouseEvent) => {
     if (!isCMDHidden && e.target === commandRef.current?.target) {
@@ -134,9 +123,9 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     setIsNavHidden(page === Page.Study)
-    if (page === Page.Home) monke.restoreCommands()
+    if (page === Page.Home) command.restore()
     // TODO: Guard page change if there's no data
-  }, [page, monke])
+  }, [page, command])
 
   return (
     <div className="app md:w-[600px] md:mx-auto">
@@ -145,6 +134,7 @@ export const App: React.FC = () => {
         isLoading={isLoading}
         monke={monke}
         user={user}
+        command={command}
       />}
       {page === Page.Settings   &&
       <SettingsPage
@@ -184,7 +174,7 @@ export const App: React.FC = () => {
         isHidden={isCMDHidden}
         isLoading={isLoading}
         commandList={cmdList}
-        onCommand={async cmd => monke.runCommand(cmd)}
+        onCommand={async cmd => command.run(cmd)}
         onHide={() => setIsCMDHidden(true)}
       />
     </div>

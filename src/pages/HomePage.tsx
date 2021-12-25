@@ -15,15 +15,18 @@ import {
   FORMATED_VERSION
 } from '@scripts/env'
 import { MemoList, MemoListButtonItem } from '@components/MemoList'
+import { Command } from '@scripts/command'
+import { TCommand } from '@models/command'
 
 interface Props {
   isLoading: boolean
   monke: Monke
   user: UserMonke
+  command: Command<TCommand>
 }
 
 export const HomePage: React.FC<Props> = (props) => {
-  const { monke, isLoading, user } = props
+  const { monke, isLoading, user, command } = props
   const [collections, setCollections] = useState<ICollectionSet[]>([])
   const colors = useMemo(() => {
     const base = getComputedStyle(document.body)
@@ -91,6 +94,10 @@ export const HomePage: React.FC<Props> = (props) => {
   useEffect(() => {
     setCollections(monke.getCollections())
   }, [monke, isLoading])
+
+  useEffect(() => {
+    command.restore()
+  }, [command])
 
   return (
     <div className="home px-4 pt-4">

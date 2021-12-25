@@ -2,7 +2,7 @@ import { APP_NAME } from './env'
 import {
   TCommand,
   ECommandMode
-} from './../models/command'
+} from '@models/command'
 import { Subject } from 'rxjs'
 import { User, UserJSON } from '@models/user'
 import { ANIMAL_NAMES } from '@assets/AnimalNames'
@@ -14,6 +14,7 @@ import {
   saveUser
 } from '@scripts/cache'
 import { Monke } from '@scripts/monke'
+import { Command } from '@scripts/command'
 
 export const randomName = () => ANIMAL_NAMES[Math.floor(
   Math.random() * ANIMAL_NAMES.length
@@ -99,9 +100,9 @@ export class UserMonke {
     }
   }
 
-  registerCommands(monke: Monke) {
-    monke.addCommand('user', async () => {
-      monke.subjectCommands.next(new Map<string, TCommand>([
+  regiser(command: Command<TCommand>) {
+    command.addBase('user', async () => {
+      command.next([
         [ 'edit name', async () => {
           return {
             success: false,
@@ -134,20 +135,19 @@ export class UserMonke {
         }],
         ['stats', async () => {
           const visits = this.data.user.metrics.visits.length
-          monke.subjectCommands.next(new Map([
+          command.next([
             [`visits: ${visits}`, async () => {/**/}],
-          ]))
+          ])
           return { success: false }
         }]
-      ]))
+      ])
 
       return {
         success: false,
         hint: 'select (up/down)',
-        restore: monke.restoreCommands.bind(monke)
+        restore: command.restore.bind(command)
       }
     })
-    // monke.addCommand()
   }
 
   setSession(session: StudySession) {

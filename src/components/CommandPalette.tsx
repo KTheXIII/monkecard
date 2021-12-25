@@ -30,6 +30,7 @@ interface Props {
 export interface CommandPaletteRef {
   target: HTMLDivElement | null
   onKeyDown: (e: KeyboardEvent) => void
+  onReset: () => void
 }
 
 export const CommandPalette =
@@ -49,8 +50,16 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     target: commandRef.current,
-    onKeyDown: onKeyDown
+    onKeyDown: onKeyDown,
+    onReset: onReset
   }))
+
+  const onReset = useCallback(() => {
+    setSelect(0)
+    setMode(ECommandMode.Normal)
+    setInputBox('')
+    setPlaceholder(DEFAULT_PLACEHOLDER)
+  }, [])
 
   // Reset to default value when isHidden changes
   useEffect(() => {
