@@ -41,7 +41,7 @@ export const CollectionPage: React.FC<Props> = (props) => {
   }, [collectionSet, user])
 
   useEffect(() => {
-    const set = monke.getCollection()
+    const set = monke.getSelectedCollection()
     if (!set) return
     const { collection } = set
     setCollectionSet(set)

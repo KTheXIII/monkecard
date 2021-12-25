@@ -33,3 +33,45 @@ export async function loadUser(): Promise<UserJSON> {
   if (user) return JSON.parse(user)
   return Promise.reject('No user saved')
 }
+
+export function downloadData(filename: string, json: string) {
+  const e = document.createElement('a')
+  e.setAttribute('href',
+    'data:text/json;charset=utf-8,' + encodeURIComponent(json))
+  e.setAttribute('download', filename + '.json')
+  e.style.display = 'none'
+  document.body.appendChild(e)
+  e.click()
+  document.body.removeChild(e)
+}
+
+export function openTextFile(accept?: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const file = document.createElement('input')
+    file.type = 'file'
+    file.accept = accept ?? '.txt,.json,.yml,.yaml'
+    file.value = ''
+    file.focus()
+    file.multiple = false
+    file.style.display = 'none'
+    document.body.appendChild(file)
+    file.click()
+    file.onchange = () => {
+      if (!file.files) return
+      const reader = new FileReader()
+      reader.onload = e => {
+        if (e.target && e.target.result) {
+          const text = e.target.result.toString()
+          resolve(text)
+        } else {
+          reject('Error reading file')
+        }
+      }
+      reader.readAsText(file.files[0])
+    }
+    file.onerror = (e) => {
+      reject(e)
+    }
+    document.body.removeChild(file)
+  })
+}

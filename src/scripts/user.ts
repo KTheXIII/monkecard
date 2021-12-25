@@ -1,12 +1,24 @@
+import { APP_NAME } from './env'
+import {
+  TCommand,
+  ECommandMode
+} from './../models/command'
 import { Subject } from 'rxjs'
 import { User, UserJSON } from '@models/user'
 import { ANIMAL_NAMES } from '@assets/AnimalNames'
 import { StudySession } from '@models/study'
-import { loadUser, saveUser } from '@scripts/cache'
+import {
+  downloadData,
+  loadUser,
+  openTextFile,
+  saveUser
+} from '@scripts/cache'
+import { Monke } from '@scripts/monke'
 
 export const randomName = () => ANIMAL_NAMES[Math.floor(
   Math.random() * ANIMAL_NAMES.length
 )]
+const LOG_VISIT_INTERVAL = 1000 * 60 * 10
 
 export function createUser(username?: string): User {
   const name = username || randomName()
@@ -65,7 +77,16 @@ export class UserMonke {
     this.subject.user.subscribe(u => this.data.user = u)
     await this.load()
 
-    this.data.user.metrics.visits.push(Date.now())
+    if (this.data.user.metrics.visits.length > 0) {
+      const visits = this.data.user.metrics.visits
+      const lastVisit = visits[visits.length - 1]
+      const lastVisitTime = new Date(lastVisit)
+      if (Date.now() - lastVisitTime.getTime() > LOG_VISIT_INTERVAL)
+        this.data.user.metrics.visits.push(Date.now())
+    } else {
+      this.data.user.metrics.visits.push(Date.now())
+    }
+    this.data.user.updated = new Date()
     this.subject.user.next(this.data.user)
   }
 
@@ -78,8 +99,55 @@ export class UserMonke {
     }
   }
 
-  async save() {
-    this.subject.user.next(this.data.user)
+  registerCommands(monke: Monke) {
+    monke.addCommand('user', async () => {
+      monke.subjectCommands.next(new Map<string, TCommand>([
+        [ 'edit name', async () => {
+          return {
+            success: false,
+            default: this.data.user.name,
+            mode: ECommandMode.Input,
+            fn: async (input) => {
+              if (input === '') return { success: false }
+              this.data.user.name = input
+              this.subject.user.next(this.data.user)
+              return { success: true }
+            }
+          }
+        }],
+        ['save', async () => {
+          downloadData(`${APP_NAME}-user-data`,
+            JSON.stringify(toJSON(this.data.user)))
+          return { success: true, hint: 'saved' }
+        }],
+        ['load', async () => {
+          openTextFile('.json').then(v => {
+            try {
+              const json = JSON.parse(v)
+              const user = toUser(json)
+              this.subject.user.next(user)
+            } catch (e) {
+              console.error(e)
+            }
+          })
+          return { success: true }
+        }],
+        ['stats', async () => {
+          const visits = this.data.user.metrics.visits.length
+          monke.subjectCommands.next(new Map([
+            [`visits: ${visits}`, async () => {/**/}],
+          ]))
+          return { success: false }
+        }]
+      ]))
+
+      return {
+        success: false,
+        hint: 'select (up/down)',
+        restore: monke.restoreCommands.bind(monke)
+      }
+    })
+    // monke.addCommand()
   }
 
   setSession(session: StudySession) {

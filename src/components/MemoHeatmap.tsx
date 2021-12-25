@@ -21,31 +21,35 @@ interface DayProps {
 }
 
 const Day: React.FC<DayProps> = (props) => {
+  const { data, color, x, y } = props
   return (
-    <rect width={BOX_SIZE} height={BOX_SIZE} x={props.x} y={props.y}
+    <rect width={BOX_SIZE} height={BOX_SIZE} x={x} y={y}
       rx={BOX_R} ry={BOX_R}
-      data-date={props.data.date.toLocaleDateString('en-SE')}
-      data-count={props.data.count.toString()}
-      data-active={props.data.active.toFixed(2)}
-      fill={`#${props.color.toString(16)}`}
+      data-date={data.date.toLocaleDateString('en-SE')}
+      data-count={data.count.toString()}
+      data-active={data.active.toFixed(2)}
+      fill={`#${color.toString(16)}`}
     ></rect>
   )
 }
 
 interface IWeek {
   activities: IActivity[],
-  colors: [number, number],
+  colorA: number,
+  colorB: number,
   x: number
   y: number
 }
 
 const Week: React.FC<IWeek> = (props) => {
-  const { activities, colors, x, y } = props
+  const { activities, colorA, colorB, x, y } = props
   return (
     <g x={x} y={y}>
-      {activities.map((data, i) => <Day data={data} key={i}
-        x={x} y={i * (BOX_PADDING + BOX_SIZE) + y}
-        color={linearInterpolate(colors[0], colors[1], data.active)} />)}
+      {activities.map((data, i) => {
+        return (<Day data={data} key={i}
+          x={x} y={i * (BOX_PADDING + BOX_SIZE) + y}
+          color={linearInterpolate(colorA, colorB, data.active)} />
+        )})}
     </g>
   )
 }
@@ -146,16 +150,19 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
   useEffect(() => {
     // Hack to speed up rendering
     // TODO: Find a better way to do this
+    const TIME_DELAY = 25  // ms
     const id = setTimeout(() => {
       setHeatmap(
         weeks.map((week, i) => (
           <Week activities={week} key={i}
-            colors={colors} x={i * (BOX_SIZE + BOX_PADDING) + 2} y={20} />
+            colorA={colors[0]} colorB={colors[1]}
+            x={i * (BOX_SIZE + BOX_PADDING) + 2}
+            y={20} />
         ))
       )
-    }, 25)
+    }, TIME_DELAY)
     return () => clearTimeout(id)
-  }, [heats, colors, weeks])
+  }, [heats, weeks, colors])
 
   return (
     <div className="bg-mbg-1 px-3 pb-2 pt-2 mx-auto rounded">

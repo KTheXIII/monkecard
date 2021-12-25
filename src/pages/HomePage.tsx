@@ -5,7 +5,6 @@ import React, {
   ReactElement,
 } from 'react'
 
-import { CollectionList } from '@components/Collection/CollectionList'
 import { ICollectionSet } from '@models/dataset'
 import { IActivity, TimeData } from '@models/user'
 import { Monke } from '@scripts/monke'
@@ -73,7 +72,7 @@ export const HomePage: React.FC<Props> = (props) => {
         })
       }
       return acc
-    }, [] as TimeData<number>[])
+    }, [] as TimeData<number>[]).reverse()
     const largest = Math.max(...dataPoints.map(d => d.data))
 
     const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
@@ -83,7 +82,6 @@ export const HomePage: React.FC<Props> = (props) => {
         data: d.data
       } as TimeData<number>))
       .map(d => ({
-               // active: Math.random() * (Math.random() > 0.1 ? 1 : 0),
         active: d.data / largest,
         count: d.data,
         date: new Date(d.time),

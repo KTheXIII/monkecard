@@ -11,19 +11,15 @@ import {
   ChevronRight,
   FileEarmarkCodeFill,
 } from '@assets/BootstrapIcons'
-import { CommandPalette, CommandPaletteRef } from '@components/CommandPalette'
+import {
+  CommandPalette,
+  CommandPaletteRef,
+} from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage } from '@pages/HomePage'
 import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
-import {
-  ECommandType,
-  ICommandBase,
-  ICommandInput,
-  ICommandNormal,
-  ICommandOption
-} from '@models/command'
-import { GetPlatform, REPOSITORY_URL } from '@scripts/env'
+import { GetPlatform } from '@scripts/env'
 import { Monke } from '@scripts/monke'
 import { UserMonke } from '@scripts/user'
 import { CollectionPage } from '@pages/CollectionPage'
@@ -36,11 +32,12 @@ enum Page {
 }
 
 export const App: React.FC = () => {
-  const [isComHidden, setIsComHidden] = useState(true)
+  const [isCMDHidden, setIsCMDHidden] = useState(true)
+  const [cmdList, setCMDList]         = useState<string[]>([])
+
   const [isLoading,   setIsLoading]   = useState(true)
   const [isNavHidden, setIsNavHidden] = useState(true)
   const [page, setPage]               = useState(Page.Home)
-  const [commandList, setCommandList] = useState<ICommandBase[]>([])
 
   const settingsRef = useRef<SettingsPageRef>(null)
   const studyRef    = useRef<StudyPageRef>(null)
@@ -50,82 +47,36 @@ export const App: React.FC = () => {
   const user  = useMemo(() => new UserMonke(), [])
 
   useEffect(() => {
-    user.subjectSession.subscribe(s => {
-      setPage(Page.Study)
-    })
+    user.subjectSession.subscribe(s => setPage(Page.Study))
     user.init()
     monke.subjectIsLoading.subscribe(setIsLoading)
-    monke.subjectCommands.subscribe(setCommandList)
-    monke.subjectCollection.subscribe(c => {
-      setPage(Page.Collection)
-    })
+    monke.subjectCollection.subscribe(c => setPage(Page.Collection))
     monke.init()
 
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'home',
-      fn: () => {
-        setPage(Page.Home)
-      },
-    } as ICommandNormal)
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'settings',
-      fn: () => setPage(Page.Settings),
-    } as ICommandNormal)
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'reload',
-      fn: () => monke.load(monke.getSources()),
-    } as ICommandNormal)
-    monke.addCommand({
-      type: ECommandType.Input,
-      name: 'add source',
-      hint: 'enter source url',
-      fn: input => monke.addSource(input),
-    } as ICommandInput)
-    monke.addCommand({
-      type: ECommandType.Option,
-      name: 'remove source',
-      hint: 'select source to remove',
-      list: monke.getSources.bind(monke),
-      fn: option => monke.removeSource(option),
-    } as ICommandOption)
-    monke.addCommand({
-      type: ECommandType.Option,
-      name: 'collections',
-      hint: 'select collection to go to',
-      list: () => monke.getCollections().map(c => c.collection.title),
-      fn: (option, i) => {
-        monke.subjectCollection.next(i)
-      },
-    } as ICommandOption)
-    monke.addCommand({
-      type: ECommandType.Input,
-      name: 'edit username',
-      default: () => user.getUser().name,
-      hint: 'enter source url',
-      fn: input => {
-        const u = user.getUser()
-        u.name = input
-        user.subjectUser.next(u)
-      },
-    } as ICommandInput)
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'repository',
-      fn: () => window.open(REPOSITORY_URL, '_blank'),
-    } as ICommandNormal)
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'report bugs',
-      fn: () => window.open(`${REPOSITORY_URL}/issues`, '_blank'),
-    } as ICommandNormal)
-    monke.addCommand({
-      type: ECommandType.Normal,
-      name: 'docs',
-      fn: () => window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank'),
-    } as ICommandNormal)
+    monke.subjectCommands.subscribe((cmds) =>
+      setCMDList(Array.from(cmds.keys())))
+    monke.addCommand('home', async () => {
+      setPage(Page.Home)
+      return { success: true }
+    })
+    monke.addCommand('settings', async () => {
+      setPage(Page.Settings)
+      return { success: true }
+    })
+    user.registerCommands(monke)
+    monke.addCommand('scroll', async () => {
+      monke.subjectCommands.next(new Map([
+        ['top', async () => window.scrollTo({
+          top: 0, left: 0,
+          behavior: 'smooth'
+        })],
+      ]))
+      return {
+        success: false,
+        restore: monke.restoreCommands.bind(monke)
+      }
+    })
+    monke.registerCommands()
   }, [monke, user])
 
   const onReload = useCallback(() => {
@@ -134,43 +85,43 @@ export const App: React.FC = () => {
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     // Show Command Palette
-    if (e.code === 'KeyP' && e.metaKey && e.shiftKey &&
-        GetPlatform() === 'macOS') {
-      setIsComHidden(false)
+    if (e.code === 'KeyP' && e.metaKey &&
+        e.shiftKey && GetPlatform() === 'macOS') {
+      setIsCMDHidden(false)
       e.preventDefault()
       return
     }
     if (e.code === 'KeyP' && e.ctrlKey && e.shiftKey &&
         GetPlatform() === 'Windows') {
-      setIsComHidden(false)
+      setIsCMDHidden(false)
       e.preventDefault()
       return
     }
     if (e.code === 'KeyK' && e.metaKey) {
-      setIsComHidden(!isComHidden)
+      setIsCMDHidden(!isCMDHidden)
       e.preventDefault()
       return
     }
     // Hide Command Palette
-    if (e.key === 'Escape' && !isComHidden) {
-      setIsComHidden(true)
+    if (e.key === 'Escape' && !isCMDHidden) {
+      setIsCMDHidden(true)
       e.preventDefault()
       return
     }
 
     commandRef.current?.onKeyDown(e)
-    if (!isComHidden) return
+    if (!isCMDHidden) return
     studyRef.current?.onKeyDown(e)
-  }, [isComHidden, studyRef])
+  }, [isCMDHidden, studyRef])
 
   const onClick = useCallback((e: MouseEvent) => {
-    if (!isComHidden && e.target === commandRef.current?.target) {
-      setIsComHidden(true)
+    if (!isCMDHidden && e.target === commandRef.current?.target) {
+      setIsCMDHidden(true)
       e.preventDefault()
       e.stopImmediatePropagation()
       return
     }
-  }, [isComHidden, commandRef])
+  }, [isCMDHidden, commandRef])
 
   useEffect(() => {
     window.addEventListener('keydown', onKeyDown)
@@ -183,7 +134,9 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     setIsNavHidden(page === Page.Study)
-  }, [page])
+    if (page === Page.Home) monke.restoreCommands()
+    // TODO: Guard page change if there's no data
+  }, [page, monke])
 
   return (
     <div className="app md:w-[600px] md:mx-auto">
@@ -224,14 +177,16 @@ export const App: React.FC = () => {
         <ToolsFloatButton
           text="cmd"
           icon={ChevronRight}
-          onClick={() => setIsComHidden(false)} />
+          onClick={() => setIsCMDHidden(false)} />
       </ToolsFloat>
       <CommandPalette
         ref={commandRef}
-        isHidden={isComHidden}
-        commands={commandList}
-        onHide={() => setIsComHidden(true)}
-        isLoading={isLoading} />
+        isHidden={isCMDHidden}
+        isLoading={isLoading}
+        commandList={cmdList}
+        onCommand={async cmd => monke.runCommand(cmd)}
+        onHide={() => setIsCMDHidden(true)}
+      />
     </div>
   )
 }
