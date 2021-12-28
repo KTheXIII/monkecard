@@ -5,7 +5,10 @@ import React, {
   useRef,
   useMemo
 } from 'react'
-import { BsFileEarmarkCodeFill, BsChevronRight } from 'react-icons/bs'
+import {
+  BsFileEarmarkCodeFill,
+  BsChevronRight
+} from 'react-icons/bs'
 import './app.css'
 
 import {
@@ -76,7 +79,7 @@ export const App: React.FC = () => {
     command.addBase('docs', async () => {
       window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank')
     })
-  }, [user, command, collection])
+  }, [user, command, collection, session])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     // Show Command Palette

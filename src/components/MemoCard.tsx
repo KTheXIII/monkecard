@@ -3,7 +3,7 @@ import React, {
   useCallback,
   useEffect, useImperativeHandle, useRef, useState
 } from 'react'
-import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
+import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { MemoFlipCard, MemoFlipCardRef } from './MemoItem/MemoFlipCard'
 import { Memo } from '@models/item'
@@ -51,7 +51,7 @@ const Component = forwardRef<MemoCardRef, Props>((props, ref) => {
       {memo && <MemoFlipCard ref={memoRef} memo={memo} />}
       <ToolsFloat>
         <ToolsFloatButton
-          icon={<BiChevronLeft />}
+          icon={<BsChevronLeft />}
           isIconLeft={true} text="prev"
           onClick={onPrev}
         />
@@ -59,7 +59,7 @@ const Component = forwardRef<MemoCardRef, Props>((props, ref) => {
           text={`${activeCard + 1}/${memos.length}`}
         />
         <ToolsFloatButton
-          icon={<BiChevronRight />}
+          icon={<BsChevronRight />}
           isIconLeft={false} text="next"
           onClick={onNext}
         />

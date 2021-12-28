@@ -102,7 +102,10 @@ export class MonkeUser {
       saveUser(userjson)
     })
     this.subject.subscribe(u => this.user = u)
-    await this.load(await loadUserRAW())
+    // Initialise user with local data or create new user
+    const user = await loadUserRAW()
+      .catch(err => JSON.stringify(createUser()))
+    await this.load(user)
 
     if (this.user.metrics.visits.length > 0) {
       const visits = this.user.metrics.visits
@@ -122,53 +125,49 @@ export class MonkeUser {
   }
 
   async load(raw: string) {
-    try {
-      this.loading.next(true)
-      const json = JSON.parse(raw)
-      const user = jsonToUser(json)
+    this.loading.next(true)
+    const json = JSON.parse(raw)
+    const user = jsonToUser(json)
 
-      const today = new Date(new Date().toLocaleDateString('en-SE'))
-      const day = 24 * 60 * 60 * 1000
-      const current = user
-      const visits = current.metrics.visits
-      const dataPoints = visits.reduce((acc, cur) => {
-        const date = new Date(cur)
-        const justDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    const today = new Date(new Date().toLocaleDateString('en-SE'))
+    const day = 24 * 60 * 60 * 1000
+    const current = user
+    const visits = current.metrics.visits
+    const dataPoints = visits.reduce((acc, cur) => {
+      const date = new Date(cur)
+      const justDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
-        if (acc.length === 0) acc.push({
+      if (acc.length === 0) acc.push({
+        time: justDate.getTime(),
+        data: 1
+      })
+      const last = acc[acc.length - 1]
+      if (last.time === justDate.getTime())
+        last.data += 1
+      else
+        acc.push({
           time: justDate.getTime(),
           data: 1
         })
-        const last = acc[acc.length - 1]
-        if (last.time === justDate.getTime())
-          last.data += 1
-        else
-          acc.push({
-            time: justDate.getTime(),
-            data: 1
-          })
-        return acc
-      }, [] as TimeData<number>[]).reverse()
+      return acc
+    }, [] as TimeData<number>[]).reverse()
 
-      const largest = Math.max(...dataPoints.map(d => d.data))
-      const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
+    const largest = Math.max(...dataPoints.map(d => d.data))
+    const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
 
-      this.activities = dataPoints.concat(Array(len).fill({ time: 0, data: 0 }))
-        .map((d, i) => ({
-          time: d.time > 0 ? d.time : today.getTime() - (i * day),
-          data: d.data
-        } as TimeData<number>))
-        .map(d => ({
-          active: d.data / largest,
-          count: d.data,
-          date: new Date(d.time),
-        } as IActivity)).reverse()
+    this.activities = dataPoints.concat(Array(len).fill({ time: 0, data: 0 }))
+      .map((d, i) => ({
+        time: d.time > 0 ? d.time : today.getTime() - (i * day),
+        data: d.data
+      } as TimeData<number>))
+      .map(d => ({
+        active: d.data / largest,
+        count: d.data,
+        date: new Date(d.time),
+      } as IActivity)).reverse()
 
-      this.next(user)
-      this.loading.next(false)
-    } catch (err) {
-      this.next(createUser())
-    }
+    this.next(user)
+    this.loading.next(false)
   }
 
   regiser(command: Command<TCommand>) {
