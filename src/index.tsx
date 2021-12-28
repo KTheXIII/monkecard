@@ -26,7 +26,7 @@ async function main() {
     <React.StrictMode>
       <App />
     </React.StrictMode>,
-    document.getElementById('root'),
+    document.querySelector('#root')
   )
 }
 

@@ -1,4 +1,4 @@
-import React, {} from 'react'
+import React from 'react'
 
 export const ActionButton: React.FC<{
   text: string,
@@ -29,4 +29,3 @@ export const FilterButton: React.FC<{
     </button>
   )
 }
-

@@ -1,3 +1,5 @@
+import { ISessionJSON } from './session'
+
 export interface IActivity {
   date: Date
   count: number
@@ -15,8 +17,10 @@ export interface IUserMetric {
   // active: TimeData<number>[]
 }
 
-// export interface MemoMetric {
-// }
+export interface MemoMetric {
+  history: ISessionJSON[]
+  saved: TimeData<string>[]  // store the hash of the item
+}
 
 export interface IUserPreference {
   theme: string
@@ -27,6 +31,7 @@ export interface IUser<DATE> {
   avatar?: string
   preference: IUserPreference
   metrics: IUserMetric
+  memo: MemoMetric
 
   created: DATE
   updated: DATE

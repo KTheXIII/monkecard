@@ -13,6 +13,10 @@ const BOX_SIZE    = 10
 const BOX_PADDING = 3
 const BOX_R       = 1.5
 
+function mapRange(x: number, in_min: number, in_max: number, out_min: number, out_max: number) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+}
+
 interface DayProps {
   data: IActivity
   color: number
@@ -35,20 +39,21 @@ const Day: React.FC<DayProps> = (props) => {
 
 interface IWeek {
   activities: IActivity[],
-  colorA: number,
-  colorB: number,
+  colors: number[]
   x: number
   y: number
 }
 
 const Week: React.FC<IWeek> = (props) => {
-  const { activities, colorA, colorB, x, y } = props
+  const { activities, colors, x, y } = props
   return (
     <g x={x} y={y}>
       {activities.map((data, i) => {
+        const index = Math.round(mapRange(data.active, 0, 1, 0, colors.length - 1))
+        const color = index === 0 && data.active > 0 ? colors[1] : colors[index]
         return (<Day data={data} key={i}
           x={x} y={i * (BOX_PADDING + BOX_SIZE) + y}
-          color={linearInterpolate(colorA, colorB, data.active)} />
+          color={color} />
         )})}
     </g>
   )
@@ -91,7 +96,7 @@ function linearInterpolate(colorA: number, colorB: number, ratio: number) {
          Math.floor((bb - ab) * ratio + ab)          // blue
 }
 
-export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
+const Component: React.FC<MemoHeatmapProps> = (props) => {
   const { heats, colors } = props
   const [heatmap, setHeatmap] = useState<ReactElement[]>()
   const startWeekday = props.startWeekday ?? 1  // Default: Monday
@@ -127,6 +132,7 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
       .map((m, i) => [m, i]).filter(([m]) => m !== -1)
   }, [weeks])
   const conRef = useRef<HTMLDivElement>(null)
+  const toolRef = useRef<HTMLDivElement>(null)
 
   const onMouseHover = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement
@@ -134,41 +140,57 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
     const date = target.getAttribute('data-date')
     const count = target.getAttribute('data-count')
     if (!date || !count) return
-    // console.log(date, count)
+    if (toolRef.current) {
+      const block = target.getBoundingClientRect()
+      const toolblock = toolRef.current.getBoundingClientRect()
+      toolRef.current.textContent = `${count} on ${date} `
+      toolRef.current.style.display = 'block'
+
+      if (block.x + toolblock.width > window.innerWidth)
+        toolRef.current.style.left = `${block.x - toolblock.width + block.width}px`
+      else
+        toolRef.current.style.left = `${block.x}px`
+      toolRef.current.style.top = `${block.y - 3 * block.height}px`
+    }
+  }, [])
+  const onMouseLeave = useCallback((e: MouseEvent) => {
+    if (toolRef.current) {
+      toolRef.current.style.display = 'none'
+    }
   }, [])
 
   useEffect(() => {
     if (!conRef.current) return
-    conRef.current.scrollLeft = conRef.current.scrollWidth
     const el = conRef.current
     el.addEventListener('mousemove', onMouseHover)
+    el.addEventListener('mouseleave', onMouseLeave)
     return () => {
       el.removeEventListener('mousemove', onMouseHover)
+      el.removeEventListener('mouseleave', onMouseLeave)
     }
-  }, [onMouseHover])
+  }, [onMouseHover, onMouseLeave])
 
   useEffect(() => {
-    // Hack to speed up rendering
-    // TODO: Find a better way to do this
-    const TIME_DELAY = 25  // ms
-    const id = setTimeout(() => {
-      setHeatmap(
-        weeks.map((week, i) => (
-          <Week activities={week} key={i}
-            colorA={colors[0]} colorB={colors[1]}
-            x={i * (BOX_SIZE + BOX_PADDING) + 2}
-            y={20} />
-        ))
-      )
-    }, TIME_DELAY)
-    return () => clearTimeout(id)
-  }, [heats, weeks, colors])
+    setHeatmap(
+      weeks.map((week, i) => (
+        <Week activities={week} key={i}
+          colors={colorLevels}
+          x={i * (BOX_SIZE + BOX_PADDING) + 2}
+          y={20} />
+      ))
+    )
+    if (conRef.current)
+      conRef.current.scrollLeft = conRef.current.scrollWidth
+  }, [heats, weeks, colorLevels])
 
   return (
     <div className="bg-mbg-1 px-3 pb-2 pt-2 mx-auto rounded">
       <div className="flex m-1">
         <WeekNames />
-        <div className="overflow-auto" ref={conRef}>
+        <div className="overflow-auto scroll-hide" ref={conRef}>
+          <div className="absolute bg-mbg-3 px-3 py-1 rounded overflow-auto hidden
+                          pointer-events-none min-w-min whitespace-nowrap" ref={toolRef}>
+          </div>
           <svg className="text-mtext-dim-1"
             width={`${weeks.length * (BOX_SIZE + BOX_PADDING) + 2}px`}
             height={`${7 * (BOX_SIZE + BOX_PADDING) + 20}px`}>
@@ -188,8 +210,7 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
         <div className='flex'>
           {colorLevels.map((color, i) => (
             <span key={i}
-              className="h-[10px] w-[10px] rounded-sm
-                         mr-[3px] my-auto last:mr-0"
+              className="h-[10px] w-[10px] rounded-sm mr-[3px] my-auto last:mr-0"
               style={{ backgroundColor: `#${color.toString(16)}` }} />
           ))}
         </div>
@@ -198,3 +219,5 @@ export const MemoHeatmap: React.FC<MemoHeatmapProps> = (props) => {
     </div>
   )
 }
+
+export const MemoHeatmap = React.memo(Component)

@@ -21,17 +21,12 @@ export const ANIMAL_NAMES = [
   'zebra',
   'rhino',
   'elephant',
-  'giraffe',
   'hippo',
   'rhinoceros',
   'crocodile',
   'lizard',
   'snake',
-  'turtle',
   'frog',
   'toad',
-  'kangaroo',
-  'koala',
-  'penguin',
-  'panda',
+  'koala'
 ]

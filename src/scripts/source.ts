@@ -1,16 +1,10 @@
 import * as yaml from 'js-yaml'
 
-import {
-  ItemSource,
-  CollectionSource
-} from '@models/source'
-import { ISourceSet } from '@models/dataset'
-
 // REGEX for source and collection query keys
-const SOURCE_REGEX   = /source=([^&]+)&?/gi   // source=<source>&
-const LIST_REGEX     = /list=([^&]+)&?/gi     // For data with a list of source
-const ITEMS_REGEX    = /items=([^&]+)&?/gi    // For data with a list of items
-const SRCLZ_REGEX    = /src_lz=([^&]+)&?/gi   // Compressed source links
+const SOURCE_REGEX   = /source=([^&]+)&?/gi  // source=<source>&
+const LIST_REGEX     = /list=([^&]+)&?/gi    // For data with a list of source
+const ITEMS_REGEX    = /items=([^&]+)&?/gi   // For data with a list of items
+const SRCLZ_REGEX    = /src_lz=([^&]+)&?/gi  // Compressed source links
 const NODE_REGEX     = /node=([^&]+)&?/gi
 const JSON_EXT_REGEX = /\.json$/i
 const YAML_EXT_REGEX = /\.ya?ml$/i
@@ -71,9 +65,9 @@ export const extractQueryNode       = (query: string)
  * @param url YAML file path
  * @returns Promise that resolves to the parsed YAML object
  */
-export async function fetchYAML<T>(url: string): Promise<T> {
+export async function fetchYAML(url: string): Promise<unknown> {
   try {
-    const res = await fetch(url)
+    const res = await fetch(url, { mode: 'cors' })
     if (!res.ok) return Promise.reject(res.statusText)
     const text = await res.text()
     const data = yaml.load(text)
@@ -92,9 +86,9 @@ export async function fetchYAML<T>(url: string): Promise<T> {
  * @param url JSON file path
  * @returns Promise that resolves to the parsed JSON object.
  */
-export async function fetchJSON<T>(url: string): Promise<T> {
+export async function fetchJSON(url: string): Promise<unknown> {
   try {
-    const res = await fetch(url)
+    const res = await fetch(url, { mode: 'cors' })
     if (!res.ok) return Promise.reject(res.statusText)
     const data = await res.json()
     return Promise.resolve(data)
@@ -103,78 +97,42 @@ export async function fetchJSON<T>(url: string): Promise<T> {
   }
 }
 
-export async function fetchGistGithub<T>(url: string): Promise<T> {
+export async function fetchGistGithub(url: string): Promise<unknown> {
   try {
-    const res = await fetch(url.replace(GITHUB_GIST_REGEX, 'https://gist.githubusercontent.com/$1/$2/raw'))
+    const dest = url.replace(GITHUB_GIST_REGEX, 'https://gist.githubusercontent.com/$1/$2/raw')
+    const res = await fetch(dest, { mode: 'cors' })
     if (!res.ok) return Promise.reject(res.statusText)
     const text = await res.text()
+
+    // Try to first parse as JSON and then as YAML
     try {
       const data = JSON.parse(text)
       return Promise.resolve(data)
     } catch (e) {
       const data = yaml.load(text)
-      if (typeof data === 'object')
-        return Promise.resolve(Object(data))
+      return Promise.resolve(data)
     }
-    return Promise.reject('data is not an object')
   } catch (err) {
     return Promise.reject(err)
   }
 }
 
-// TODO: Add data validation for source
 /**
- * Fetch collection data from a url.
- * Supports JSON and YAML files depeding on the file extension.
- *
- * @param url Collection file url.
- * @returns Promise that resolves to the parsed collection data.
+ * Fetch source file and parse it to JavaScript object.
+ * @param url JSON, YAML or GitHub Gist url
+ * @returns Promise with unknown data type
  */
-export async function fetchCollectionSource(url: string):
-  Promise<CollectionSource> {
+export function fetchSupportedURL(url: string): Promise<unknown> {
   try {
     if (JSON_EXT_REGEX.test(url))
-      return fetchJSON<CollectionSource>(url)
+      return fetchJSON(url)
     else if (YAML_EXT_REGEX.test(url))
-      return fetchYAML<CollectionSource>(url)
+      return fetchYAML(url)
     else if (GITHUB_GIST_REGEX.test(url))
-      return fetchGistGithub<CollectionSource>(url)
+      return fetchGistGithub(url)
     else
       return Promise.reject(`Unsupported URL type: ${url}`)
-  } catch (err) {
-    return Promise.reject(err)
+  } catch (e) {
+    return Promise.reject(e)
   }
 }
-
-/**
- * Fetch item list from a url.
- * Supports JSON and YAML files depeding on the file extension.
- *
- * @param url Item url to fetch
- * @returns Promise that resolves to the parsed item data.
- */
-export async function getItemSource(url: string): Promise<ItemSource[]> {
-  try {
-    if (JSON_EXT_REGEX.test(url))
-      return fetchJSON<ItemSource[]>(url)
-    else if (YAML_EXT_REGEX.test(url))
-      return fetchYAML<ItemSource[]>(url)
-    else
-      return Promise.reject('Unknown file extension')
-  } catch (err) {
-    return Promise.reject(err)
-  }
-}
-
-export async function loadSourceSet(urls: string[]): Promise<ISourceSet[]> {
-  return Promise.all(urls.map(async (url) => {
-    const set: ISourceSet = { url: url, data: null }
-    try {
-      set.data = await fetchCollectionSource(url)
-    } catch (err) {
-      console.error(err)
-    }
-    return set
-  }))
-}
-

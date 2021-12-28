@@ -28,13 +28,19 @@ export async function saveUser(user: UserJSON): Promise<void> {
   return Promise.resolve()
 }
 
+export async function loadUserRAW(): Promise<string> {
+  const user = localStorage.getItem(USER_KEY)
+  if (user) return user
+  return Promise.reject('No user saved')
+}
+
 export async function loadUser(): Promise<UserJSON> {
   const user = localStorage.getItem(USER_KEY)
   if (user) return JSON.parse(user)
   return Promise.reject('No user saved')
 }
 
-export function downloadData(filename: string, json: string) {
+export function downloadText(filename: string, json: string) {
   const e = document.createElement('a')
   e.setAttribute('href',
     'data:text/json;charset=utf-8,' + encodeURIComponent(json))
@@ -45,33 +51,60 @@ export function downloadData(filename: string, json: string) {
   document.body.removeChild(e)
 }
 
-export function openTextFile(accept?: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
+export async function openFile(accept: string): Promise<File> {
+  return new Promise<File>((resolve, reject) => {
     const file = document.createElement('input')
     file.type = 'file'
-    file.accept = accept ?? '.txt,.json,.yml,.yaml'
+    file.accept = accept
     file.value = ''
     file.focus()
     file.multiple = false
     file.style.display = 'none'
+    file.onchange = () => {
+      if (!file.files)
+        reject('No files selected')
+      else if (file.files.length === 0)
+        reject('No files selected')
+      else
+        resolve(file.files[0])
+    }
     document.body.appendChild(file)
     file.click()
-    file.onchange = () => {
-      if (!file.files) return
-      const reader = new FileReader()
-      reader.onload = e => {
-        if (e.target && e.target.result) {
-          const text = e.target.result.toString()
-          resolve(text)
-        } else {
-          reject('Error reading file')
-        }
-      }
-      reader.readAsText(file.files[0])
-    }
-    file.onerror = (e) => {
-      reject(e)
-    }
     document.body.removeChild(file)
+  })
+}
+
+export async function openFiles(accept: string): Promise<FileList> {
+  return new Promise<FileList>((resolve, reject) => {
+    const file = document.createElement('input')
+    file.type   = 'file'
+    file.accept = accept
+    file.value  = ''
+    file.focus()
+    file.multiple = true
+    file.style.display = 'none'
+    file.onchange = () => {
+      if (!file.files)
+        reject('No files selected')
+      else if (file.files.length === 0)
+        reject('No files selected')
+      else
+        resolve(file.files)
+    }
+    document.body.appendChild(file)
+    file.click()
+    document.body.removeChild(file)
+  })
+}
+
+export async function readTextFile(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (reader.result) resolve(reader.result.toString())
+      else reject(`Error reading file`)
+    }
+    reader.onerror = () => reject(reader.error)
+    reader.readAsText(file)
   })
 }

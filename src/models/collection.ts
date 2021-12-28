@@ -1,49 +1,55 @@
-import { ItemSource } from '@models/source'
+import * as io from 'io-ts'
+import {
+  Item,
+  MemoSource,
+} from '@models/item'
 
-export enum EItemType {
-  Unknown  = -1,
-  Memo     =  0,
-  Question =  1
+// Collection status
+export enum ECStatus {
+  Loading   = 0,
+  Loaded    = 1,
+  NotLoaded = 2,
+  Error     = 3,
 }
 
-export interface Item {
-  type: EItemType
-  id: string
-  hash: string
-  keywords: string[]
-  lang?: string
+// Collection type
+export enum ECType {
+  Local  = 0,
+  Remote = 1,
+  Saved  = 2,
 }
 
-export interface Memo extends Item {
-  front: string
-  back: string
+export interface ICollectionBase {
+  type: ECType
+  source: string    // source url or hash of local collection
+  status: ECStatus
+  error?: string    // error message
 }
 
-export interface OptionBase {
-  text: string
-  correct: boolean
-}
-
-export interface QuestionBase extends Item {
-  text: string
-  description?: string
-  note?: string
-}
-
-export interface IOption extends OptionBase {
-  marked: boolean
-}
-
-export interface IQuestion extends QuestionBase {
-  options: IOption[]
-}
-
-export interface ICollection {
+export interface ICollection extends ICollectionBase {
   title: string
-  description: string
+  description?: string
   created: Date
   updated: Date
 
-  items: Map<string, ItemSource>
+  items: Map<string, Item>
   lang?: string
 }
+
+const IODate = new io.Type<Date, Date, unknown>(
+  'Date',
+  (input: unknown): input is Date => typeof input === 'object' && input instanceof Date,
+  (input, context) => (typeof input === 'object' && input instanceof Date ? io.success(input) : io.failure(input, context)),
+  io.identity
+)
+
+export const CollectionSource = io.type({
+  title: io.string,
+  description: io.union([io.string, io.undefined]),
+  lang: io.union([io.string, io.undefined]),
+  created: io.union([io.string, io.number, IODate]),
+  updated: io.union([io.string, io.number, IODate]),
+  items: io.array(io.unknown)
+})
+
+export type TCollectionSource = io.TypeOf<typeof CollectionSource>

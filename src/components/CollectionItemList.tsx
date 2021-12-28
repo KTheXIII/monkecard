@@ -9,8 +9,7 @@ import {
   MemoListMarkItem
 } from '@components/MemoList'
 import { ActionButton, FilterButton } from '@components/ButtonUtilities'
-import { EItemType } from '@models/collection'
-import { ItemSource } from '@models/source'
+import { EItemType, Item } from '@models/item'
 
 const START_TEXTS = {
   Start: 'start',
@@ -19,7 +18,7 @@ const START_TEXTS = {
 const DEFAULT_FILTER = EItemType.Memo
 
 interface Props {
-  items: Map<string, ItemSource>
+  items?: Map<string, Item>
   onStart: (type: EItemType, item: string[]) => void
 }
 
@@ -73,6 +72,7 @@ export const CollectionItemList: React.FC<Props> = (props) => {
     if (f !== filter) {
       selected.clear()
       setSelected(selected)
+      setStartText(START_TEXTS.Start)
     }
     setFilter(f)
   }, [filter, selected])
@@ -108,7 +108,7 @@ export const CollectionItemList: React.FC<Props> = (props) => {
       <MemoList>
         {itemList.map((set, index) => (
           <MemoListMarkItem
-            key={`${index + set.id}`}
+            key={`${index}`}
             isMarked={selected.has(set.id)}
             onMark={(mark) => {
               if (mark) selected.add(set.id)

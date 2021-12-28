@@ -5,30 +5,26 @@ import React, {
   useRef,
   useMemo
 } from 'react'
+import { BsFileEarmarkCodeFill, BsChevronRight } from 'react-icons/bs'
 import './app.css'
 
-import {
-  ChevronRight,
-  FileEarmarkCodeFill,
-} from '@assets/BootstrapIcons'
 import {
   CommandPalette,
   CommandPaletteRef,
 } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage } from '@pages/HomePage'
-import { SettingsPage, SettingsPageRef } from '@pages/SettingsPage'
-import { StudyPage, StudyPageRef } from '@pages/StudyPage'
-import { GetPlatform } from '@scripts/env'
-import { Monke } from '@scripts/monke'
-import { UserMonke } from '@scripts/user'
 import { CollectionPage } from '@pages/CollectionPage'
+import { StudyPage, StudyPageRef } from '@pages/StudyPage'
+import { GetPlatform, REPOSITORY_URL } from '@scripts/env'
+import { MonkeUser } from '@scripts/user'
+import { MonkeCollection } from '@scripts/collection'
+import { MonkeSession } from '@scripts/session'
 import { Command } from '@scripts/command'
 import { TCommand } from '@models/command'
 
 enum Page {
   Home,
-  Settings,
   Collection,
   Study,
 }
@@ -41,33 +37,46 @@ export const App: React.FC = () => {
   const [isNavHidden, setIsNavHidden] = useState(true)
   const [page, setPage]               = useState(Page.Home)
 
-  const settingsRef = useRef<SettingsPageRef>(null)
   const studyRef    = useRef<StudyPageRef>(null)
   const commandRef  = useRef<CommandPaletteRef>(null)
 
   const command = useMemo(() => new Command<TCommand>(), [])
-  const monke   = useMemo(() => new Monke(), [])
-  const user    = useMemo(() => new UserMonke(), [])
+  const user    = useMemo(() => new MonkeUser(), [])
+  const collection = useMemo(() => new MonkeCollection(), [])
+  const session = useMemo(() => new MonkeSession(), [])
 
   useEffect(() => {
     command.sub(s => setCMDList(command.cmdStrings()))
     command.addBase('home', async () => setPage(Page.Home))
-    command.addBase('settings', async () => setPage(Page.Settings))
 
-    user.subjectSession.subscribe(s => setPage(Page.Study))
     user.init()
-
-    monke.subjectIsLoading.subscribe(setIsLoading)
-    monke.subjectCollection.subscribe(c => setPage(Page.Collection))
-    monke.init()
-
     user.regiser(command)
-    monke.register(command)
-  }, [monke, user, command])
+    user.subIsLoading(setIsLoading)
+    user.sub(u => session.setUser(u))
 
-  const onReload = useCallback(() => {
-    monke.load(monke.getSources())
-  }, [monke])
+    session.sub(s => setPage(Page.Study))
+
+    collection.subLoading(setIsLoading)
+    collection.init()
+    collection.subSelect(i => {
+      if (i !== -1) setPage(Page.Collection)
+    })
+    collection.register(command)
+
+    command.addBase('reload', async () => {
+      await user.reload()
+      await collection.load()
+    })
+    command.addBase('repository', async () => {
+      window.open(`${REPOSITORY_URL}`, '_blank')
+    })
+    command.addBase('report bugs', async () => {
+      window.open(`${REPOSITORY_URL}/issues`, '_blank')
+    })
+    command.addBase('docs', async () => {
+      window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank')
+    })
+  }, [user, command, collection])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     // Show Command Palette
@@ -132,15 +141,17 @@ export const App: React.FC = () => {
       {page === Page.Home       &&
       <HomePage
         isLoading={isLoading}
-        monke={monke}
         user={user}
+        collection={collection}
         command={command}
       />}
-      {page === Page.Settings   &&
-      <SettingsPage
-        ref={settingsRef}
-        monke={monke}
-        onReload={onReload}
+      {page === Page.Collection &&
+      <CollectionPage
+        isLoading={isLoading}
+        user={user}
+        collection={collection}
+        command={command}
+        session={session}
       />}
       {page === Page.Study      &&
       <StudyPage
@@ -149,24 +160,20 @@ export const App: React.FC = () => {
           setPage(Page.Home)
         }}
         user={user}
-      />}
-      {page === Page.Collection &&
-      <CollectionPage
-        monke={monke}
-        user={user}
-        isLoading={isLoading}
+        command={command}
+        session={session}
       />}
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
           text="home"
-          icon={FileEarmarkCodeFill}
+          icon={<BsFileEarmarkCodeFill />}
           onClick={() => {
             setPage(Page.Home)
           }} />
         <ToolsFloatButton
           text="cmd"
-          icon={ChevronRight}
+          icon={<BsChevronRight />}
           onClick={() => setIsCMDHidden(false)} />
       </ToolsFloat>
       <CommandPalette

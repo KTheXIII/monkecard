@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 import Fuse from 'fuse.js'
-import { TerminalFill } from '@assets/BootstrapIcons'
+import { BsTerminalFill } from 'react-icons/bs'
 import { ECommandMode, TCommand } from '@models/command'
 
 const DEFAULT_PLACEHOLDER = 'search command'
@@ -33,8 +33,7 @@ export interface CommandPaletteRef {
   onReset: () => void
 }
 
-export const CommandPalette =
-React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
+const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
   const { isHidden, onCommand, commandList, onHide } = props
   const [filtered, setFiltered] = useState(commandList)
   const [mode, setMode]         = useState(ECommandMode.Normal)
@@ -67,10 +66,10 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
     setMode(ECommandMode.Normal)
     setInputBox('')
     if (isHidden && restore) {
-      setPlaceholder(DEFAULT_PLACEHOLDER)
       restore.fn()
       setRestore(undefined)
     }
+    if (isHidden) setPlaceholder(DEFAULT_PLACEHOLDER)
 
     if (!inputRef.current) return
     inputRef.current.focus()
@@ -108,6 +107,7 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
 
   const onSelectCommand = useCallback((index: number) => {
     if (filtered.length === 0) return
+    if (!inputRef.current) return
     const cmd = filtered[index]
     const input = inputRef.current
     onCommand(cmd).then(s => {
@@ -122,8 +122,7 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
       else setPlaceholder(DEFAULT_PLACEHOLDER)
 
       if (s.restore) setRestore({ fn: s.restore })
-      if (!input) return
-      if (s.default) input.value = s.default
+      if (s.value) input.value = s.value
       else input.value = ''
       input.focus()
     })
@@ -170,13 +169,15 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
                                      bg-black flex font-light">
         <div className="w-full mx-5 md:mx-auto md:mt-56 mt-8 mb-auto
                         md:w-[500pt] rounded-memo overflow-hidden">
-          <div className="flex bg-mbg-1">
+          <div className="flex bg-mbg-1 space-x-3 px-3">
             {mode !== ECommandMode.Input &&
-             <div className='p-1 pl-3 pr-0 m-auto'>{TerminalFill}</div>
+             <div className='my-auto'>
+               <BsTerminalFill />
+             </div>
             }
             <input ref={inputRef}
               className="text-mt-0 bg-mbg-1 md:text-base font-light text-mbase
-                         py-2 px-3 w-full outline-none rounded-none"
+                         py-2 w-full outline-none rounded-none"
               placeholder={placeholder}
               type="text"
               onKeyUp={e => onKey(e.nativeEvent)}
@@ -209,3 +210,6 @@ React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
     </div>
   )
 })
+
+Component.displayName = 'CommandPalette'
+export const CommandPalette = React.memo(Component)

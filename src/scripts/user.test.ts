@@ -3,8 +3,8 @@ import { expect } from 'chai'
 import { UserJSON, } from '@models/user'
 import {
   createUser,
-  toJSON,
-  toUser,
+  userToJSON,
+  jsonToUser,
 } from './user'
 
 describe('User', () => {
@@ -30,17 +30,21 @@ describe('User', () => {
       metrics: {
         visits: [],
       },
+      memo: {
+        history: [],
+        saved: [],
+      },
       created: user.created.getTime(),
-      updated: user.updated.getTime()
+      updated: user.updated.getTime(),
     }
-    const json = toJSON(user)
+    const json = userToJSON(user)
     expect(json).to.deep.equal(userJSON)
   })
 
   it('should convert user json to user', () => {
     const user = createUser('Penguin')
-    const json = toJSON(user)
-    const converted = toUser(json)
+    const json = userToJSON(user)
+    const converted = jsonToUser(json)
 
     expect(converted).to.deep.equal(user)
   })

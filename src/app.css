@@ -29,6 +29,10 @@
   :root {
     font-size: 11pt;
   }
+
+  svg {
+    overflow: visible;
+  }
 }
 
 .auto-theme {

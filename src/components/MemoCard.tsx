@@ -3,13 +3,10 @@ import React, {
   useCallback,
   useEffect, useImperativeHandle, useRef, useState
 } from 'react'
+import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
-import {
-  ChevronLeft,
-  ChevronRight,
-} from '@assets/BootstrapIcons'
 import { MemoFlipCard, MemoFlipCardRef } from './MemoItem/MemoFlipCard'
-import { Memo } from '@models/collection'
+import { Memo } from '@models/item'
 
 interface Props {
   memos: Memo[]
@@ -20,7 +17,7 @@ export interface MemoCardRef {
   onKeyDown: (e: KeyboardEvent) => void
 }
 
-export const MemoCard = forwardRef<MemoCardRef, Props>((props, ref) => {
+const Component = forwardRef<MemoCardRef, Props>((props, ref) => {
   const { memos } = props
   const memoRef = useRef<MemoFlipCardRef>(null)
   const [activeCard, setActiveCard] = useState(0)
@@ -54,7 +51,7 @@ export const MemoCard = forwardRef<MemoCardRef, Props>((props, ref) => {
       {memo && <MemoFlipCard ref={memoRef} memo={memo} />}
       <ToolsFloat>
         <ToolsFloatButton
-          icon={ChevronLeft}
+          icon={<BiChevronLeft />}
           isIconLeft={true} text="prev"
           onClick={onPrev}
         />
@@ -62,7 +59,7 @@ export const MemoCard = forwardRef<MemoCardRef, Props>((props, ref) => {
           text={`${activeCard + 1}/${memos.length}`}
         />
         <ToolsFloatButton
-          icon={ChevronRight}
+          icon={<BiChevronRight />}
           isIconLeft={false} text="next"
           onClick={onNext}
         />
@@ -70,3 +67,6 @@ export const MemoCard = forwardRef<MemoCardRef, Props>((props, ref) => {
     </div>
   )
 })
+
+Component.displayName = 'MemoCard'
+export const MemoCard = React.memo(Component)

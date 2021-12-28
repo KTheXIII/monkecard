@@ -1,76 +1,94 @@
 import React, {
-  useState,
   useEffect,
-  useCallback
+  useState,
 } from 'react'
+import sha256 from 'crypto-js/sha256'
+import {
+  ECStatus,
+  ECType,
+  ICollection,
+  ICollectionBase
+} from '@models/collection'
+import { Item } from '@models/item'
+import { MonkeCollection } from '@scripts/collection'
+import { MonkeUser } from '@scripts/user'
+import { CollectionItemList } from '@components/CollectionItemList'
+import { Command } from '@scripts/command'
+import { MonkeSession } from '@scripts/session'
+import { TCommand } from '@models/command'
+import { Subscription } from 'rxjs'
 
-import { CollectionDescription } from '@components/Collection/CollectionDescription'
-import { ICollectionSet } from '@models/dataset'
-import { CollectionItemList } from '@components/Collection/CollectionItemList'
-import { EItemType, Item } from '@models/collection'
-import { Monke } from '@scripts/monke'
-import { UserMonke } from '@scripts/user'
-import { MemoList } from '@components/MemoList'
-import { ItemSource } from '@models/source'
-import { createItemFromSource } from '@scripts/collection'
-import { createSession } from '@models/study'
+const DEFAULT_COLLECTION: ICollectionBase = {
+  source: sha256('default').toString(),
+  status: ECStatus.Error,
+  type: ECType.Local,
+}
 
 interface Props {
-  monke: Monke
-  user: UserMonke
   isLoading: boolean
-  // onStart: (type: EItemType, itemIDs: string[]) => void
+  user: MonkeUser
+  collection: MonkeCollection
+  session: MonkeSession
+  command: Command<TCommand>
 }
 
 export const CollectionPage: React.FC<Props> = (props) => {
-  const { monke, user, isLoading } = props
+  const { isLoading, collection, command, session } = props
+  const [data, setData] = useState(DEFAULT_COLLECTION)
+
   const [title, setTitle] = useState('')
-  const [items, setItems] = useState<Map<string, ItemSource>>()
-  const [description, setDescription] = useState('')
-  const [collectionSet, setCollectionSet] = useState<ICollectionSet>()
-
-  const onStartSession = useCallback((type: EItemType, ids: string[]) => {
-    if (!collectionSet) return
-    const items = ids.reduce((acc, id) => {
-      // TODO: Compute hash with links to the source and item contents
-      const item = collectionSet.collection.items.get(id)
-      if (item) acc.push(createItemFromSource(item))
-      return acc
-    }, [] as Item[])
-    user.subjectSession.next(createSession(type, items))
-  }, [collectionSet, user])
+  const [description, setDescription] = useState<string>()
+  const [items, setItems] = useState<Map<string, Item>>()
 
   useEffect(() => {
-    const set = monke.getSelectedCollection()
-    if (!set) return
-    const { collection } = set
-    setCollectionSet(set)
-    setTitle(collection.title)
-    setDescription(collection.description)
-    setItems(collection.items)
-    const sub = monke.subjectCollection.subscribe(index => {
-      setCollectionSet(monke.getCollections()[index])
-    })
-    return () => sub.unsubscribe()
-  }, [monke, isLoading])
+    const subs: Subscription[] = []
+    subs.push(collection.subSelect(c => {
+      const selected = collection.getSelect()
+      if (selected) setData(selected)
+    }))
+    subs.push(collection.subLoading(isloading => {
+      if (isloading) {
+        setData(DEFAULT_COLLECTION)
+        return
+      }
+      const selected = collection.getSelect()
+      if (selected) setData(selected)
+    }))
+    return () => subs.forEach(s => s.unsubscribe())
+  }, [collection, command])
 
   useEffect(() => {
-    if (!collectionSet) return
-    setTitle(collectionSet.collection.title)
-    setDescription(collectionSet.collection.description)
-    setItems(collectionSet.collection.items)
-  }, [collectionSet])
+    const selected = collection.getSelect()
+    if (selected) setData(selected)
+    else setData(DEFAULT_COLLECTION)
+  }, [isLoading, collection])
+
+  // TODO: Render something else when loading
+  // TODO: Render something else when error
+  useEffect(() => {
+    if (!data) return
+    if (data.status === ECStatus.Error) return
+
+    if (data.status === ECStatus.Loaded) {
+      const c = data as ICollection
+      setTitle(c.title)
+      setDescription(c.description)
+      setItems(c.items)
+    }
+  }, [data])
 
   return (
-    <div className="collection-page pb-40 flex flex-col p-4">
-      <div className="collection-header pb-10">
-        <h1 className="text-2xl">{title}</h1>
+    <div className='pb-28 p-4'>
+      <div>
+        <h1>{title}</h1>
       </div>
-      <CollectionDescription text={description} />
-      {items && <CollectionItemList
-        items={items}
-        onStart={(type, ids) => onStartSession(type, ids)}
-      />}
+      <div>{description}</div>
+      <CollectionItemList items={items} onStart={(type, ids) => {
+        if (data.status === ECStatus.Error || data.status === ECStatus.NotLoaded)
+          return
+        const c = data as ICollection
+        session.create(c, type, ids)
+      }} />
     </div>
   )
 }

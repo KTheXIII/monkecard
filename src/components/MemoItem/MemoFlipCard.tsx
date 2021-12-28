@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 
 import { MemoMarkdown } from '@components/MemoMarkdown'
-import { Memo } from '@models/collection'
+import { Memo } from '@models/item'
 
 interface Props {
   memo: Memo
@@ -17,7 +17,7 @@ export interface MemoFlipCardRef {
   flip: () => void
 }
 
-export const MemoFlipCard = forwardRef<MemoFlipCardRef, Props>((props, ref) => {
+const Component = forwardRef<MemoFlipCardRef, Props>((props, ref) => {
   const { memo, onFlip } = props
   const [show, setShow]  = useState(false)
   const [active, setActive] = useState(memo.front)
@@ -56,3 +56,6 @@ export const MemoFlipCard = forwardRef<MemoFlipCardRef, Props>((props, ref) => {
     </div>
   )
 })
+
+Component.displayName = 'MemoFlipCard'
+export const MemoFlipCard = Component

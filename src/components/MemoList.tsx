@@ -6,10 +6,8 @@ import React, {
   useRef,
 } from 'react'
 import {
-  Circle,
-  CircleFill,
-  XCircle
-} from '@assets/BootstrapIcons'
+  BsCircleFill, BsCircle, BsXCircle
+} from 'react-icons/bs'
 
 interface MemoListProps {
   text?: string
@@ -18,7 +16,7 @@ interface MemoListProps {
 
 export const MemoList: React.FC<MemoListProps> = (props) => {
   const { text } = props
-  const isEmpty = React.Children.count(props.children) === 0
+  // const isEmpty = React.Children.count(props.children) === 0
 
   return (
     <div className="memo-list text-base">
@@ -91,11 +89,12 @@ export const MemoListButtonItem: React.FC<ButtonItemProps> = (props) => {
                           select-text w-0 m-auto">
             {text}
           </div>
-          {preview && <div
-            className="text-right w-1/4 text-mtext-dim-1 m-auto
-                       whitespace-nowrap overflow-hidden">
-            <span>{preview}</span></div>}
-          {!hideIconR && <div className="m-auto ml-4 w-4 h-4"
+          {preview &&
+          <div className="text-right w-1/4 text-mtext-dim-1 m-auto
+                          whitespace-nowrap overflow-hidden">
+            <span>{preview}</span>
+          </div>}
+          {!hideIconR && <div className="m-auto ml-4 w-[16px]"
             style={iconRStyle}>{props.iconR}</div>}
         </div>
       </div>
@@ -114,7 +113,7 @@ interface MemoListMarkProps {
 
 export const MemoListMarkItem: React.FC<MemoListMarkProps> = (props) => {
   const [isMarked, setIsMarked] = useState(props.isMarked || false)
-  const [ON, OFF] = props.icons || [CircleFill, Circle]
+  const [ON, OFF] = props.icons || [<BsCircleFill />, <BsCircle />]
 
   useEffect(() => {
     setIsMarked(props.isMarked)
@@ -176,12 +175,12 @@ export const MemoListInputText: React.FC<MemoListInputTextProps> = (props) => {
       <button className="m-auto bg-mbg-0 rounded-mfull mr-2
                         hover:bg-mbg-2 active:bg-mbg-3 text-mred"
       onClick={props.onCancel}>
-        <div className="w-6 h-6 m-2">{XCircle}</div>
+        <div className="w-6 h-6 m-2">{<BsXCircle />}</div>
       </button>
       <button className="m-auto bg-mbg-0 rounded-mfull mr-2 last:mr-0
                         hover:bg-mbg-2 active:bg-mbg-3 text-mgreen"
       onClick={onDone}>
-        <div className="w-6 h-6 m-2">{Circle}</div>
+        <div className="w-6 h-6 m-2">{<BsCircle />}</div>
       </button>
     </div>
   )

@@ -19,8 +19,10 @@ export class Command<T> {
   async run(cmd: string) {
     const command = this.next_cmds.get(cmd)
     if (!command) return
-    if (typeof command === 'function')
+    if (typeof command === 'function') {
+      this.cmd_history.push(cmd)
       return command(cmd)
+    }
   }
   /**
    * Get the next command list as string
@@ -28,6 +30,9 @@ export class Command<T> {
    */
   cmdStrings(): string[] {
     return Array.from(this.next_cmds.keys())
+  }
+  cmdBaseStrings(): string[] {
+    return Array.from(this.base_cmds.keys())
   }
   /**
    * Set next command list to the base command list.
@@ -49,7 +54,8 @@ export class Command<T> {
     return this.subject.subscribe(s)
   }
 
+  private cmd_history: string[] = []
   private base_cmds: TMap<T> = new Map()
   private next_cmds: TMap<T> = new Map()
-  private subject = new Subject<Map<string, T>>()
+  private subject = new Subject<TMap<T>>()
 }

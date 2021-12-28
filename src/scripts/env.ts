@@ -17,7 +17,7 @@ export function GetPlatform(): string {
   if (userAgent.indexOf('Linux') !== -1)
     return 'Linux'
 
-  return 'Unknwon'
+  return 'Unknown'
 }
 
 export const FORMATED_VERSION = `v${VERSION}-${COMMIT_HASH.substring(0, 7)}`

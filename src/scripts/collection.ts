@@ -1,164 +1,276 @@
-import { ISourceSet, ICollectionSet } from '@models/dataset'
+import { ItemSource } from './../models/item'
+import { Command } from '@scripts/command'
 import {
-  ICollection,
-  Item,
-  Memo,
-  IQuestion,
-  IOption,
   EItemType,
+  TItemSource,
+  TMemoSource,
+  MemoSource,
+  Memo
+} from '@models/item'
+import { Subject } from 'rxjs'
+import {
+  fold,
+  isRight,
+} from 'fp-ts/Either'
+import { pipe } from 'fp-ts/lib/function'
+import { Errors } from 'io-ts'
+import sha256 from 'crypto-js/sha256'
+
+import {
+  ICollectionBase,
+  ICollection,
+  CollectionSource,
+  TCollectionSource,
+  ECType, ECStatus,
 } from '@models/collection'
 import {
-  QuestionSource,
-  ItemSource,
-  MemoSource,
-  OptionSource,
-} from '@models/source'
+  extractQuerySource,
+  fetchSupportedURL,
+} from '@scripts/source'
+import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
+import { Item } from '@models/item'
+import {
+  ECommandMode,
+  TCommand,
+} from '@models/command'
 
-/**
- * Load collection from source set.
- *
- * @param set Source set.
- * @returns Created ICollection object
- */
-export function loadCollection(set: ISourceSet): ICollection {
-  // NOTE: Might reconsider how ICollection looks like,
-  //       should the data inside be optional instead and check for null?
-  const title       = (set.data && set.data.title)       || 'unknown'
-  const description = (set.data && set.data.description) || 'n/a'
-  const lang    = set.data && set.data.lang || undefined
-  const created = new Date(set.data && set.data.created || Date.now())
-  const updated = new Date(set.data && set.data.updated || Date.now())
-  const items   = new Map<string, ItemSource>()
-  return {
-    title,
-    description,
-    created,
-    updated,
-    items,
-    lang
+export async function createItemFromSource(source: TItemSource): Promise<Item> {
+  if (source.type === EItemType[0] || source.type === EItemType.Memo) {
+    const memoSource = source as TMemoSource
+    const id = memoSource.id === '' ?
+      sha256(memoSource.front + memoSource.back).toString()
+      :
+      memoSource.id
+    const memo: Memo = {
+      type: EItemType.Memo,
+      keywords: memoSource.keywords,
+      lang: memoSource.lang,
+      id: id,
+      hash: sha256(JSON.stringify(memoSource)).toString(),
+      front: memoSource.front,
+      back: memoSource.back,
+    }
+    return memo
   }
+
+  throw new Error('Unsupported item type')
 }
 
-/**
- * Merge the source set into the collection.
- *
- * @note The merge is done by the source title.
- *
- * @param sourceSet Source set list of collection
- * @returns Collection set list
- */
-export function mergeCollection(sourceSet: ISourceSet[]): ICollectionSet[] {
-  return sourceSet
-    .reduce((acc, cur) => {       // merge collections
-      const found = acc.find(c => c.collection && cur.data &&
-                                  c.collection.title === cur.data.title)
-      if (found) found.sources.push(cur)
-      else acc.push({
-        sources: [cur],
-        collection: loadCollection(cur)
+export async function sourceToCollection(source: TCollectionSource): Promise<ICollectionBase> {
+  const items = new Map<string, Item>()
+  for (const itemSource of source.items) {
+    const res = MemoSource.decode(itemSource)
+    if (isRight(res)) {
+      items.set(res.right.id, await createItemFromSource(res.right))
+    } else {
+      const item = ItemSource.decode(itemSource)
+      if (isRight(item))
+        console.warn('invalid item format', item.right)
+      else
+        console.error('invalid item format', item.left)
+    }
+  }
+
+  return {
+    type: ECType.Remote,
+    source: sha256(JSON.stringify(source)).toString(),
+    status: ECStatus.Loaded,
+    title: source.title,
+    description: source.description,
+    created: new Date(source.created),
+    updated: new Date(source.updated),
+    items: items,
+    lang: source.lang,
+  } as ICollection
+}
+
+export async function validateCollection(data: unknown): Promise<ICollectionBase> {
+  return new Promise((resolve, reject) => {
+    const onLeft = (err: Errors): string => {
+      console.error(err)
+      reject('invalid collection data')
+      return 'Invalid collection data'
+    }
+    const onRight = (value: TCollectionSource) => {
+      resolve(sourceToCollection(value))
+      return 'ok'
+    }
+    pipe(CollectionSource.decode(data), fold(onLeft, onRight))
+  })
+}
+
+export async function loadCollection(collection: ICollectionBase): Promise<ICollectionBase> {
+  try {
+    if (collection.type === ECType.Remote) {
+      const data = await fetchSupportedURL(collection.source)
+      return await validateCollection(data).then(data => {
+        data.source = collection.source
+        return data
       })
-      return acc
-    }, [] as ICollectionSet[])
-    .map(set => {                 // merge items
-      const { sources, collection } = set
-      sources.reduce((acc, cur) => {  // reduce to array of items
-        if (cur.data && cur.data.items) return acc
-          .concat(cur.data.items.map(src => cleanItemSource(src)))
-        return acc
-      }, [] as ItemSource[])
-        .forEach(i => collection && collection.items.set(i.id, i))  // put items into a map
-      return set
+    }
+  } catch (err) {
+    console.log(err)
+    collection.status = ECStatus.Error
+    // collection.error = err as any
+  }
+
+  throw new Error('Not implemented branch')
+}
+
+export class MonkeCollection {
+  constructor() {
+    this.collection.subscribe(c => this.collectionList = c)
+    this.collection.subscribe(c => {
+      saveLocalSourceList(c.filter(c => c.type === ECType.Remote).map(c => c.source))
     })
-}
-
-/**
- * Change the type to its enum value
- *
- * @param item Item source to clean
- * @return Item source with cleaned type
- */
-function cleanItemSource(item: ItemSource): ItemSource {
-  switch (item.type) {
-  case 'Memo':
-  case EItemType.Memo:
-    item.type = EItemType.Memo
-    break
-  case 'Question':
-  case EItemType.Question:
-    item.type = EItemType.Question
-    break
-  case 'Unknown':
-  default:
-    item.type = EItemType.Unknown
-    break
+    this.selected.subscribe(i => this.selectIndex = i)
   }
-  return item
-}
 
-/**
- * Create item from source.
- *
- * @param source Item source object
- * @returns Memo or Question object
- * @throws Error when item source is not formatted correctly
- */
-export function createItemFromSource(source: ItemSource): Item {
-  switch (source.type) {
-  case EItemType.Memo:
-    return createMemoFromSource(source as MemoSource)
-  case EItemType.Question:
-    return createQuestionFromSource(source as QuestionSource)
-  default:
-    throw new Error(
-      `Unknown item ${JSON.stringify(source)} type with ID: ${source.id}`
-    )
-  }
-}
+  async init() {
+    const queries = extractQuerySource(window.location.search)
+    const locals  = await getLocalSourceList()
+    const sources = new Set([...queries, ...locals])
 
-export function createMemoFromSource(source: MemoSource): Memo {
-  const id = source.id
-  const keywords = source.keywords
-  const lang  = source.lang
-  const front = source.front
-  const back  = source.back
-  const hash  = ''
-  return {
-    type: EItemType.Memo,
-    id,
-    hash,
-    keywords,
-    lang,
-    front,
-    back
-  }
-}
+    this.collection.next(await Promise.all(
+      Array.from(sources.values())
+        .map(s => ({
+          type: ECType.Remote,
+          source: s,
+          status: ECStatus.NotLoaded,
+        } as ICollectionBase))
+    ))
 
-export function createQuestionFromSource(source: QuestionSource): IQuestion {
-  const id = source.id
-  const keywords = source.keywords
-  const lang = source.lang
-  const text = source.text
-  const description = source.description
-  const options = source.options.map(createOptionFromSource)
-  const hash    = ''
-  return {
-    type: EItemType.Question,
-    id,
-    hash,
-    keywords,
-    lang,
-    text,
-    description,
-    options
+    await this.load()
   }
-}
 
-export function createOptionFromSource(source: OptionSource): IOption {
-  const text    = source.text
-  const correct = source.correct || false
-  return {
-    text,
-    correct,
-    marked: false
+  async load() {
+    try {
+      // TODO: Load from cache
+
+      this.loading.next(true)
+      const collection = await Promise.all(
+        this.collectionList.map(c => loadCollection(c)))
+      this.collection.next(collection)
+      this.loading.next(false)
+    } catch (err) {
+      console.error(err)
+    }
   }
+
+  list() {
+    return this.collectionList
+  }
+  addSource(url: string) {
+    this.collectionList.push({
+      type: ECType.Remote,
+      source: url,
+      status: ECStatus.NotLoaded,
+    })
+    this.collection.next(this.collectionList)
+    this.load()
+  }
+  editSource(index: number, url: string) {
+    this.collectionList[index].source = url
+    this.collection.next(this.collectionList)
+    this.load()
+  }
+  removeSource(index: number) {
+    this.collectionList.splice(index, 1)
+    this.collection.next(this.collectionList)
+    this.selected.next(-1)
+    this.load()
+  }
+
+  select(index: number) {
+    this.selected.next(index)
+  }
+  subSelect(fn: (c: number) => void) {
+    return this.selected.subscribe(fn)
+  }
+  getSelect() {
+    if (this.selectIndex >= 0 && this.selectIndex < this.collectionList.length)
+      return this.collectionList[this.selectIndex]
+    else
+      return null
+  }
+  subLoading(cb: (tof: boolean) => void) {
+    return this.loading.subscribe(cb)
+  }
+
+  register(command: Command<TCommand>) {
+    command.addBase('open collection', async () => {
+      command.next(this.list().map((c, i) => [
+        c.status === ECStatus.Loaded ? (c as ICollection).title : c.source,
+        async () => {
+          this.select(i)
+        }
+      ]))
+      return {
+        success: false,
+        hint: 'select a collection to open',
+        restore: command.restore.bind(command),
+      }
+    })
+
+    command.addBase('edit collection', async () => {
+      command.next(this.list().map((c, i) => [
+        c.status === ECStatus.Loaded ? (c as ICollection).title : c.source,
+        async () => {
+          command.next([
+            ['edit source', async () => {
+              return {
+                success: false,
+                value: c.source,
+                hint: 'edit source',
+                mode: ECommandMode.Input,
+                fn: async (v: string) => {
+                  if (v === '') return { success: false }
+                  this.editSource(i, v)
+                }
+              }
+            }],
+            ['remove', async () => {
+              command.next([
+                ['yes', async () => {
+                  this.removeSource(i)
+                }],
+                ['no', async () => {/**/}]
+              ])
+              return {
+                success: false,
+                hint: `confirm to remove ${c.source}`,
+              }
+            }],
+            ['go to source', async () => {
+              window.open(c.source, '_blank')
+            }]
+          ])
+          return {
+            success: false,
+            hint: 'select command',
+          }
+        }
+      ]))
+      return {
+        success: false,
+        hint: 'select a collection to edit',
+        restore: command.restore.bind(command),
+      }
+    })
+
+    command.addBase('add source', async () => ({
+      success: false,
+      mode: ECommandMode.Input,
+      hint: 'enter url source to add',
+      fn: async (input: string) => this.addSource(input)
+    }))
+
+  }
+
+  private selectIndex = -1
+  private selected = new Subject<number>()
+
+  private collectionList: ICollectionBase[] = []
+  private collection = new Subject<ICollectionBase[]>()
+  private loading = new Subject<boolean>()
 }

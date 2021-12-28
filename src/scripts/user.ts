@@ -1,24 +1,28 @@
-import { APP_NAME } from './env'
+import { Subject } from 'rxjs'
+import { ANIMAL_NAMES } from '@assets/AnimalNames'
 import {
   TCommand,
   ECommandMode
 } from '@models/command'
-import { Subject } from 'rxjs'
-import { User, UserJSON } from '@models/user'
-import { ANIMAL_NAMES } from '@assets/AnimalNames'
-import { StudySession } from '@models/study'
 import {
-  downloadData,
-  loadUser,
-  openTextFile,
-  saveUser
-} from '@scripts/cache'
-import { Monke } from '@scripts/monke'
+  User,
+  UserJSON,
+  IActivity,
+  TimeData,
+} from '@models/user'
+import { APP_NAME } from '@scripts/env'
 import { Command } from '@scripts/command'
+import {
+  saveUser,
+  loadUserRAW,
+  downloadText,
+  openFile,
+  readTextFile,
+} from '@scripts/cache'
 
-export const randomName = () => ANIMAL_NAMES[Math.floor(
-  Math.random() * ANIMAL_NAMES.length
-)]
+export const randomName = () => ANIMAL_NAMES[
+  Math.floor(Math.random() * ANIMAL_NAMES.length)
+]
 const LOG_VISIT_INTERVAL = 1000 * 60 * 10
 
 export function createUser(username?: string): User {
@@ -33,12 +37,16 @@ export function createUser(username?: string): User {
     metrics: {
       visits: [],
     },
+    memo: {
+      history: [],
+      saved: [],
+    },
     created: currentDate,
     updated: currentDate
   }
 }
 
-export function toJSON(user: User): UserJSON {
+export function userToJSON(user: User): UserJSON {
   return {
     name: user.name,
     avatar: user.avatar,
@@ -46,57 +54,120 @@ export function toJSON(user: User): UserJSON {
     metrics: {
       visits: user.metrics.visits
     },
+    memo: {
+      history: user.memo.history,
+      saved: user.memo.saved
+    },
     created: user.created.getTime(),
     updated: user.updated.getTime()
   }
 }
 
-export function toUser(userJSON: UserJSON): User {
+export function jsonToUser(userJSON: UserJSON): User {
+  const preference = userJSON.preference ?? { theme: 'auto-theme' }
+  const metrics = userJSON.metrics ?? {
+    visits: []
+  }
+  const memo = userJSON.memo ?? {
+    history: [],
+    saved: []
+  }
   return {
     name: userJSON.name,
     avatar: userJSON.avatar,
-    preference: userJSON.preference,
-    metrics: userJSON.metrics,
+    preference: preference,
+    metrics: metrics,
+    memo: memo,
     created: new Date(userJSON.created),
     updated: new Date(userJSON.updated)
   }
 }
 
-interface UserMonkeData {
-  user: User
-  session?: StudySession
-}
+export class MonkeUser {
+  constructor() {
+    const today = new Date(new Date().toLocaleDateString('en-SE'))
+    const day = 24 * 60 * 60 * 1000
+    this.activities = Array(365).fill(0).map((_, i) => {
+      return {
+        active: 0,
+        count: 0,
+        date: new Date(today.getTime() - i * day),
+      } as IActivity
+    })
+  }
 
-export class UserMonke {
   async init() {
-    this.subject.session.subscribe(s => this.session = s)
-
-    this.subject.user.subscribe(u => {
-      const userjson = toJSON(u)
+    this.subject.subscribe(u => {
+      const userjson = userToJSON(u)
       saveUser(userjson)
     })
-    this.subject.user.subscribe(u => this.data.user = u)
-    await this.load()
+    this.subject.subscribe(u => this.user = u)
+    await this.load(await loadUserRAW())
 
-    if (this.data.user.metrics.visits.length > 0) {
-      const visits = this.data.user.metrics.visits
+    if (this.user.metrics.visits.length > 0) {
+      const visits = this.user.metrics.visits
       const lastVisit = visits[visits.length - 1]
       const lastVisitTime = new Date(lastVisit)
       if (Date.now() - lastVisitTime.getTime() > LOG_VISIT_INTERVAL)
-        this.data.user.metrics.visits.push(Date.now())
+        this.user.metrics.visits.push(Date.now())
     } else {
-      this.data.user.metrics.visits.push(Date.now())
+      this.user.metrics.visits.push(Date.now())
     }
-    this.data.user.updated = new Date()
-    this.subject.user.next(this.data.user)
+    this.user.updated = new Date()
+    this.next(this.user)
   }
 
-  async load() {
+  async reload() {
+    await this.load(await loadUserRAW())
+  }
+
+  async load(raw: string) {
     try {
-      const userjson = await loadUser()
-      this.subject.user.next(toUser(userjson))
+      this.loading.next(true)
+      const json = JSON.parse(raw)
+      const user = jsonToUser(json)
+
+      const today = new Date(new Date().toLocaleDateString('en-SE'))
+      const day = 24 * 60 * 60 * 1000
+      const current = user
+      const visits = current.metrics.visits
+      const dataPoints = visits.reduce((acc, cur) => {
+        const date = new Date(cur)
+        const justDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+        if (acc.length === 0) acc.push({
+          time: justDate.getTime(),
+          data: 1
+        })
+        const last = acc[acc.length - 1]
+        if (last.time === justDate.getTime())
+          last.data += 1
+        else
+          acc.push({
+            time: justDate.getTime(),
+            data: 1
+          })
+        return acc
+      }, [] as TimeData<number>[]).reverse()
+
+      const largest = Math.max(...dataPoints.map(d => d.data))
+      const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
+
+      this.activities = dataPoints.concat(Array(len).fill({ time: 0, data: 0 }))
+        .map((d, i) => ({
+          time: d.time > 0 ? d.time : today.getTime() - (i * day),
+          data: d.data
+        } as TimeData<number>))
+        .map(d => ({
+          active: d.data / largest,
+          count: d.data,
+          date: new Date(d.time),
+        } as IActivity)).reverse()
+
+      this.next(user)
+      this.loading.next(false)
     } catch (err) {
-      this.subject.user.next(createUser())
+      this.next(createUser())
     }
   }
 
@@ -106,35 +177,56 @@ export class UserMonke {
         [ 'edit name', async () => {
           return {
             success: false,
-            default: this.data.user.name,
+            value: this.user.name,
             mode: ECommandMode.Input,
             fn: async (input) => {
               if (input === '') return { success: false }
-              this.data.user.name = input
-              this.subject.user.next(this.data.user)
+              this.editName(input)
               return { success: true }
             }
           }
         }],
         ['save', async () => {
-          downloadData(`${APP_NAME}-user-data`,
-            JSON.stringify(toJSON(this.data.user)))
+          downloadText(`${APP_NAME}-user-data`,
+            JSON.stringify(userToJSON(this.user)))
           return { success: true, hint: 'saved' }
         }],
         ['load', async () => {
-          openTextFile('.json').then(v => {
-            try {
-              const json = JSON.parse(v)
-              const user = toUser(json)
-              this.subject.user.next(user)
-            } catch (e) {
-              console.error(e)
-            }
-          })
-          return { success: true }
+          return await openFile('.json')
+            .then(f => {
+              command.next([
+                ['yes', async () => {
+                  await this.load(await readTextFile(f))
+                }],
+                ['no', async () => {/* */}]
+              ])
+              return {
+                success: false,
+                hint: `load user data from file '${f.name}'?`,
+                restore: command.restore.bind(command)
+              }
+            })
+            .catch(err => {
+              return { success: false, hint: err.message }
+            })
+        }],
+        ['delete', async () => {
+          command.next([
+            ['yes', async () => {
+              this.subject.next(createUser())
+            }],
+            ['no', async () => {
+              return { success: true }
+            }]
+          ])
+          return {
+            success: false,
+            hint: 'delete user?',
+            restore: command.restore.bind(command),
+          }
         }],
         ['stats', async () => {
-          const visits = this.data.user.metrics.visits.length
+          const visits = this.user.metrics.visits.length
           command.next([
             [`visits: ${visits}`, async () => {/**/}],
           ])
@@ -150,30 +242,28 @@ export class UserMonke {
     })
   }
 
-  setSession(session: StudySession) {
-    this.session = session
+  getActivities() { return this.activities }
+  subIsLoading(fn: (loading: boolean) => void) {
+    this.loading.subscribe(fn)
   }
-  getSession() {
-    return this.session
+  current() { return this.user ?? createUser() }
+  next(user: User) {
+    this.user = user
+    this.subject.next(user)
   }
-  getUser() {
-    return this.data.user
+  sub(fn: (user: User) => void) {
+    return this.subject.subscribe(fn)
+  }
+  save() {
+    this.subject.next(this.user)
+  }
+  editName(name: string) {
+    this.user.name = name
+    this.subject.next(this.user)
   }
 
-  get subjectUser() {
-    return this.subject.user
-  }
-  get subjectSession() {
-    return this.subject.session
-  }
-
-  private subject = {
-    user: new Subject<User>(),
-    session: new Subject<StudySession>()
-  }
-  private data: UserMonkeData = {
-    user: createUser(),
-    session: undefined
-  }
-  private session?: StudySession
+  private loading = new Subject<boolean>()
+  private subject = new Subject<User>()
+  private user!: User
+  private activities: IActivity[]
 }

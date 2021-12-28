@@ -2,13 +2,10 @@ import React, {
   useState,
   useEffect,
   useMemo,
-  ReactElement,
 } from 'react'
 
-import { ICollectionSet } from '@models/dataset'
-import { IActivity, TimeData } from '@models/user'
-import { Monke } from '@scripts/monke'
-import { UserMonke } from '@scripts/user'
+import { IActivity } from '@models/user'
+import { MonkeUser } from '@scripts/user'
 import { MemoHeatmap } from '@components/MemoHeatmap'
 import {
   REPOSITORY_URL,
@@ -17,17 +14,22 @@ import {
 import { MemoList, MemoListButtonItem } from '@components/MemoList'
 import { Command } from '@scripts/command'
 import { TCommand } from '@models/command'
+import {
+  ECStatus, ICollection, ICollectionBase
+} from '@models/collection'
+import { MonkeCollection } from '@scripts/collection'
 
 interface Props {
   isLoading: boolean
-  monke: Monke
-  user: UserMonke
+  user: MonkeUser
+  collection: MonkeCollection
   command: Command<TCommand>
 }
 
 export const HomePage: React.FC<Props> = (props) => {
-  const { monke, isLoading, user, command } = props
-  const [collections, setCollections] = useState<ICollectionSet[]>([])
+  const { isLoading, user, collection, command } = props
+  const [collectionList, setCollectionList] = useState<ICollectionBase[]>([])
+  const [heats, setHeats] = useState<IActivity[]>([])
   const colors = useMemo(() => {
     const base = getComputedStyle(document.body)
       .getPropertyValue('--activity-min').trim()
@@ -38,72 +40,20 @@ export const HomePage: React.FC<Props> = (props) => {
     return [colorBase, colorMax] as [number, number]
   }, [])
 
-  // TODO: Generate heatmap from user's activity
-  const heats = useMemo(() => {
-    const today = new Date(new Date().toLocaleDateString('en-SE'))
-    const day = 24 * 60 * 60 * 1000
-
-    if (isLoading) return Array(365).fill(0).map((_, i) => {
-      return {
-        active: 0,
-        count: 0,
-        date: new Date(today.getTime() - i * day),
-      } as IActivity
-    })
-
-    const current = user.getUser()
-    const visits = current.metrics.visits
-    const dataPoints = visits.reduce((acc, cur) => {
-      const date = new Date(cur)
-      const justDate = new Date(date.getFullYear(),
-        date.getMonth(), date.getDate())
-
-      if (acc.length === 0) {
-        acc.push({
-          time: justDate.getTime(),
-          data: 1
-        })
-      }
-      const last = acc[acc.length - 1]
-      if (last.time === justDate.getTime()) {
-        last.data += 1
-        return acc
-      } else {
-        acc.push({
-          time: justDate.getTime(),
-          data: 1
-        })
-      }
-      return acc
-    }, [] as TimeData<number>[]).reverse()
-    const largest = Math.max(...dataPoints.map(d => d.data))
-
-    const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
-    return dataPoints.concat(Array(len).fill({ time: 0, data: 0 }))
-      .map((d, i) => ({
-        time: d.time > 0 ? d.time : today.getTime() - (i * day),
-        data: d.data
-      } as TimeData<number>))
-      .map(d => ({
-        active: d.data / largest,
-        count: d.data,
-        date: new Date(d.time),
-      } as IActivity)).reverse()
-  }, [user, isLoading])
-
-  useEffect(() => {
-    setCollections(monke.getCollections())
-  }, [monke, isLoading])
-
   useEffect(() => {
     command.restore()
   }, [command])
+
+  useEffect(() => {
+    setCollectionList(collection.list())
+    setHeats(user.getActivities())
+  }, [isLoading, collection, user])
 
   return (
     <div className="home px-4 pt-4">
       <div className='mb-5 mt-5'>
         <h1 className='text-3xl text-mtext-dim-1'>
-          {user.getUser().name}
+          {isLoading ? 'loading...' :  user.current().name}
         </h1>
       </div>
       <div className='pb-2 ml-1 text-mtext-dim-1'>activity</div>
@@ -120,13 +70,18 @@ export const HomePage: React.FC<Props> = (props) => {
         </a>
       </div>
       <MemoList text='collections'>
-        {collections.map((c, i) => (
-          <MemoListButtonItem key={i} text={c.collection.title}
-            preview={`${c.collection.items.size}`}
-            onClick={() => {
-              monke.subjectCollection.next(i)
-            }} />
-        ))}
+        {collectionList.map((c, i) => {
+          const text = c.status === ECStatus.Loaded ? (c as ICollection).title : c.source
+          const preview = c.status === ECStatus.Loaded ? (c as ICollection).items.size : c.error
+          return (
+            <MemoListButtonItem key={i} text={text}
+              preview={`${preview}`}
+              onClick={() => {
+                collection.select(i)
+                // throw new Error('Selecting collection is not implemented yet')
+              }} />
+          )
+        })}
       </MemoList>
     </div>
   )

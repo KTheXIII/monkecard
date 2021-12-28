@@ -1,16 +1,18 @@
 import React, {
   forwardRef, useEffect, useImperativeHandle, useRef, useState
 } from 'react'
-import {
-  EItemType,
-  Memo
-} from '@models/collection'
 import { MemoCard, MemoCardRef } from '@components/MemoCard'
-import { UserMonke } from '@scripts/user'
-import { StudySession } from '@models/study'
+import { MonkeUser } from '@scripts/user'
+import { ISession } from '@models/session'
+import { Memo, EItemType } from '@models/item'
+import { Command } from '@scripts/command'
+import { TCommand } from '@models/command'
+import { MonkeSession } from '@scripts/session'
 
 interface Props {
-  user: UserMonke
+  user: MonkeUser
+  session: MonkeSession
+  command: Command<TCommand>
   onHome: () => void
 }
 
@@ -20,8 +22,8 @@ export interface StudyPageRef {
 
 export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
   const memoRef = useRef<MemoCardRef>(null)
-  const { user } = props
-  const [session, setSession] = useState<StudySession>()
+  const { user, command, session } = props
+  const [current, setCurrent] = useState<ISession>()
 
   useImperativeHandle(ref, () => ({
     onKeyDown: (e: KeyboardEvent) => {
@@ -30,8 +32,8 @@ export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
   }))
 
   useEffect(() => {
-    setSession(user.getSession())
-  }, [user])
+    setCurrent(session.current())
+  }, [user, command, session])
 
   return (
     <div className="h-full">
@@ -43,14 +45,14 @@ export const StudyPage = forwardRef<StudyPageRef, Props>((props, ref) => {
           </button>
         </div>
       </div>
-      {session && session.type === EItemType.Memo &&
+      {current && current.type === EItemType.Memo &&
        <MemoCard
          ref={memoRef}
          onBack={() => {
            props.onHome()
-         }} memos={session.items as Memo[]}
+         }} memos={current.items as Memo[]}
        />}
-      {session && session.type === EItemType.Question &&
+      {current && current.type === EItemType.Question &&
       // TODO: Implement Question
       <div className="flex flex-col h-full">
         <button onClick={() => props.onHome()}>go back</button>
