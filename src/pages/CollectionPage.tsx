@@ -18,12 +18,6 @@ import { MonkeSession } from '@scripts/session'
 import { TCommand } from '@models/command'
 import { Subscription } from 'rxjs'
 
-const DEFAULT_COLLECTION: ICollectionBase = {
-  source: sha256('default').toString(),
-  status: ECStatus.Error,
-  type: ECType.Local,
-}
-
 interface Props {
   isLoading: boolean
   user: MonkeUser
@@ -34,7 +28,7 @@ interface Props {
 
 export const CollectionPage: React.FC<Props> = (props) => {
   const { isLoading, collection, command, session } = props
-  const [data, setData] = useState(DEFAULT_COLLECTION)
+  const [data, setData] = useState<ICollectionBase>()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState<string>()
@@ -48,7 +42,7 @@ export const CollectionPage: React.FC<Props> = (props) => {
     }))
     subs.push(collection.subLoading(isloading => {
       if (isloading) {
-        setData(DEFAULT_COLLECTION)
+        setData(undefined)
         return
       }
       const selected = collection.getSelect()
@@ -60,16 +54,27 @@ export const CollectionPage: React.FC<Props> = (props) => {
   useEffect(() => {
     const selected = collection.getSelect()
     if (selected) setData(selected)
-    else setData(DEFAULT_COLLECTION)
-  }, [isLoading, collection])
+    else setData(undefined)
+
+    command.nextExtend([
+      [`start current`, async () => {
+        // TODO: start current selected collection
+      }]
+    ])
+
+    return () => {
+      command.resetExtend()
+    }
+  }, [isLoading, collection, command])
 
   // TODO: Render something else when loading
   // TODO: Render something else when error
   useEffect(() => {
     if (!data) return
-    if (data.status === ECStatus.Error) return
-
-    if (data.status === ECStatus.Loaded) {
+    if (data.status === ECStatus.Error) {
+      setTitle('Error')
+      setDescription(`${data.error}`)
+    } else if (data.status === ECStatus.Loaded) {
       const c = data as ICollection
       setTitle(c.title)
       setDescription(c.description)
@@ -83,12 +88,13 @@ export const CollectionPage: React.FC<Props> = (props) => {
         <h1>{title}</h1>
       </div>
       <div>{description}</div>
-      <CollectionItemList items={items} onStart={(type, ids) => {
+      {data && data.status !== ECStatus.Error
+      && <CollectionItemList items={items} onStart={(type, ids) => {
         if (data.status === ECStatus.Error || data.status === ECStatus.NotLoaded)
           return
         const c = data as ICollection
         session.create(c, type, ids)
-      }} />
+      }} />}
     </div>
   )
 }

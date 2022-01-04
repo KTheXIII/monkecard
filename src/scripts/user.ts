@@ -129,7 +129,9 @@ export class MonkeUser {
     const json = JSON.parse(raw)
     const user = jsonToUser(json)
 
-    const today = new Date(new Date().toLocaleDateString('en-SE'))
+    const tempDate = new Date()
+    const today = new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate())
+
     const day = 24 * 60 * 60 * 1000
     const current = user
     const visits = current.metrics.visits
@@ -153,18 +155,18 @@ export class MonkeUser {
     }, [] as TimeData<number>[]).reverse()
 
     const largest = Math.max(...dataPoints.map(d => d.data))
-    const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
+    // const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
 
-    this.activities = dataPoints.concat(Array(len).fill({ time: 0, data: 0 }))
-      .map((d, i) => ({
-        time: d.time > 0 ? d.time : today.getTime() - (i * day),
-        data: d.data
-      } as TimeData<number>))
-      .map(d => ({
-        active: d.data / largest,
-        count: d.data,
-        date: new Date(d.time),
-      } as IActivity)).reverse()
+    this.activities = Array(365).fill(0).map((_, i) => {
+      const date = new Date(today.getTime() - i * day)
+      // NOTE: Optimize this, when possible
+      const data = dataPoints.find(d => d.time === date.getTime())
+      return {
+        active: data ? data.data / largest : 0,
+        count: data ? data.data : 0,
+        date: date
+      } as IActivity
+    }).reverse()
 
     this.next(user)
     this.loading.next(false)

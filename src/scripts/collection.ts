@@ -109,9 +109,9 @@ export async function loadCollection(collection: ICollectionBase): Promise<IColl
       })
     }
   } catch (err) {
-    console.log(err)
     collection.status = ECStatus.Error
-    // collection.error = err as any
+    collection.error = String(err)
+    return collection
   }
 
   throw new Error('Not implemented branch')
@@ -190,8 +190,6 @@ export class MonkeCollection {
   getSelect() {
     if (this.selectIndex >= 0 && this.selectIndex < this.collectionList.length)
       return this.collectionList[this.selectIndex]
-    else
-      return null
   }
   subLoading(cb: (tof: boolean) => void) {
     return this.loading.subscribe(cb)
@@ -264,7 +262,6 @@ export class MonkeCollection {
       hint: 'enter url source to add',
       fn: async (input: string) => this.addSource(input)
     }))
-
   }
 
   private selectIndex = -1

@@ -25,7 +25,7 @@ updated: string or number
 items: Item[]
 ```
 
-`title`: Title of the collection file. If this is not defined then the question will show in unknown collection. If there are multiple collection files with the same title, then the `datas` will be merge together.
+`title`: Title of the collection file.
 
 `description`: Description for the collection (optional), this will be ignored if the `title` is not defined. Markdown is supported with Latex Math.
 
@@ -45,15 +45,15 @@ items: Item[]
 
 ```yml
 type: ItemType
-id: string
 keywords: string[]
 lang: string (optional)
+id: string
 ```
 
- - `type`: `ItemType:` `[ Unknwon, Question, Memo ]`
- - `id`: Unqiue ID, if it's not unique in the collection then it'll be generated to avoid conflict.
+ - `type`: `ItemType:` `[ Unknwon, Question, Memo, Task ]`
  - `keywords`: string of keywords, if it's empty then the default will be `unknown`.
  - `lang`: Item language uses [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+ - `id`: Unqiue ID, if it's not unique in the collection then it'll be generated to avoid conflict.
 
 #### Question Item
 
@@ -85,7 +85,7 @@ front: string
 back: string
 
 type: ItemType
-id: string
 keywords: string[]
 lang: string (optional)
+id: string
 ```

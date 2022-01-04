@@ -9,6 +9,8 @@ type TMap<T> = Map<string, T>
 export class Command<T> {
   constructor() {
     this.sub(s => this.next_cmds = s)
+    this.extend.subscribe(s => this.extend_cmds = new Map(s))
+    this.extend.subscribe(s => this.subject.next(this.next_cmds))
   }
   /**
    * This runs the command in the 'next list'.
@@ -17,7 +19,7 @@ export class Command<T> {
    * @returns Promise<T>
    */
   async run(cmd: string) {
-    const command = this.next_cmds.get(cmd)
+    const command = this.next_cmds.get(cmd) ?? this.extend_cmds.get(cmd)
     if (!command) return
     if (typeof command === 'function') {
       this.cmd_history.push(cmd)
@@ -29,10 +31,13 @@ export class Command<T> {
    * @returns list of commands
    */
   cmdStrings(): string[] {
-    return Array.from(this.next_cmds.keys())
+    return [...Array.from(this.next_cmds.keys()), ...Array.from(this.extend_cmds.keys())]
   }
   cmdBaseStrings(): string[] {
     return Array.from(this.base_cmds.keys())
+  }
+  cmdExtendStrings(): string[] {
+    return Array.from(this.extend_cmds.keys())
   }
   /**
    * Set next command list to the base command list.
@@ -40,12 +45,18 @@ export class Command<T> {
   restore() {
     this.subject.next(this.base_cmds)
   }
+  resetExtend() {
+    this.extend.next([])
+  }
   addBase(name: string, cmd: T) {
     this.base_cmds.set(name, cmd)
   }
   addNext(name: string, cmd: T) {
     this.next_cmds.set(name, cmd)
     this.subject.next(this.next_cmds)
+  }
+  nextExtend(cmds: TNextCommand<T>[]) {
+    this.extend.next(cmds)
   }
   next(cmds: TNextCommand<T>[]) {
     this.subject.next(new Map(cmds))
@@ -56,6 +67,8 @@ export class Command<T> {
 
   private cmd_history: string[] = []
   private base_cmds: TMap<T> = new Map()
+  private extend_cmds: TMap<T> = new Map()
   private next_cmds: TMap<T> = new Map()
   private subject = new Subject<TMap<T>>()
+  private extend = new Subject<TNextCommand<T>[]>()
 }

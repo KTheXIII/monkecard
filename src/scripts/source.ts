@@ -131,7 +131,7 @@ export function fetchSupportedURL(url: string): Promise<unknown> {
     else if (GITHUB_GIST_REGEX.test(url))
       return fetchGistGithub(url)
     else
-      return Promise.reject(`Unsupported URL type: ${url}`)
+      return Promise.reject(`URL: ${url} is not supported`)
   } catch (e) {
     return Promise.reject(e)
   }

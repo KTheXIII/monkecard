@@ -72,7 +72,7 @@ export const HomePage: React.FC<Props> = (props) => {
       <MemoList text='collections'>
         {collectionList.map((c, i) => {
           const text = c.status === ECStatus.Loaded ? (c as ICollection).title : c.source
-          const preview = c.status === ECStatus.Loaded ? (c as ICollection).items.size : c.error
+          const preview = c.status === ECStatus.Loaded ? (c as ICollection).items.size : 'not loaded'
           return (
             <MemoListButtonItem key={i} text={text}
               preview={`${preview}`}
