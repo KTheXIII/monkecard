@@ -34,3 +34,14 @@ Build production
 ```
 pnpm build
 ```
+
+## Planned
+
+  - [ ] Confidence metric
+  - [ ] Local data
+  - [ ] User dashboard with dataview
+  - [ ] Tutorial view
+  - [ ] Custom theme
+  - [ ] Editor tool for collection and item creation
+  - [ ] Server node for data syncing
+  - [ ] Language selector

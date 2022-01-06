@@ -130,7 +130,6 @@ export class MonkeCollection {
     const queries = extractQuerySource(window.location.search)
     const locals  = await getLocalSourceList()
     const sources = new Set([...queries, ...locals])
-
     this.collection.next(await Promise.all(
       Array.from(sources.values())
         .map(s => ({
@@ -141,6 +140,9 @@ export class MonkeCollection {
     ))
 
     await this.load()
+
+    // Remove query params when loaded
+    window.history.replaceState({}, document.title, '/')
   }
 
   async load() {

@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs'
 
-type TNextCommand<T> = [string, T]
+type TMapGeneric<T> = [string, T]
 type TMap<T> = Map<string, T>
 
 /**
@@ -31,7 +31,7 @@ export class Command<T> {
    * @returns list of commands
    */
   cmdStrings(): string[] {
-    return [...Array.from(this.next_cmds.keys()), ...Array.from(this.extend_cmds.keys())]
+    return [...Array.from(this.next_cmds.keys())]
   }
   cmdBaseStrings(): string[] {
     return Array.from(this.base_cmds.keys())
@@ -45,6 +45,10 @@ export class Command<T> {
   restore() {
     this.subject.next(this.base_cmds)
   }
+  resetBase() {
+    this.base_cmds.clear()
+    this.next([])
+  }
   resetExtend() {
     this.extend.next([])
   }
@@ -55,10 +59,10 @@ export class Command<T> {
     this.next_cmds.set(name, cmd)
     this.subject.next(this.next_cmds)
   }
-  nextExtend(cmds: TNextCommand<T>[]) {
+  nextExtend(cmds: TMapGeneric<T>[]) {
     this.extend.next(cmds)
   }
-  next(cmds: TNextCommand<T>[]) {
+  next(cmds: TMapGeneric<T>[]) {
     this.subject.next(new Map(cmds))
   }
   sub(s: (cmd: TMap<T>) => void) {
@@ -70,5 +74,5 @@ export class Command<T> {
   private extend_cmds: TMap<T> = new Map()
   private next_cmds: TMap<T> = new Map()
   private subject = new Subject<TMap<T>>()
-  private extend = new Subject<TNextCommand<T>[]>()
+  private extend = new Subject<TMapGeneric<T>[]>()
 }

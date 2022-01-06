@@ -59,7 +59,7 @@ export const CollectionPage: React.FC<Props> = (props) => {
     command.nextExtend([
       [`start current`, async () => {
         // TODO: start current selected collection
-      }]
+      }],
     ])
 
     return () => {

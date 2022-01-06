@@ -1,6 +1,6 @@
 {
   "name": "monkecard",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "author": "KTheXIII",
   "license": "MIT",
   "homepage": "https://monkecard.xyz",
@@ -10,9 +10,14 @@
     "url": "https://github.com/KTheXIII/monkecard/issues"
   },
   "private": true,
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/KTheXIII"
+  },
   "scripts": {
     "dev": "snowpack dev",
     "build": "snowpack build && workbox generateSW",
+    "build:dev": "NODE_ENV=development snowpack build",
     "test": "NODE_ENV=test web-test-runner './src/**/*.test.*' --node-resolve",
     "clean": "rimraf build .cache"
   },

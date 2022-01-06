@@ -1,5 +1,6 @@
 import { marked } from 'marked'
 import katex from 'katex'
+import { pipe } from 'fp-ts/function'
 import DOMPurify from 'dompurify'
 
 export const EQUATION_BLOCK_REGEX  = /^\${2}\s((?:.|\\\\\n)*)\s^\${2}$/gm
@@ -29,7 +30,8 @@ export function renderBlockMatch(text: string): string {
 
 export function renderMarkdown(text: string): string {
   // TODO: Set base URL for the relative links
-  return marked(renderBlockMatch(renderInlineMatch(text)), {
-    sanitizer: DOMPurify.sanitize
-  })
+  return pipe(text, renderInlineMatch, renderBlockMatch,
+    text => marked(text, {
+      sanitizer: DOMPurify.sanitize
+    }))
 }

@@ -1,8 +1,5 @@
 import * as io from 'io-ts'
-import {
-  Item,
-  MemoSource,
-} from '@models/item'
+import { Item } from '@models/item'
 
 // Collection status
 export enum ECStatus {
@@ -14,9 +11,10 @@ export enum ECStatus {
 
 // Collection type
 export enum ECType {
-  Local  = 0,
-  Remote = 1,
-  Saved  = 2,
+  Unknown = -1,
+  Local   =  0,
+  Remote  =  1,
+  Saved   =  2,
 }
 
 export interface ICollectionBase {

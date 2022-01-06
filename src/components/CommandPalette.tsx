@@ -70,9 +70,8 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
       setRestore(undefined)
     }
     if (isHidden) setPlaceholder(DEFAULT_PLACEHOLDER)
-
-    if (!inputRef.current) return
-    inputRef.current.focus()
+    if (!isHidden)
+      inputRef.current?.focus({ preventScroll: true })
   }, [isHidden, restore])
 
   useEffect(() => {
@@ -96,8 +95,9 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
 
   useEffect(() => {
     const element = listRef.current?.children[select]
-    element?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-  }, [select])
+    if (!element || isHidden) return
+    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [select, isHidden])
 
   const onKey = useCallback((e: KeyboardEvent) => {
     const input = inputRef.current
@@ -139,19 +139,8 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (!inputRef.current) return
-    if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      const newSelect = (select + filtered.length - 1) % filtered.length
-      setSelect(newSelect)
-      return
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      const newSelect = (select + 1) % filtered.length
-      setSelect(newSelect)
-      return
-    }
-
-    if (e.key === 'Enter') {
+    switch (e.key) {
+    case 'Enter': {
       switch (mode) {
       case ECommandMode.Input:
         onInputEnter()
@@ -159,11 +148,29 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
       default:
         onSelectCommand(select)
       }
+      break
     }
-  }, [select, filtered, mode, onInputEnter, onSelectCommand])
+    case 'ArrowUp': {
+      e.preventDefault()
+      const newSelect = (select + filtered.length - 1) % filtered.length
+      setSelect(newSelect)
+      break
+    }
+    case 'ArrowDown': {
+      e.preventDefault()
+      const newSelect = (select + 1) % filtered.length
+      setSelect(newSelect)
+      break
+    }
+    case 'Escape': {
+      onHide()
+      break
+    }
+    }
+  }, [select, filtered, mode, onInputEnter, onSelectCommand, onHide])
 
   return (
-    <div className="command-palette fixed top-0 left-1/2 -translate-x-1/2">
+    <div className="fixed top-0 left-0">
       {!isHidden &&
       <div ref={commandRef} className="w-screen h-screen bg-opacity-50
                                      bg-black flex font-light">

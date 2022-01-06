@@ -13,5 +13,9 @@ export interface ICommandResult {
   pre?: TCommand        // Command to be executed before the input
 }
 
+export interface ICommand {
+  mode?: ECommandMode  // Defaults to normal
+}
+
 export type TCommand = (input: string) => Promise<ICommandResult | void>
 export type TCommandMap = Map<string, TCommand>

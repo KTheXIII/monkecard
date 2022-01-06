@@ -65,6 +65,7 @@ declare const __SNOWPACK_ENV__ : {
   HOMEPAGE: string
   REPOSITORY_URL: string
   COMMIT_HASH: string
+  SPONSOR_URL: string
 
   PUBLIC_URL: string
   MODE: string,

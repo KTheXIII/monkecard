@@ -19,7 +19,11 @@ import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { HomePage } from '@pages/HomePage'
 import { CollectionPage } from '@pages/CollectionPage'
 import { StudyPage, StudyPageRef } from '@pages/StudyPage'
-import { GetPlatform, REPOSITORY_URL } from '@scripts/env'
+import {
+  GetPlatform,
+  REPOSITORY_URL,
+  SPONSOR_URL
+} from '@scripts/env'
 import { MonkeUser } from '@scripts/user'
 import { MonkeCollection } from '@scripts/collection'
 import { MonkeSession } from '@scripts/session'
@@ -79,6 +83,9 @@ export const App: React.FC = () => {
     command.addBase('docs', async () => {
       window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank')
     })
+    command.addBase('sponsor', async () => {
+      window.open(SPONSOR_URL, '_blank')
+    })
   }, [user, command, collection, session])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
@@ -104,11 +111,11 @@ export const App: React.FC = () => {
       return
     }
     // Hide Command Palette
-    if (e.key === 'Escape' && !isCMDHidden) {
-      setIsCMDHidden(true)
-      e.preventDefault()
-      return
-    }
+    // if (e.key === 'Escape' && !isCMDHidden) {
+    //   setIsCMDHidden(true)
+    //   e.preventDefault()
+    //   return
+    // }
 
     commandRef.current?.onKeyDown(e)
     if (!isCMDHidden) return

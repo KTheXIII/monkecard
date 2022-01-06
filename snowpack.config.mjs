@@ -8,7 +8,8 @@ export default {
     HOMEPAGE: process.env.npm_package_homepage,
     REPOSITORY_URL: process.env.npm_package_repository,
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
-    PUBLIC_URL: process.env.PUBLIC_URL || '/'
+    PUBLIC_URL: process.env.PUBLIC_URL || '/',
+    SPONSOR_URL: process.env.npm_package_funding_url,
   },
   alias: {
     '@assets': './src/assets',

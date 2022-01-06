@@ -50,7 +50,7 @@ const Week: React.FC<IWeek> = (props) => {
     <g x={x} y={y}>
       {activities.map((data, i) => {
         const index = Math.round(mapRange(data.active, 0, 1, 0, colors.length - 1))
-        const color = index === 0 && data.active > 0 ? colors[1] : colors[index]
+        const color = index === 0 && data.count > 0 ? colors[1] : colors[index]
         return (<Day data={data} key={i}
           x={x} y={i * (BOX_PADDING + BOX_SIZE) + y}
           color={color} />

@@ -15,7 +15,7 @@ const GITHUB_GIST_REGEX = /^https:\/\/gist\.github\.com\/([^/]+)\/([^/]+)\/?$/i
  *
  * @example
  * const array = extractQueryValues('source=a&source=b&source=c', /source=([^&]+&?)/gi)
- *
+ * @note Might consider switching to URLSearchParams
  * @param query Query string to parse
  * @param regex Regex to match against
  * @returns Array of strings with regex match stripped.

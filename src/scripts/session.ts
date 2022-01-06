@@ -16,7 +16,7 @@ export class MonkeSession {
         time.push(0)
         confidence.push(0)
         completed.push(0)
-        items.push(item)
+        items.push({ ...item })
       }
     }
     const session: ISession = {

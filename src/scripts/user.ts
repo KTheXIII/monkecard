@@ -104,7 +104,7 @@ export class MonkeUser {
     this.subject.subscribe(u => this.user = u)
     // Initialise user with local data or create new user
     const user = await loadUserRAW()
-      .catch(err => JSON.stringify(createUser()))
+      .catch(err => JSON.stringify(userToJSON(createUser())))
     await this.load(user)
 
     if (this.user.metrics.visits.length > 0) {
@@ -135,13 +135,13 @@ export class MonkeUser {
     const day = 24 * 60 * 60 * 1000
     const current = user
     const visits = current.metrics.visits
-    const dataPoints = visits.reduce((acc, cur) => {
+    const dataPoints = visits.sort((a, b) => a - b).reduce((acc, cur) => {
       const date = new Date(cur)
       const justDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
       if (acc.length === 0) acc.push({
         time: justDate.getTime(),
-        data: 1
+        data: 0
       })
       const last = acc[acc.length - 1]
       if (last.time === justDate.getTime())
@@ -155,15 +155,16 @@ export class MonkeUser {
     }, [] as TimeData<number>[]).reverse()
 
     const largest = Math.max(...dataPoints.map(d => d.data))
-    // const len = 365 - dataPoints.length > 0 ? 365 - dataPoints.length : 0
+    const minimum = Math.min(...dataPoints.map(d => d.data))
+    const delta = largest - minimum
 
     this.activities = Array(365).fill(0).map((_, i) => {
       const date = new Date(today.getTime() - i * day)
-      // NOTE: Optimize this, when possible
       const data = dataPoints.find(d => d.time === date.getTime())
+      const value = data ? data.data : 0
       return {
-        active: data ? data.data / largest : 0,
-        count: data ? data.data : 0,
+        active: (value - minimum) > 0 ? (value - minimum) / delta : 0,
+        count: value,
         date: date
       } as IActivity
     }).reverse()

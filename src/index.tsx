@@ -7,7 +7,9 @@ import {
   PUBLIC_URL,
   VERSION,
   COMMIT_HASH,
-  REPOSITORY_URL
+  REPOSITORY_URL,
+  SPONSOR_URL,
+  APP_NAME,
 } from '@scripts/env'
 
 if ('serviceWorker' in navigator && MODE === 'production') {
@@ -19,8 +21,9 @@ if ('serviceWorker' in navigator && MODE === 'production') {
 }
 
 async function main() {
-  console.log(`v${VERSION}-${COMMIT_HASH.slice(0, 7)}`)
+  console.log(`${APP_NAME} - v${VERSION}-${COMMIT_HASH.slice(0, 7)}`)
   console.log(`bug report: ${REPOSITORY_URL}/issues`)
+  console.log(`sponsor me on github: ${SPONSOR_URL}`)
 
   ReactDOM.render(
     <React.StrictMode>
