@@ -108,3 +108,9 @@ export async function readTextFile(file: File): Promise<string> {
     reader.readAsText(file)
   })
 }
+
+export async function copyText(text: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    reject('Not implemented')
+  })
+}

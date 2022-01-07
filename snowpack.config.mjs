@@ -1,4 +1,27 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
+
+const plugins = [
+  '@snowpack/plugin-react-refresh',
+  '@snowpack/plugin-dotenv',
+  ['@snowpack/plugin-typescript'],
+  ['@snowpack/plugin-run-script',
+    {
+      cmd: 'eslint src --ext .js,.jsx,.ts,.tsx',
+      watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
+    },
+  ],
+  '@snowpack/plugin-postcss',
+  ['@snowpack/plugin-optimize',
+    {
+      preloadCSS: true,
+      preloadCSSFileName: '/style.css'
+    }
+  ],
+]
+
+if (process.env.NODE_ENV === 'development')
+  plugins.push(['snowpack-plugin-hash'])
+
 export default {
   env: {
     APP_NAME: process.env.npm_package_name,
@@ -10,6 +33,7 @@ export default {
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
     PUBLIC_URL: process.env.PUBLIC_URL || '/',
     SPONSOR_URL: process.env.npm_package_funding_url,
+    BUILD_DATE: new Date().toISOString(),
   },
   alias: {
     '@assets': './src/assets',
@@ -22,24 +46,7 @@ export default {
     public: { url: '/', static: true, resolve: true },
     src: { url: '/static' },
   },
-  plugins: [
-    '@snowpack/plugin-react-refresh',
-    '@snowpack/plugin-dotenv',
-    ['@snowpack/plugin-typescript'],
-    ['@snowpack/plugin-run-script',
-      {
-        cmd: 'eslint src --ext .js,.jsx,.ts,.tsx',
-        watch: 'esw -w --clear src --ext .js,.jsx,.ts,.tsx'
-      },
-    ],
-    '@snowpack/plugin-postcss',
-    ['@snowpack/plugin-optimize',
-      {
-        preloadCSS: true,
-        preloadCSSFileName: (process.env.PUBLIC_URL || '/') + 'style.css'
-      }
-    ],
-  ],
+  plugins: plugins,
   routes: [
     /* Enable an SPA Fallback in development: */
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
@@ -57,6 +64,6 @@ export default {
   buildOptions: {
     cacheDirPath: './.cache/snowpack',
     metaUrlPath: 'snowpack', // Fix for github pages
-    baseUrl: process.env.PUBLIC_URL || '/'
+    // baseUrl: process.env.PUBLIC_URL || '/'
   },
 }

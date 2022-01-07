@@ -8,6 +8,7 @@ export const MODE           = __SNOWPACK_ENV__.MODE
 export const PUBLIC_URL     = __SNOWPACK_ENV__.PUBLIC_URL
 export const HOMEPAGE       = __SNOWPACK_ENV__.HOMEPAGE
 export const SPONSOR_URL    = __SNOWPACK_ENV__.SPONSOR_URL
+export const BUILD_DATE     = __SNOWPACK_ENV__.BUILD_DATE
 
 export function GetPlatform(): string {
   const userAgent = navigator.userAgent

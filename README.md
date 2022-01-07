@@ -29,10 +29,28 @@ Run tests
 pnpm test
 ```
 
-Build production
+## Production
+
+### Static
+
+Before building run the test script first, build production
 
 ```
 pnpm build
+```
+
+### Docker
+
+Build with docker with `production` enviroment
+
+```
+docker build --build-arg mode=production -t monkecard .
+```
+
+Run docker image
+
+```
+docker run -d --name container_name -p port_bind:80 monkecard
 ```
 
 ## Planned

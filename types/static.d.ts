@@ -66,9 +66,9 @@ declare const __SNOWPACK_ENV__ : {
   REPOSITORY_URL: string
   COMMIT_HASH: string
   SPONSOR_URL: string
+  BUILD_DATE: string
 
   PUBLIC_URL: string
   MODE: string,
-  MODE_ENV: string
   SSR: boolean
 }

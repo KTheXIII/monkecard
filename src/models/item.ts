@@ -4,7 +4,7 @@ export enum EItemType {
   Unknown  = -1,
   Memo     =  0,
   Question =  1,
-  Task     =  2,
+  Tenta    =  2,
 }
 export type TItemType = keyof typeof EItemType
 

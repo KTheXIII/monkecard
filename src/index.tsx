@@ -10,6 +10,7 @@ import {
   REPOSITORY_URL,
   SPONSOR_URL,
   APP_NAME,
+  BUILD_DATE,
 } from '@scripts/env'
 
 if ('serviceWorker' in navigator && MODE === 'production') {
@@ -22,6 +23,7 @@ if ('serviceWorker' in navigator && MODE === 'production') {
 
 async function main() {
   console.log(`${APP_NAME} - v${VERSION}-${COMMIT_HASH.slice(0, 7)}`)
+  console.log(`build date: ${BUILD_DATE}`)
   console.log(`bug report: ${REPOSITORY_URL}/issues`)
   console.log(`sponsor me on github: ${SPONSOR_URL}`)
 
