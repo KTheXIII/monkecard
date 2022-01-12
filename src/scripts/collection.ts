@@ -1,4 +1,4 @@
-import { ItemSource } from './../models/item'
+import { ItemSource } from '@models/item'
 import { Command } from '@scripts/command'
 import {
   EItemType,
@@ -12,7 +12,7 @@ import {
   fold,
   isRight,
 } from 'fp-ts/Either'
-import { pipe } from 'fp-ts/lib/function'
+import { pipe } from 'fp-ts/function'
 import { Errors } from 'io-ts'
 import sha256 from 'crypto-js/sha256'
 
@@ -27,7 +27,11 @@ import {
   extractQuerySource,
   fetchSupportedURL,
 } from '@scripts/source'
-import { getLocalSourceList, saveLocalSourceList } from '@scripts/cache'
+import {
+  copyToClipboard,
+  getLocalSourceList,
+  saveLocalSourceList
+} from '@scripts/cache'
 import { Item } from '@models/item'
 import {
   ECommandMode,
@@ -109,8 +113,10 @@ export async function loadCollection(collection: ICollectionBase): Promise<IColl
       })
     }
   } catch (err) {
+    if (typeof err === 'string') {
+      collection.error = String(err)
+    }
     collection.status = ECStatus.Error
-    collection.error = String(err)
     return collection
   }
 
@@ -241,6 +247,9 @@ export class MonkeCollection {
                 hint: `confirm to remove ${c.source}`,
               }
             }],
+            ['copy source', async () => {
+              await copyToClipboard(c.source)
+            }],
             ['go to source', async () => {
               window.open(c.source, '_blank')
             }]
@@ -262,7 +271,7 @@ export class MonkeCollection {
       success: false,
       mode: ECommandMode.Input,
       hint: 'enter url source to add',
-      fn: async (input: string) => this.addSource(input)
+      fn: async (input: string) => this.addSource(input.trim())
     }))
   }
 

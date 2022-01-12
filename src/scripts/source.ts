@@ -66,18 +66,18 @@ export const extractQueryNode       = (query: string)
  * @returns Promise that resolves to the parsed YAML object
  */
 export async function fetchYAML(url: string): Promise<unknown> {
-  try {
-    const res = await fetch(url, { mode: 'cors' })
-    if (!res.ok) return Promise.reject(res.statusText)
-    const text = await res.text()
+  return await fetch(url, {
+    method: 'GET',
+    mode: 'cors'
+  }).then(res => {
+    if (res.ok) return res.text()
+    return Promise.reject(new Error(`Fetch failed: ${res.statusText}`))
+  }).then(text => {
     const data = yaml.load(text)
     if (typeof data === 'object')
-      return Promise.resolve(Object(data))
-
+      return Promise.resolve(data)
     return Promise.reject('YAML data is not an object')
-  } catch (err) {
-    return Promise.reject(err)
-  }
+  })
 }
 
 /**
@@ -87,34 +87,30 @@ export async function fetchYAML(url: string): Promise<unknown> {
  * @returns Promise that resolves to the parsed JSON object.
  */
 export async function fetchJSON(url: string): Promise<unknown> {
-  try {
-    const res = await fetch(url, { mode: 'cors' })
-    if (!res.ok) return Promise.reject(res.statusText)
-    const data = await res.json()
-    return Promise.resolve(data)
-  } catch (err) {
-    return Promise.reject(err)
-  }
+  return await fetch(url, { mode: 'cors' }).then(res => {
+    if (res.ok) return res.json()
+    return Promise.reject(res.statusText)
+  })
 }
 
 export async function fetchGistGithub(url: string): Promise<unknown> {
-  try {
-    const dest = url.replace(GITHUB_GIST_REGEX, 'https://gist.githubusercontent.com/$1/$2/raw')
-    const res = await fetch(dest, { mode: 'cors' })
-    if (!res.ok) return Promise.reject(res.statusText)
-    const text = await res.text()
-
-    // Try to first parse as JSON and then as YAML
+  const dest = url.replace(GITHUB_GIST_REGEX, 'https://gist.githubusercontent.com/$1/$2/raw')
+  return await fetch(dest, { mode: 'cors' }).then(res => {
+    if (res.ok) return res.text()
+    return Promise.reject(res.statusText)
+  }).then(text => {
     try {
       const data = JSON.parse(text)
       return Promise.resolve(data)
-    } catch (e) {
+    } catch (err) {/* ignore */}
+
+    try {
       const data = yaml.load(text)
       return Promise.resolve(data)
-    }
-  } catch (err) {
-    return Promise.reject(err)
-  }
+    } catch (err) {/* ignore */}
+
+    return Promise.reject('JSON or YAML data is not an object')
+  })
 }
 
 /**
@@ -122,7 +118,7 @@ export async function fetchGistGithub(url: string): Promise<unknown> {
  * @param url JSON, YAML or GitHub Gist url
  * @returns Promise with unknown data type
  */
-export function fetchSupportedURL(url: string): Promise<unknown> {
+export async function fetchSupportedURL(url: string): Promise<unknown> {
   try {
     if (JSON_EXT_REGEX.test(url))
       return fetchJSON(url)

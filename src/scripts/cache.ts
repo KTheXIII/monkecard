@@ -40,7 +40,7 @@ export async function loadUser(): Promise<UserJSON> {
   return Promise.reject('No user saved')
 }
 
-export function downloadText(filename: string, json: string) {
+export function downloadJSON(filename: string, json: string) {
   const e = document.createElement('a')
   e.setAttribute('href',
     'data:text/json;charset=utf-8,' + encodeURIComponent(json))
@@ -109,8 +109,21 @@ export async function readTextFile(file: File): Promise<string> {
   })
 }
 
-export async function copyText(text: string): Promise<void> {
+export async function copyToClipboard(text: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    reject('Not implemented')
+    if (!navigator.clipboard) {
+      const textarea = document.createElement('textarea')
+      document.body.appendChild(textarea)
+      textarea.value = text
+      textarea.select()
+      textarea.setSelectionRange(0, 99999)
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      resolve()
+    } else {
+      navigator.clipboard.writeText(text)
+        .then(() => resolve())
+        .catch(err => reject(err))
+    }
   })
 }

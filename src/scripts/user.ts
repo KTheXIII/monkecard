@@ -15,7 +15,7 @@ import { Command } from '@scripts/command'
 import {
   saveUser,
   loadUserRAW,
-  downloadText,
+  downloadJSON,
   openFile,
   readTextFile,
 } from '@scripts/cache'
@@ -189,7 +189,7 @@ export class MonkeUser {
           }
         }],
         ['save', async () => {
-          downloadText(`${APP_NAME}-user-data`,
+          downloadJSON(`${APP_NAME}-user-data`,
             JSON.stringify(userToJSON(this.user)))
           return { success: true, hint: 'saved' }
         }],

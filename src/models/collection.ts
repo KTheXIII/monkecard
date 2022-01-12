@@ -17,6 +17,9 @@ export enum ECType {
   Saved   =  2,
 }
 
+// hash format
+// collection:sha256<hash>
+
 export interface ICollectionBase {
   type: ECType
   source: string    // source url or hash of local collection

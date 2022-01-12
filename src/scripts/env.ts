@@ -10,7 +10,15 @@ export const HOMEPAGE       = __SNOWPACK_ENV__.HOMEPAGE
 export const SPONSOR_URL    = __SNOWPACK_ENV__.SPONSOR_URL
 export const BUILD_DATE     = __SNOWPACK_ENV__.BUILD_DATE
 
-export function GetPlatform(): string {
+enum EPlatform {
+  Unknown = -1,
+  macOS   =  0,
+  Windows =  1,
+  Linux   =  2,
+}
+type TPlatform = keyof typeof EPlatform
+
+export function GetPlatform(): TPlatform {
   const userAgent = navigator.userAgent
   if (userAgent.indexOf('Macintosh') !== -1)
     return 'macOS'
