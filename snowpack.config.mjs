@@ -29,7 +29,7 @@ export default {
     AUTHOR: process.env.npm_config_init_author_name,
     DESCRIPTION: process.env.npm_package_description,
     HOMEPAGE: process.env.npm_package_homepage,
-    REPOSITORY_URL: process.env.npm_package_repository,
+    REPOSITORY_URL: process.env.npm_package_repository_url,
     COMMIT_HASH: process.env.GITHUB_SHA || 'development',
     PUBLIC_URL: process.env.PUBLIC_URL || '/',
     SPONSOR_URL: process.env.npm_package_funding_url,

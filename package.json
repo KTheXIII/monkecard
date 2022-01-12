@@ -5,7 +5,10 @@
   "license": "MIT",
   "homepage": "https://monkecard.xyz",
   "description": "Decentralised memo webapp with external sources",
-  "repository": "https://github.com/KTheXIII/monkecard",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KTheXIII/monkecard"
+  },
   "bugs": {
     "url": "https://github.com/KTheXIII/monkecard/issues"
   },
