@@ -5,13 +5,12 @@ ARG mode=production
 ENV MODE=$mode
 
 COPY package.json .
-COPY pnpm-lock.yaml .
+COPY yarn.lock .
 
-RUN npm i -g pnpm
-RUN pnpm i --shamefully-hoist --frozen-lockfile
+RUN yarn --frozen-lockfile
 COPY . .
-RUN NODE_ENV=$MODE pnpm build
+RUN NODE_ENV=$MODE yarn build
 
-# Serve with nginx
+# Serve with Apache httpd
 FROM httpd
 COPY --from=builder /app/build/ /usr/local/apache2/htdocs/

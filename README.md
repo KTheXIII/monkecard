@@ -7,26 +7,25 @@ Build with Snowpack, ReactJS, tailwindcss and TypeScript.
 ## Requirements
 
   - [nodejs](https://nodejs.dev)
-  - [pnpm](https://pnpm.io)
 
 ## Development
 
 Installs the packages
 
 ```
-pnpm i
+yarn
 ```
 
 Run development server
 
 ```
-pnpm dev
+yarn dev
 ```
 
 Run tests
 
 ```
-pnpm test
+yarn test
 ```
 
 ## Production
@@ -36,7 +35,7 @@ pnpm test
 Before building run the test script first, build production
 
 ```
-pnpm build
+yarn build
 ```
 
 ### Docker
@@ -52,14 +51,3 @@ Run docker image
 ```
 docker run -d --name container_name -p port_bind:80 monkecard
 ```
-
-## Planned
-
-  - [ ] Confidence metric
-  - [ ] Local data
-  - [ ] User dashboard with dataview
-  - [ ] Tutorial view
-  - [ ] Custom theme
-  - [ ] Editor tool for collection and item creation
-  - [ ] Server node for data syncing
-  - [ ] Language selector

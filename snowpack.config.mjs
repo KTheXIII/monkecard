@@ -56,6 +56,9 @@ export default {
     treeshake: true,
   },
   packageOptions: {
+    knownEntrypoints: [
+      'fp-ts/es6/Either'
+    ],
   },
   devOptions: {
     open: 'none',
