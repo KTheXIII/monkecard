@@ -1,28 +1,31 @@
 {
   "name": "monkecard",
   "short_name": "monkecard",
-  "start_url": "/",
-  "display": "standalone",
   "description": "Memo app with quizes and card memos.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
   "background_color": "#0f0f0f",
   "orientation": "portrait-primary",
   "icons": [
     {
       "src": "favicon.png",
       "type": "image/png",
-      "sizes": "64x64 32x32 24x24 16x16"
+      "sizes": "64x64"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "any"
     },
     {
       "src": "logo@2x.png",
       "type": "image/png",
-      "sizes": "128x128",
-      "purpose": "maskable"
+      "sizes": "128x128"
     },
     {
       "src": "logo@3x.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "maskable"
+      "sizes": "192x192"
     },
     {
       "src": "logo@4x.png",

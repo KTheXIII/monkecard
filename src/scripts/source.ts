@@ -1,4 +1,5 @@
-import * as yaml from 'js-yaml'
+import * as YAML from 'js-yaml'
+import { YAMLException } from 'js-yaml'
 
 // REGEX for source and collection query keys
 const SOURCE_REGEX   = /source=([^&]+)&?/gi  // source=<source>&
@@ -66,18 +67,10 @@ export const extractQueryNode       = (query: string)
  * @returns Promise that resolves to the parsed YAML object
  */
 export async function fetchYAML(url: string): Promise<unknown> {
-  return await fetch(url, {
-    method: 'GET',
-    mode: 'cors'
-  }).then(res => {
+  return await fetch(url, { mode: 'cors' }).then(res => {
     if (res.ok) return res.text()
     return Promise.reject(new Error(`Fetch failed: ${res.statusText}`))
-  }).then(text => {
-    const data = yaml.load(text)
-    if (typeof data === 'object')
-      return Promise.resolve(data)
-    return Promise.reject('YAML data is not an object')
-  })
+  }).then(text => parseSource(text))
 }
 
 /**
@@ -88,9 +81,9 @@ export async function fetchYAML(url: string): Promise<unknown> {
  */
 export async function fetchJSON(url: string): Promise<unknown> {
   return await fetch(url, { mode: 'cors' }).then(res => {
-    if (res.ok) return res.json()
-    return Promise.reject(res.statusText)
-  })
+    if (res.ok) return res.text()
+    return Promise.reject(new Error(`Fetch failed: ${res.statusText}`))
+  }).then(text => parseSource(text))
 }
 
 export async function fetchGistGithub(url: string): Promise<unknown> {
@@ -98,19 +91,7 @@ export async function fetchGistGithub(url: string): Promise<unknown> {
   return await fetch(dest, { mode: 'cors' }).then(res => {
     if (res.ok) return res.text()
     return Promise.reject(res.statusText)
-  }).then(text => {
-    try {
-      const data = JSON.parse(text)
-      return Promise.resolve(data)
-    } catch (err) {/* ignore */}
-
-    try {
-      const data = yaml.load(text)
-      return Promise.resolve(data)
-    } catch (err) {/* ignore */}
-
-    return Promise.reject('JSON or YAML data is not an object')
-  })
+  }).then(text =>  parseSource(text))
 }
 
 /**
@@ -130,5 +111,16 @@ export async function fetchSupportedURL(url: string): Promise<unknown> {
       return Promise.reject(`URL: ${url} is not supported`)
   } catch (e) {
     return Promise.reject(e)
+  }
+}
+
+export async function parseSource(text: string): Promise<unknown> {
+  try {
+    const data = YAML.load(text)
+    return Promise.resolve(data)
+  } catch (err) {
+    if (err instanceof YAMLException)
+      return Promise.reject(err.message)
+    return Promise.reject(err)
   }
 }

@@ -1,5 +1,3 @@
-import { ISessionJSON } from './session'
-
 export interface IActivity {
   date: Date
   count: number
@@ -12,13 +10,13 @@ export interface TimeData<T> {
 }
 
 export interface IUserMetric {
-  visits: number[]
-  // idle: TimeData<number>[]
-  // active: TimeData<number>[]
+  visit: number[]
+  idle: TimeData<number>[]
+  active: TimeData<number>[]
 }
 
 export interface MemoMetric {
-  history: ISessionJSON[]
+  infos: string
   saved: TimeData<string>[]  // store the hash of the item
 }
 

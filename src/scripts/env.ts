@@ -30,4 +30,15 @@ export function GetPlatform(): TPlatform {
   return 'Unknown'
 }
 
+export function RegisterServiceWorker(): void {
+  if (MODE === 'development') return
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register(`${PUBLIC_URL || '/'}service-worker.js`)
+        .then(reg => console.log(`registered service worker: ${reg.scope}`))
+        .catch(err => console.error(err))
+    })
+  }
+}
+
 export const FORMATED_VERSION = `v${VERSION}-${COMMIT_HASH.substring(0, 7)}`

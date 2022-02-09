@@ -28,7 +28,7 @@ jobs:
         run: |
           yarn clean
           yarn build
-          yarn postpack
+          yarn post:build
           touch build/.nojekyll
         # env:
         #   PUBLIC_URL: './'

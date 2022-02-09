@@ -3,10 +3,8 @@ import React, {
   useCallback,
   useEffect, useImperativeHandle, useRef, useState
 } from 'react'
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
-import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { MemoFlipCard, MemoFlipCardRef } from './MemoItem/MemoFlipCard'
-import { Memo } from '@models/item'
+import { Memo } from '@models/Card'
 
 interface Props {
   memos: Memo[]
@@ -45,11 +43,15 @@ const Component = forwardRef<MemoCardRef, Props>((props, ref) => {
   const onNext = useCallback(() => {
     setActiveCard(prev => (prev + 1) % memos.length)
   }, [memos])
+  const onGrade = useCallback((grade: number) => {
+    console.log(grade)
+  }, [])
 
   return (
     <div className="memo-card h-full grid p-4">
-      {memo && <MemoFlipCard ref={memoRef} memo={memo} />}
-      <ToolsFloat>
+      {memo && <MemoFlipCard ref={memoRef} memo={memo} onGrade={onGrade} />}
+
+      {/* <ToolsFloat>
         <ToolsFloatButton
           icon={<BsChevronLeft />}
           isIconLeft={true} text="prev"
@@ -63,7 +65,7 @@ const Component = forwardRef<MemoCardRef, Props>((props, ref) => {
           isIconLeft={false} text="next"
           onClick={onNext}
         />
-      </ToolsFloat>
+      </ToolsFloat> */}
     </div>
   )
 })

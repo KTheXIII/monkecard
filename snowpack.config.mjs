@@ -19,9 +19,6 @@ const plugins = [
   ],
 ]
 
-if (process.env.NODE_ENV === 'development')
-  plugins.push(['snowpack-plugin-hash'])
-
 export default {
   env: {
     APP_NAME: process.env.npm_package_name,
@@ -38,6 +35,7 @@ export default {
   alias: {
     '@assets': './src/assets',
     '@components': './src/components',
+    '@hooks': './src/hooks',
     '@pages': './src/pages',
     '@models': './src/models',
     '@scripts': './src/scripts',

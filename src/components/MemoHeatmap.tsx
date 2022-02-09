@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useLayoutEffect
 } from 'react'
 import { IActivity } from '@models/user'
 
@@ -59,12 +60,24 @@ const Week: React.FC<IWeek> = (props) => {
   )
 }
 
-const WeekNames: React.FC = (props) => {
+type TWeekNames   = [string, string, string, string, string, string, string]
+type TWeekPattern = [0 | 1, 0 | 1, 0 | 1, 0 | 1, 0 | 1, 0 | 1, 0 | 1]
+const WEEK_NAMES: TWeekNames     = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+const WEEK_PATTERN: TWeekPattern = [1, 0, 1, 0, 1, 0, 0]
+
+interface IWeekNames {
+  names?: TWeekNames
+  pattern?: TWeekPattern
+}
+
+const WeekNames: React.FC<IWeekNames> = (props) => {
+  const names   = props.names   ?? WEEK_NAMES
+  const pattern = props.pattern ?? WEEK_PATTERN
   return (
     <div className="flex flex-col mr-[5px] text-mtext-dim-1 text-xs mt-[20px]">
-      {['mon', '', 'wed', '', 'fri', '', ''].map((v, i) => (
+      {names.map((v, i) => (
         <div className="h-[10px] rounded-sm mb-[3px] last:m-0" key={i}>
-          {v}
+          {pattern[i] === 1 &&  v}
         </div>
       ))}
     </div>
@@ -170,7 +183,7 @@ const Component: React.FC<MemoHeatmapProps> = (props) => {
     }
   }, [onMouseHover, onMouseLeave])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setHeatmap(
       weeks.map((week, i) => (
         <Week activities={week} key={i}

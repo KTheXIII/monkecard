@@ -9,17 +9,17 @@ import {
   MemoListMarkItem
 } from '@components/MemoList'
 import { ActionButton, FilterButton } from '@components/ButtonUtilities'
-import { EItemType, Item } from '@models/item'
+import { ECardType, Card } from '@models/Card'
 
 const START_TEXTS = {
   Start: 'start',
   Selected: 'start selected'
 }
-const DEFAULT_FILTER = EItemType.Memo
+const DEFAULT_FILTER = ECardType.Memo
 
 interface Props {
-  items?: Map<string, Item>
-  onStart: (type: EItemType, item: string[]) => void
+  items?: Map<string, Card>
+  onStart: (type: ECardType, item: string[]) => void
 }
 
 interface KeywordSet {
@@ -29,7 +29,7 @@ interface KeywordSet {
 
 export const CollectionItemList: React.FC<Props> = (props) => {
   const [itemList,  setItemList]  = useState<KeywordSet[]>([])
-  const [filter,    setFilter]    = useState<EItemType>(DEFAULT_FILTER)
+  const [filter,    setFilter]    = useState<ECardType>(DEFAULT_FILTER)
   const [startText, setStartText] = useState<string>(START_TEXTS.Start)
   const [selected,  setSelected]  = useState<Set<string>>(new Set())
 
@@ -64,11 +64,11 @@ export const CollectionItemList: React.FC<Props> = (props) => {
     const { items } = props
     if (!items) return
     const count = Array.from(items.values())
-      .reduce((acc, item) => acc + (item.type === EItemType.Memo ? 1 : 0), 0)
-    if (count === 0) setFilter(EItemType.Question)
+      .reduce((acc, item) => acc + (item.type === ECardType.Memo ? 1 : 0), 0)
+    if (count === 0) setFilter(ECardType.Question)
   }, [props])
 
-  const onFilterClick = useCallback((f: EItemType) => {
+  const onFilterClick = useCallback((f: ECardType) => {
     if (f !== filter) {
       selected.clear()
       setSelected(selected)
@@ -100,10 +100,10 @@ export const CollectionItemList: React.FC<Props> = (props) => {
         }} />}
       </div>
       <div className="flex gap-1 overflow-x-auto mb-3">
-        <FilterButton text="memo" active={filter === EItemType.Memo}
-          onClick={() => onFilterClick(EItemType.Memo)} />
-        <FilterButton text="quiz" active={filter === EItemType.Question}
-          onClick={() => onFilterClick(EItemType.Question)} />
+        <FilterButton text="memo" active={filter === ECardType.Memo}
+          onClick={() => onFilterClick(ECardType.Memo)} />
+        <FilterButton text="quiz" active={filter === ECardType.Question}
+          onClick={() => onFilterClick(ECardType.Question)} />
       </div>
       <MemoList>
         {itemList.map((set, index) => (

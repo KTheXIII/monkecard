@@ -16,20 +16,20 @@ import {
   CommandPaletteRef,
 } from '@components/CommandPalette'
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
+import { MonkeContext } from '@hooks/MonkeContext'
 import { HomePage } from '@pages/HomePage'
-import { CollectionPage } from '@pages/CollectionPage'
-import { StudyPage, StudyPageRef } from '@pages/StudyPage'
+import { StudyPageRef } from '@pages/StudyPage'
 
+import { TCommand } from '@models/command'
+import { Command } from '@scripts/command'
 import {
   GetPlatform,
   REPOSITORY_URL,
   SPONSOR_URL
 } from '@scripts/env'
-import { MonkeUser } from '@scripts/user'
-import { MonkeCollection } from '@scripts/collection'
-import { MonkeSession } from '@scripts/session'
-import { Command } from '@scripts/command'
-import { TCommand } from '@models/command'
+import { DeckDB } from '@scripts/DeckDB'
+import { CardDB } from '@scripts/CardDB'
+import { MonkeDB } from '@scripts/MonkeDB'
 
 enum Page {
   Home,
@@ -49,32 +49,18 @@ export const App: React.FC = () => {
   const commandRef  = useRef<CommandPaletteRef>(null)
 
   const command = useMemo(() => new Command<TCommand>(), [])
-  const user    = useMemo(() => new MonkeUser(), [])
-  const collection = useMemo(() => new MonkeCollection(), [])
-  const session = useMemo(() => new MonkeSession(), [])
+  const monkeDB = useMemo(() => new MonkeDB(), [])
+  const deckDB  = useMemo(() => new DeckDB(), [])
+  const cardDB  = useMemo(() => new CardDB(), [])
 
   useEffect(() => {
+    const deckSub = deckDB.loading.subscribe(setIsLoading)
+
     command.sub(s => setCMDList(command.cmdStrings()))
     command.addBase('home', async () => setPage(Page.Home))
 
-    user.init()
-    user.regiser(command)
-    user.subIsLoading(setIsLoading)
-    user.sub(u => session.setUser(u))
+    deckDB.init(monkeDB, cardDB)
 
-    session.sub(s => setPage(Page.Study))
-
-    collection.subLoading(setIsLoading)
-    collection.init()
-    collection.subSelect(i => {
-      if (i !== -1) setPage(Page.Collection)
-    })
-    collection.register(command)
-
-    command.addBase('reload', async () => {
-      await user.reload()
-      await collection.load()
-    })
     command.addBase('sponsor', async () => {
       window.open(SPONSOR_URL, '_blank')
     })
@@ -87,7 +73,11 @@ export const App: React.FC = () => {
     command.addBase('docs', async () => {
       window.open(`${REPOSITORY_URL}/tree/trunk/docs`, '_blank')
     })
-  }, [user, command, collection, session])
+
+    return () => {
+      deckSub.unsubscribe()
+    }
+  }, [command, deckDB, cardDB, monkeDB])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     // Show Command Palette
@@ -138,36 +128,17 @@ export const App: React.FC = () => {
   useEffect(() => {
     setIsNavHidden(page === Page.Study)
     if (page === Page.Home) command.restore()
-    // TODO: Guard page change if there's no data
   }, [page, command])
 
   return (
     <div className="app md:w-[600px] md:mx-auto">
-      {page === Page.Home       &&
-      <HomePage
-        isLoading={isLoading}
-        user={user}
-        collection={collection}
-        command={command}
-      />}
-      {page === Page.Collection &&
-      <CollectionPage
-        isLoading={isLoading}
-        user={user}
-        collection={collection}
-        command={command}
-        session={session}
-      />}
-      {page === Page.Study      &&
-      <StudyPage
-        ref={studyRef}
-        onHome={() => {
-          setPage(Page.Home)
-        }}
-        user={user}
-        command={command}
-        session={session}
-      />}
+      <MonkeContext.Provider value={{ monke: monkeDB, deck: deckDB, card: cardDB }}>
+        {page === Page.Home       &&
+        <HomePage
+          isLoading={isLoading}
+          command={command}
+        />}
+      </MonkeContext.Provider>
 
       <ToolsFloat isHidden={isNavHidden}>
         <ToolsFloatButton
