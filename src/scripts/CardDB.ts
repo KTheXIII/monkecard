@@ -1,4 +1,4 @@
-import {  } from '../models/Card'
+
 import { isLeft, isRight } from 'fp-ts/lib/Either'
 import md5 from 'crypto-js/md5'
 import {
@@ -6,6 +6,8 @@ import {
   CardSource,
   Memo,
   MemoSource,
+  CardException,
+  ECardType
 } from '@models/Card'
 
 async function sourceToMemo(srcHash: string, hash: string, source: unknown): Promise<Memo> {
@@ -13,8 +15,8 @@ async function sourceToMemo(srcHash: string, hash: string, source: unknown): Pro
   if (isLeft(decode)) return Promise.reject(decode.left)
   const item = decode.right
   return {
-    type: item.type,
-    keywords: item.keywords,
+    type: ECardType.Memo,
+    tags: item.tags,
     lang: item.lang,
     id: item.id,
     deck: srcHash,
@@ -35,16 +37,16 @@ async function sourceToCard(srcHash: string, hash: string, source: unknown): Pro
 
     case 1:
     case 'Question':
-      return Promise.reject(new Error('Question is not implemented'))
+      return Promise.reject(new CardException('Question is not supported yet'))
 
     case 2:
     case 'Tenta':
-      return Promise.reject(new Error('Tenta is not implemented'))
+      return Promise.reject(new CardException('Tenta is not supported yet'))
 
     default:
     case -1:
     case 'Unknown':
-      return Promise.reject('Unknown item type')
+      return Promise.reject(new CardException('Unknown card type'))
     }
   } else {
     return Promise.reject(dec.left)

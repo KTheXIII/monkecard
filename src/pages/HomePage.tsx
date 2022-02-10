@@ -6,8 +6,7 @@ import React, {
   useCallback,
 } from 'react'
 
-import { IActivity } from '@models/user'
-import { MemoHeatmap } from '@components/MemoHeatmap'
+import { IHeat, MemoHeatmap } from '@components/MemoHeatmap'
 import {
   REPOSITORY_URL,
   FORMATED_VERSION,
@@ -26,7 +25,6 @@ import { MonkeContext } from '@hooks/MonkeContext'
 
 interface Props {
   isLoading: boolean
-  command: Command<TCommand>
 }
 
 interface TextItem {
@@ -36,11 +34,11 @@ interface TextItem {
 }
 
 export const HomePage: React.FC<Props> = (props) => {
-  const { isLoading, command } = props
-  const { monke, deck } = useContext(MonkeContext)
+  const { isLoading } = props
+  const { monke, deck, command } = useContext(MonkeContext)
   const [deckList, setDeckList] = useState<TextItem[]>([])
 
-  const [heats, setHeats] = useState<IActivity[]>([])
+  const [heats, setHeats] = useState<IHeat[]>([])
   const colors = useMemo(() => {
     const base = getComputedStyle(document.body)
       .getPropertyValue('--activity-min').trim()
@@ -57,45 +55,62 @@ export const HomePage: React.FC<Props> = (props) => {
     const items: TextItem[] = []
     for (let i = 0; i < keys.length; i++) {
       const deckData = await deck.getDeck(keys[i])
-      let text = 'loading...'
-      let preview = '(￣ω￣)'
+      const item: TextItem = {
+        text: 'loading...',
+        preview :`(×_×)`,
+        id: keys[i],
+      }
 
       switch (deckData.status) {
       case EDeckStatus.Loaded: {
         const deck = deckData as IDeck
-        text = deck.title
-        preview = `${deck.cards.size}`
+        item.text = deck.title
+        item.preview = `${deck.cards.size}`
         break
       }
+
       case EDeckStatus.Error: {
-        text = 'error'
-        preview = '(￣ω￣)'
+        item.text = `${deckData.error?.toLocaleLowerCase()}`
+        item.preview = `${deckData.source}`
         break
       }
+
       case EDeckStatus.Loading:
       default:
         break
       }
-      items.push({ text, preview, id: keys[i] })
+      items.push(item)
     }
     setDeckList(items)
   }, [deck])
 
   const renderHeats = useCallback(async () => {
     if (!monke) return
+    const today = new Date(new Date().toLocaleDateString('en-SE'))
+    const day = 24 * 60 * 60 * 1000
+    const heatData: IHeat[] = Array(365).fill(0).map((_, i) => {
+      return {
+        active: Math.random() * (Math.random() < 0.3 ? 0 : 1),
+        count: 0,
+        date: new Date(today.getTime() - i * day),
+        // date: new Date(lastYear.getTime() + (i + 1) * day),
+      } as IHeat
+    }).reverse()
+    setHeats(heatData)
   }, [monke])
 
-  const onDeckOpen = useCallback(async (id: string) => {
-    // TODO: Open deck
+  const onDeckOpen = useCallback((id: string) => {
+    if (deck) deck.selectDeck(id)
   }, [deck])
 
   useEffect(() => {
+    if (!command) return
     command.restore()
   }, [command])
 
   useEffect(() => {
-    renderDecks()
     renderHeats()
+    renderDecks()
   }, [isLoading, renderDecks, renderHeats])
 
   return (

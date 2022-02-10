@@ -1,5 +1,4 @@
 import * as io from 'io-ts'
-import { Card } from '@models/Card'
 
 // Collection status
 export enum EDeckStatus {
@@ -16,9 +15,6 @@ export enum EDeckType {
   Remote  =  1,
   Saved   =  2,
 }
-
-// hash format
-// collection:sha256<hash>
 
 export interface IDeckBase {
   type: EDeckType

@@ -18,6 +18,7 @@ import {
 import { ToolsFloat, ToolsFloatButton } from '@components/ToolsFloat'
 import { MonkeContext } from '@hooks/MonkeContext'
 import { HomePage } from '@pages/HomePage'
+import { DeckPage } from '@pages/DeckPage'
 import { StudyPageRef } from '@pages/StudyPage'
 
 import { TCommand } from '@models/command'
@@ -49,17 +50,18 @@ export const App: React.FC = () => {
   const commandRef  = useRef<CommandPaletteRef>(null)
 
   const command = useMemo(() => new Command<TCommand>(), [])
-  const monkeDB = useMemo(() => new MonkeDB(), [])
-  const deckDB  = useMemo(() => new DeckDB(), [])
-  const cardDB  = useMemo(() => new CardDB(), [])
+  // Application state is stored in these databases
+  const monke = useMemo(() => new MonkeDB(), [])
+  const deck  = useMemo(() => new DeckDB(), [])
+  const card  = useMemo(() => new CardDB(), [])
 
   useEffect(() => {
-    const deckSub = deckDB.loading.subscribe(setIsLoading)
-
+    const loadingSub = deck.onLoading(setIsLoading)
+    const selectSub  = deck.onSelect(id => id !== '' && setPage(Page.Collection))
     command.sub(s => setCMDList(command.cmdStrings()))
     command.addBase('home', async () => setPage(Page.Home))
 
-    deckDB.init(monkeDB, cardDB)
+    deck.init(monke, card)
 
     command.addBase('sponsor', async () => {
       window.open(SPONSOR_URL, '_blank')
@@ -75,9 +77,10 @@ export const App: React.FC = () => {
     })
 
     return () => {
-      deckSub.unsubscribe()
+      loadingSub.unsubscribe()
+      selectSub.unsubscribe()
     }
-  }, [command, deckDB, cardDB, monkeDB])
+  }, [command, deck, card, monke])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     // Show Command Palette
@@ -132,12 +135,11 @@ export const App: React.FC = () => {
 
   return (
     <div className="app md:w-[600px] md:mx-auto">
-      <MonkeContext.Provider value={{ monke: monkeDB, deck: deckDB, card: cardDB }}>
+      <MonkeContext.Provider value={{ monke, deck, card, command }}>
         {page === Page.Home       &&
-        <HomePage
-          isLoading={isLoading}
-          command={command}
-        />}
+        <HomePage isLoading={isLoading} />}
+        {page === Page.Collection &&
+        <DeckPage isLoading={isLoading} />}
       </MonkeContext.Provider>
 
       <ToolsFloat isHidden={isNavHidden}>

@@ -12,6 +12,7 @@ export class Command<T> {
     this.extend.subscribe(s => this.extend_cmds = new Map(s))
     this.extend.subscribe(s => this.subject.next(this.next_cmds))
   }
+
   /**
    * This runs the command in the 'next list'.
    *
@@ -26,6 +27,7 @@ export class Command<T> {
       return command(cmd)
     }
   }
+
   /**
    * Get the next command list as string
    * @returns list of commands

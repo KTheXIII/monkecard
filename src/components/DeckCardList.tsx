@@ -1,7 +1,8 @@
 import React, {
   useEffect,
   useState,
-  useCallback
+  useCallback,
+  useContext
 } from 'react'
 
 import {
@@ -9,7 +10,9 @@ import {
   MemoListMarkItem
 } from '@components/MemoList'
 import { ActionButton, FilterButton } from '@components/ButtonUtilities'
-import { ECardType, Card } from '@models/Card'
+import { ECardType } from '@models/Card'
+import { MonkeContext } from '@hooks/MonkeContext'
+import { CardDB } from '@scripts/CardDB'
 
 const START_TEXTS = {
   Start: 'start',
@@ -18,55 +21,45 @@ const START_TEXTS = {
 const DEFAULT_FILTER = ECardType.Memo
 
 interface Props {
-  items?: Map<string, Card>
-  onStart: (type: ECardType, item: string[]) => void
+  cardIDs: string[]
 }
 
-interface KeywordSet {
+interface TagSet {
   id: string
   items: string[],
 }
 
-export const CollectionItemList: React.FC<Props> = (props) => {
-  const [itemList,  setItemList]  = useState<KeywordSet[]>([])
+export const DeckCardList: React.FC<Props> = (props) => {
+  const { card: cardDB } = useContext(MonkeContext)
+
+  const [itemList,  setItemList]  = useState<TagSet[]>([])
   const [filter,    setFilter]    = useState<ECardType>(DEFAULT_FILTER)
   const [startText, setStartText] = useState<string>(START_TEXTS.Start)
   const [selected,  setSelected]  = useState<Set<string>>(new Set())
 
-  useEffect(() => {
-    const { items } = props
-    if (!items) return
-    // Filter out the keywords
-    const filteredKeywords = Array.from(items.values())
-      .filter((item) => {
-        return item.type === filter
+  const renderCards = useCallback(async (ids: string[], filter: ECardType, db: CardDB) => {
+    const tagMap = new Map<string, string[]>()
+    for (let i = 0; i < ids.length; i ++) {
+      const key = ids[i]
+      const card = await db.getCard(key)
+      if (card.type !== filter) continue
+      card.tags.forEach((tag) => {
+        tagMap.set(tag, [...(tagMap.get(tag) || []), key])
       })
-      .reduce((acc, item) => {
-        item.keywords.forEach((keyword) => acc.add(keyword))
-        return acc
-      }, new Set<string>())
-    // Create Keyword set list for displaying
-    const keywordList: KeywordSet[] = Array.from(filteredKeywords.values())
-      .map((keyword) => {
-        return {
-          id: keyword,
-          items: Array.from(items.values())
-            .filter((item) =>
-              item.keywords.includes(keyword))
-            .map((item) => item.id)
-        }
-      })
-    setItemList(keywordList)
-  }, [props, filter, selected])
+    }
+    const tagSet: TagSet[] = []
+    tagMap.forEach((items, tag) => {
+      tagSet.push({ id: tag, items })
+    })
+    setItemList(tagSet)
+  }, [])
 
   // Auto switch to Question filter if Memo item list is empty
   useEffect(() => {
-    const { items } = props
-    if (!items) return
-    const count = Array.from(items.values())
-      .reduce((acc, item) => acc + (item.type === ECardType.Memo ? 1 : 0), 0)
-    if (count === 0) setFilter(ECardType.Question)
-  }, [props])
+    if (!cardDB) return
+    const { cardIDs } = props
+    renderCards(cardIDs, filter, cardDB)
+  }, [cardDB, filter, props, renderCards])
 
   const onFilterClick = useCallback((f: ECardType) => {
     if (f !== filter) {
@@ -85,8 +78,8 @@ export const CollectionItemList: React.FC<Props> = (props) => {
       if (selected.has(set.id)) set.items.forEach((id) => acc.add(id))
       return acc
     }, new Set<string>())
-    props.onStart(filter, Array.from(itemIDSet.values()))
-  }, [selected, itemList, props, filter])
+    // props.onStart(filter, Array.from(itemIDSet.values()))
+  }, [selected, itemList])
 
   return (
     <div className="collection-item-list">

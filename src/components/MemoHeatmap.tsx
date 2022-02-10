@@ -7,7 +7,12 @@ import React, {
   useState,
   useLayoutEffect
 } from 'react'
-import { IActivity } from '@models/user'
+
+export interface IHeat {
+  date: Date
+  count: number
+  active: number
+}
 
 const MONTH_NAMES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 const BOX_SIZE    = 10
@@ -19,7 +24,7 @@ function mapRange(x: number, in_min: number, in_max: number, out_min: number, ou
 }
 
 interface DayProps {
-  data: IActivity
+  data: IHeat
   color: number
   x: number
   y: number
@@ -39,7 +44,7 @@ const Day: React.FC<DayProps> = (props) => {
 }
 
 interface IWeek {
-  activities: IActivity[],
+  activities: IHeat[],
   colors: number[]
   x: number
   y: number
@@ -85,7 +90,7 @@ const WeekNames: React.FC<IWeekNames> = (props) => {
 }
 
 interface MemoHeatmapProps {
-  heats: IActivity[]
+  heats: IHeat[]
   colors: [number, number]
   startWeekday?: number
 }
@@ -128,7 +133,7 @@ const Component: React.FC<MemoHeatmapProps> = (props) => {
         dayCount = 0
       }
       return acc
-    }, [] as IActivity[][])
+    }, [] as IHeat[][])
   }, [heats, startWeekday])
   const months = useMemo(() => {
     // NOTE: This needs to be optimized

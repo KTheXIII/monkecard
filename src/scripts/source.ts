@@ -102,11 +102,11 @@ export async function fetchGistGithub(url: string): Promise<unknown> {
 export async function fetchSupportedURL(url: string): Promise<unknown> {
   try {
     if (JSON_EXT_REGEX.test(url))
-      return fetchJSON(url)
+      return await fetchJSON(url)
     else if (YAML_EXT_REGEX.test(url))
-      return fetchYAML(url)
+      return await fetchYAML(url)
     else if (GITHUB_GIST_REGEX.test(url))
-      return fetchGistGithub(url)
+      return await fetchGistGithub(url)
     else
       return Promise.reject(`URL: ${url} is not supported`)
   } catch (e) {

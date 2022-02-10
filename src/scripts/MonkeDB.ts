@@ -30,6 +30,7 @@ export class MonkeDB {
     if (data) return Promise.resolve(data)
     else return Promise.reject(`No user with id:${id}`)
   }
+
   async loadUserMemory(id: string): Promise<string> {
     const key  = `user:${id}`
     const data = this.db.get(key)
@@ -74,6 +75,17 @@ export class MonkeDB {
       this.db.set(key, json)
       return Promise.reject(err)
     }
+  }
+
+  async keys(pattern: string): Promise<string[]> {
+    const list: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (!key) continue
+      const match = key.match(pattern)
+      if (match && key.startsWith(match[0])) list.push(key.replace(match[0], ''))
+    }
+    return Promise.resolve(list)
   }
 
   readonly loading = new Subject<boolean>()

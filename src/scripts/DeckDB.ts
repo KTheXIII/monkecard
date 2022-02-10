@@ -1,18 +1,20 @@
-import { MonkeDB } from './MonkeDB'
-import { extractQuerySource } from './source'
-import { CardDB } from './CardDB'
-import { TDeckSource, IDeck } from '../models/Deck'
+import { CardException } from './../models/Card'
 import md5 from 'crypto-js/md5'
 import { isRight } from 'fp-ts/lib/Either'
-import { Subject } from 'rxjs'
-import { fetchSupportedURL } from '@scripts/source'
+import { Subject, Subscription } from 'rxjs'
+
 import {
   IDeckBase,
   DeckSource,
   EDeckType,
   EDeckStatus,
+  TDeckSource,
+  IDeck
 } from '@models/Deck'
-import { boolean } from 'fp-ts'
+import { fetchSupportedURL } from '@scripts/source'
+import { MonkeDB } from '@scripts/MonkeDB'
+import { extractQuerySource } from '@scripts/source'
+import { CardDB } from '@scripts/CardDB'
 
 async function parseDeck(url: string, source: TDeckSource, cardDB: CardDB): Promise<IDeckBase> {
   const { cards } = source
@@ -22,7 +24,7 @@ async function parseDeck(url: string, source: TDeckSource, cardDB: CardDB): Prom
     for (const card of cards)
       await cardDB.loadCard(hash, card)
         .then(key => cardKeys.push(key))
-        .catch(err => console.error('card parsing', err))
+        .catch(err => console.warn(err))
 
     const today = Date.now()
     const created = source.created || today
@@ -52,9 +54,6 @@ async function fetchDeck(collection: IDeckBase, cardDB: CardDB): Promise<IDeckBa
       .then(dec => isRight(dec) ? dec.right : Promise.reject('Error decoding deck'))
       .then(source => parseDeck(collection.source, source, cardDB))
   } catch (err) {
-    collection.status = EDeckStatus.Error
-    // FIXME: Parse error to string
-    console.error(err)
     return collection
   }
 }
@@ -68,6 +67,7 @@ export class DeckDB {
     if (queryURLs.length > 0) window.location.search = ''
     await monkeDB.updateSources(urls)
     for (const url of urls) await this.loadDeck(url, cardDB)
+    this.loadingEvent.next(false)
   }
 
   async getDeck(id: string): Promise<IDeckBase> {
@@ -77,7 +77,7 @@ export class DeckDB {
   }
 
   async loadDeck(url: string, cardDB: CardDB): Promise<void> {
-    this.loading.next(true)
+    this.loadingEvent.next(true)
     const id  = md5(url).toString()
     const col: IDeckBase = {
       type: EDeckType.Remote,
@@ -92,8 +92,10 @@ export class DeckDB {
       this.db.set(id, loaded)
     } catch (err) {
       col.status = EDeckStatus.Error
+      if (err instanceof TypeError) col.error = err.message
+      // col.error = err
     }
-    this.loading.next(false)
+    this.loadingEvent.next(false)
   }
 
   async getDeckList(): Promise<IDeckBase[]> {
@@ -102,8 +104,30 @@ export class DeckDB {
   async getDeckKeys(): Promise<string[]> {
     return Array.from(this.db.keys())
   }
+  async getSelected(): Promise<IDeckBase> {
+    if (this.selected === '')
+      return Promise.reject(new Error('No selected deck'))
+    return this.getDeck(this.selected)
+  }
+  selectDeck(id: string): void {
+    this.selected = id
+    this.selectEvent.next(id)
+  }
+  deselectDeck(): void {
+    this.selected = ''
+    this.selectEvent.next('')
+  }
 
+  onLoading(cb: (tof: boolean) => void): Subscription {
+    return this.loadingEvent.subscribe(cb)
+  }
+  onSelect(cb: (id: string) => void): Subscription {
+    return this.selectEvent.subscribe(cb)
+  }
+
+  private readonly loadingEvent = new Subject<boolean>()
+  private readonly selectEvent  = new Subject<string>()
   // <collection:hash, collection>
   private readonly db = new Map<string, IDeckBase>()
-  readonly loading = new Subject<boolean>()
+  private selected = ''
 }

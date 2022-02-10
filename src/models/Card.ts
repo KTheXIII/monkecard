@@ -10,9 +10,10 @@ export type TCardType = keyof typeof ECardType
 
 export interface Card {
   type: ECardType | TCardType
-  keywords: string[]
+  tags: string[]
   lang?: string
   id: string
+
   deck: string   // url or hash of local item
   hash: string   // hash of item source
 }
@@ -37,6 +38,7 @@ export interface TentaItem extends Card {
 }
 
 export const CardSource = io.type({
+  id: io.string,
   type: io.union([
     io.literal(ECardType['Unknown']),
     io.literal(ECardType['Memo']),
@@ -45,9 +47,8 @@ export const CardSource = io.type({
     io.literal(ECardType[0]),
     io.literal(ECardType[1]),
   ]),
-  keywords: io.array(io.string),
+  tags: io.union([io.array(io.string), io.undefined, io.null]),
   lang: io.union([io.string, io.undefined]),
-  id: io.string,
 })
 export type TCardSource = io.TypeOf<typeof CardSource>
 
@@ -62,8 +63,15 @@ export const TentaSourceBase = io.type({
   text: io.union([io.string, io.undefined]),
   solution: io.union([io.string, io.undefined]),
   hint: io.union([io.string, io.undefined, io.null]),
-  tag: io.union([io.array(io.string), io.undefined, io.null]),
+  tags: io.union([io.array(io.string), io.undefined, io.null]),
   branch: io.union([io.array(io.unknown), io.undefined, io.null]),
 })
 export const TentaSource = io.intersection([CardSource, TentaSourceBase])
 export type TTentaSource = io.TypeOf<typeof TentaSource>
+
+export class CardException extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'CardException'
+  }
+}
