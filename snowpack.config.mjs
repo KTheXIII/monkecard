@@ -1,5 +1,4 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
-
 const plugins = [
   '@snowpack/plugin-react-refresh',
   '@snowpack/plugin-dotenv',
@@ -34,6 +33,7 @@ export default {
   },
   alias: {
     '@assets': './src/assets',
+    '@commands': './src/commands',
     '@components': './src/components',
     '@hooks': './src/hooks',
     '@pages': './src/pages',

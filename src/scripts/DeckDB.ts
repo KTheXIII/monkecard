@@ -1,4 +1,3 @@
-import { CardException } from './../models/Card'
 import md5 from 'crypto-js/md5'
 import { isRight } from 'fp-ts/lib/Either'
 import { Subject, Subscription } from 'rxjs'
@@ -86,7 +85,6 @@ export class DeckDB {
       error: undefined,
     }
     this.db.set(id, col)
-    // FIXME: Set error state with message
     try {
       const loaded = await fetchDeck(col, cardDB)
       this.db.set(id, loaded)

@@ -43,9 +43,9 @@ export const DeckCardList: React.FC<Props> = (props) => {
       const key = ids[i]
       const card = await db.getCard(key)
       if (card.type !== filter) continue
-      card.tags.forEach((tag) => {
+      card.tags.forEach((tag) =>
         tagMap.set(tag, [...(tagMap.get(tag) || []), key])
-      })
+      )
     }
     const tagSet: TagSet[] = []
     tagMap.forEach((items, tag) => {

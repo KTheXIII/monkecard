@@ -162,7 +162,7 @@ export const MemoListInputText: React.FC<MemoListInputTextProps> = (props) => {
       <input type="text"
         ref={ref}
         className="py-4 pr-3 bg-mbg-1 w-full h-full overflow-hidden
-                   outline-none border-none text-mbase md:text-base font-light
+                   outline-none border-none text-memo md:text-base font-light
                    placeholder-mt-1"
         defaultValue={props.defaultText}
         placeholder={props.placeholder}

@@ -5,8 +5,6 @@ import React, {
   useState,
 } from 'react'
 
-import { Command } from '@scripts/command'
-import { TCommand } from '@models/command'
 import { EDeckStatus, IDeck } from '@models/Deck'
 import { MonkeContext } from '@hooks/MonkeContext'
 import { DeckCardList } from '@components/DeckCardList'
@@ -27,19 +25,6 @@ export const DeckPage: React.FC<Props> = (props) => {
       if (current.status !== EDeckStatus.Loaded) return
       setTitle(current.title)
       setCardList(Array.from(current.cards))
-      // const tags: Map<string, string[]> = new Map()
-      // const ids = Array.from(current.cards)
-      // for (let i = 0; i < ids.length; i ++) {
-      //   const card = await cardDB.getCard(ids[i])
-      //   card.tags.forEach((tag) => {
-      //     tags.set(tag, [...(tags.get(tag) || []), card.id])
-      //   })
-      // }
-      // const list: string[] = []
-      // tags.forEach((count, tag) => {
-      //   list.push(`${tag}(${count.length})`)
-      // })
-      // setItemList(list)
     } catch (err) { /* TODO: Handle error */ }
   }, [deckDB, cardDB])
 
