@@ -136,7 +136,7 @@ const Component: React.FC<MemoHeatmapProps> = (props) => {
     }, [] as IHeat[][])
   }, [heats, startWeekday])
   const months = useMemo(() => {
-    // NOTE: This needs to be optimized
+    // NOTE: This might need to be optimized
     return weeks.reduce((acc, week, i) => {
       const dayIndex = week.findIndex(d => d.date.getDate() === 1)
       if (dayIndex !== -1) {

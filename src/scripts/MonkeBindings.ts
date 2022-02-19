@@ -24,5 +24,6 @@ export function CommandMouseBinds(e: MouseEvent, cmd: CommandPaletteRef): boolea
     e.preventDefault
     return false
   }
+
   return false
 }

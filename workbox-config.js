@@ -10,11 +10,11 @@ module.exports = {
   swDest: 'build/service-worker.js',
   runtimeCaching: [
     {
-      urlPattern: /\.(css)$/,
+      urlPattern: /\.(css|woff2|ttf|woff)$/,
       handler: 'CacheFirst',
     },
     {
-      urlPattern: /\.(png|jpg|jpeg|svg|gif)$/,
+      urlPattern: /\.(png|jpg|jpeg|svg|gif|yml|yaml|json)$/,
       handler: 'CacheFirst',
     }
   ]

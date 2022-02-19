@@ -29,8 +29,11 @@ export const DeckPage: React.FC<Props> = (props) => {
   }, [deckDB, cardDB])
 
   useEffect(() => {
+    if (!deckDB) return
+    const sub = deckDB.onSelect(() => renderDeck())
     renderDeck()
-  }, [renderDeck])
+    return () => sub.unsubscribe()
+  }, [renderDeck, deckDB])
 
   return (
     <div className='pb-28 p-4'>

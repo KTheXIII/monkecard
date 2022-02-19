@@ -14,12 +14,9 @@ import {
   BUILD_DATE
 } from '@scripts/env'
 import { MemoList, MemoListButtonItem } from '@components/MemoList'
-import { Command } from '@scripts/command'
-import { TCommand } from '@models/command'
 import {
   EDeckStatus,
   IDeck,
-  IDeckBase
 } from '@models/Deck'
 import { MonkeContext } from '@hooks/MonkeContext'
 
@@ -35,7 +32,7 @@ interface TextItem {
 
 export const HomePage: React.FC<Props> = (props) => {
   const { isLoading } = props
-  const { monke, deck, command } = useContext(MonkeContext)
+  const { monke, deck } = useContext(MonkeContext)
   const [deckList, setDeckList] = useState<TextItem[]>([])
 
   const [heats, setHeats] = useState<IHeat[]>([])
@@ -102,11 +99,6 @@ export const HomePage: React.FC<Props> = (props) => {
   const onDeckOpen = useCallback((id: string) => {
     if (deck) deck.selectDeck(id)
   }, [deck])
-
-  useEffect(() => {
-    if (!command) return
-    command.restore()
-  }, [command])
 
   useEffect(() => {
     renderHeats()
