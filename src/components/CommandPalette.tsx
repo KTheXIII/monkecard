@@ -4,29 +4,15 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  useMemo,
   useLayoutEffect,
 } from 'react'
-import Fuse from 'fuse.js'
 import { BsTerminalFill } from 'react-icons/bs'
 
-const QUOTE_REGEX = /(["'])(?:(?=(\\?))\2.)*?\1/g
-const DEFAULT_PLACEHOLDER = 'search command'
-
-const TEST_LIST = [
-  'open',
-  'add',
-  'remove',
-  'close',
-  'go',
-  'search',
-]
-
 interface Props {
-  onRun(cmd: string, args?: string[]): void
+  onRun(cmd: string): void
+  onEval(text: string): void
   onInput(input: string): void
   onExpand(cmd: string): void
-  onShrink(text: string): void
 }
 
 export interface CommandPaletteRef {
@@ -38,21 +24,23 @@ export interface CommandPaletteRef {
   setIsHidden(isHidden: boolean): void
   setIsInput(isInput: boolean): void
   isInput(): boolean
+  setMessage(text: string): void
+  setSearch(text: string): void
 }
 
 const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
-  const { onRun, onInput, onExpand } = props
-  const [hint, setHint] = useState(DEFAULT_PLACEHOLDER)
+  const { onRun, onEval, onInput, onExpand } = props
+  const [hint, setHint] = useState('')
   const [isHidden, setIsHidden] = useState(true)
   const [isInput,  setIsInput ] = useState(false)
-  const [commands, setCommands] = useState<string[]>(TEST_LIST)
-  const [results,  setResults ] = useState<string[]>(commands)
+  const [commands, setCommands] = useState<string[]>([])
   const [selected, setSelected] = useState<number>(0)
   const [search,   setSearch  ] = useState<string>('')
+  const [message,  setMessage ] = useState<string>('')
   const cmdRef   = useRef<HTMLDivElement>(null)
   const listRef  = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const fuse = useMemo(() => new Fuse(commands), [commands])
+  // const fuse = useMemo(() => new Fuse(commands), [commands])
 
   useImperativeHandle(ref, () => ({
     target: cmdRef.current,
@@ -63,34 +51,28 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
     setIsHidden: setIsHidden,
     setIsInput: setIsInput,
     isInput: () => isInput,
+    setMessage: setMessage,
+    setSearch: setSearch,
   }))
+
+  useEffect(() => {
+    if (isHidden) return
+    onEval('')
+    setSelected(0)
+    setSearch('')
+    setIsInput(false)
+  }, [isHidden, onEval])
 
   // Reset view into its initial state
   useEffect(() => {
     if (isHidden || !inputRef.current) return
     inputRef.current.focus()
+  }, [isHidden])
 
-    // Reset to default values
-    setIsInput(false)
-    setSelected(0)
-    setSearch('')
-    setResults(commands)
-  }, [isHidden, commands])
-
-  // Perform search
   useEffect(() => {
-    if (isInput) return  // Skip if input is active
-    const res = fuse.search(search.replaceAll(QUOTE_REGEX, '').trim())
-    if (res.length > 0) {
-      setResults(res.map(({ item }) => item))
-      setSelected(0)
-    } else if (search.length === 0) {
-      setResults(commands)
-      setSelected(0)
-    } else {
-      setResults([])
-    }
-  }, [isInput, search, fuse, commands])
+    if (isHidden || !inputRef.current) return
+    inputRef.current.value = search
+  }, [isHidden, search])
 
   useLayoutEffect(() => {
     const element = listRef.current?.children[selected]
@@ -101,53 +83,48 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
   const onInputChange = useCallback(() => {
     if (!inputRef.current) return
     setSearch(inputRef.current.value)
-  }, [inputRef, setSearch])
+    onEval(inputRef.current.value)
+  }, [onEval])
 
   const onRunCommand = useCallback((index: number) => {
     if (!inputRef.current) return
     const input = inputRef.current
-    if (isInput) {
+    if (isInput)
       onInput(input.value)
-      return
-    }
-    // TODO: Add support for argument without quotes
-    //       e.g. `add "deck" "card"`
-    const cmd = results[index]
-    const parse = input.value.trim().match(QUOTE_REGEX)
-    const args  = parse ? parse.map(s => s.replace(/^["']|['"]$/g, '')) : []
-    onRun(cmd, args)
-  }, [isInput, results, onRun, onInput])
+    else if (index > -1 && index < commands.length)
+      onRun(commands[index])
+  }, [isInput, onInput, onRun, commands])
 
   const onExpandCommand = useCallback((index: number) => {
     const input = inputRef.current
     if (!input) return
-    input.focus()
-    const cmd = results[index] + ' '
-    input.value = cmd + ' '
+    const cmd = commands[index]
+    input.value = cmd
     setSearch(cmd)
     onExpand(cmd)
-  }, [results, onExpand])
+  }, [commands, onExpand])
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (!inputRef.current) return
-    switch (e.key) {
+    switch (e.code) {
     case 'Enter':
       onRunCommand(selected)
       break
     case 'ArrowUp':
       e.preventDefault()
-      setSelected(p => (p + results.length - 1) % results.length)
+      setSelected(p => (p + commands.length - 1) % commands.length)
       break
     case 'ArrowDown':
       e.preventDefault()
-      setSelected(p => (p + 1) % results.length)
+      setSelected(p => (p + 1) % commands.length)
       break
     case 'Tab':
       e.preventDefault()
+      inputRef.current.focus()
       onExpandCommand(selected)
       break
     }
-  }, [onRunCommand, selected, onExpandCommand, results])
+  }, [onRunCommand, selected, onExpandCommand, commands])
 
   return (
     <div className="fixed top-0 left-0">
@@ -159,28 +136,32 @@ const Component = React.forwardRef<CommandPaletteRef, Props>((props, ref) => {
             <div className='my-auto'> <BsTerminalFill /></div>
             <input ref={inputRef}
               className="bg-mbg-1 md:text-base font-light text-memo py-2 w-full outline-none rounded-none"
+              autoCapitalize='off'
+              autoComplete='off'
+              autoCorrect='off'
               placeholder={hint}
               type="text"
               onChange={_ => onInputChange()}
             />
           </div>
-          {!isInput && <div ref={listRef}
-            className="max-h-[336px] bg-mbg-base rounded-b-memo overflow-y-auto snap-y scroll-auto">
-            {results.map((c, i) => (
-              <div key={`${i.toString().padStart(2, '0')}`}
-                className={`md:h-[28px] h-10 w-full pl-3 select-none flex snap-start 
+          {!isInput &&
+            <div ref={listRef}
+              className="max-h-[336px] bg-mbg-base rounded-b-memo overflow-y-auto snap-y scroll-auto">
+              {commands.map((c, i) => (
+                <div key={`${i.toString(16).padStart(2, '0')}`}
+                  className={`md:h-[28px] h-10 w-full pl-3 select-none flex snap-start 
                             cursor-pointer border-none active:bg-mbg-active
                             ${i === selected ? 'bg-mbg-active' : 'hover:bg-mbg-hover'}`}
-                onClick={_ => onRunCommand(i)}>
-                <span className="my-auto overflow-x-auto whitespace-nowrap">{c}</span>
-              </div>
-            ))}
-            {/* {results.length === 0 && commands.length !== 0 &&
-            <div className="h-[28px] pl-3 flex">
-              <span className='my-auto'>no result...</span>
-            </div>
-            } */}
-          </div>}
+                  onClick={_ => onRunCommand(i)}>
+                  <span className="my-auto overflow-x-auto whitespace-nowrap">{c}</span>
+                </div>
+              ))}
+              {commands.length === 0 && message &&
+                <div className="h-[28px] pl-3 flex">
+                  <span className='my-auto'>{message}</span>
+                </div>
+              }
+            </div>}
         </div>
       </div>
       }
