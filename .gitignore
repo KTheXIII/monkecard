@@ -1,40 +1,34 @@
-# ┃ Outputs
-# ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ #
-
-## Builds
+# Builds
 build
 .cache
 
-## Package files
+# Package files
 *.zip
 *.rar
 *.tar.gz
 
-## NodeJS
+# NodeJS
 node_modules
 
-## Log files
+# Log files
 *.log
 *.tsbuildinfo
 
-## Environment Variables
+# Environment Variables
 .env
 
-# ┃ Generated Workspaces
-# ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ #
-
-## Visual Studio Code
+# Visual Studio Code
 .vscode
 
-# ┃ System Files
-# ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ #
+# IntelliJ
+.idea
 
-## macOS
+# macOS
 .DS_Store
 *.icloud
 .AppleDouble
 .LSOverride
 
-## Windows
+# Windows
 $RECYCLE.BIN/
 *.lnk
