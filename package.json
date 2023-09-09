@@ -1,21 +1,21 @@
 {
   "name": "monkecard",
   "version": "0.0.15",
-  "author": "KTheXIII",
+  "author": "mnerv",
   "license": "MIT",
   "homepage": "https://monkecard.xyz",
   "description": "Decentralised memo webapp with external sources",
   "repository": {
     "type": "git",
-    "url": "https://github.com/KTheXIII/monkecard"
+    "url": "https://github.com/mnerv/monkecard"
   },
   "bugs": {
-    "url": "https://github.com/KTheXIII/monkecard/issues"
+    "url": "https://github.com/mnerv/monkecard/issues"
   },
   "private": true,
   "funding": {
     "type": "individual",
-    "url": "https://github.com/sponsors/KTheXIII"
+    "url": "https://github.com/sponsors/mnerv"
   },
   "scripts": {
     "dev": "snowpack dev",
